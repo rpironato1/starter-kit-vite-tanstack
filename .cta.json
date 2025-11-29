@@ -1,0 +1,24 @@
+{
+  "projectName": "vite-project",
+  "mode": "file-router",
+  "typescript": true,
+  "tailwind": true,
+  "packageManager": "npm",
+  "addOnOptions": {},
+  "git": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": [
+    "biome",
+    "tanstack-query",
+    "shadcn",
+    "t3env",
+    "table",
+    "form",
+    "oRPC",
+    "start",
+    "store",
+    "compiler",
+    "tanchat"
+  ]
+}
