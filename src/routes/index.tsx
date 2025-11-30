@@ -107,7 +107,6 @@ function ChatPage() {
 					setIsSidebarOpen(false);
 					setIsSettingsOpen(true);
 				}}
-				currentView="chat"
 			/>
 
 			{/* Model Selector */}

@@ -166,7 +166,6 @@ function DocPage() {
 					setIsSidebarOpen(false);
 					setIsSettingsOpen(true);
 				}}
-				currentView="doc"
 			/>
 
 			<SettingsModal

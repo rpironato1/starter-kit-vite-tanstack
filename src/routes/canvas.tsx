@@ -153,7 +153,6 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 					setIsSidebarOpen(false);
 					setIsSettingsOpen(true);
 				}}
-				currentView="canvas"
 			/>
 
 			<ModelSelector

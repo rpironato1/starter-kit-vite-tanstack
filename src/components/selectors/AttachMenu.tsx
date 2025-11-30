@@ -78,7 +78,7 @@ export function AttachMenu({
 					transition={springTransition}
 					className={cn(
 						"absolute bottom-full mb-2 left-0 origin-bottom",
-						"min-w-[200px] rounded-2xl p-1.5",
+						"w-[220px] rounded-2xl p-1.5",
 						"bg-bg-modal/95 backdrop-blur-xl",
 						"border border-border-default",
 						"shadow-2xl",

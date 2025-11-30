@@ -128,7 +128,6 @@ function PhotoPage() {
 					setIsSidebarOpen(false);
 					setIsSettingsOpen(true);
 				}}
-				currentView="photo"
 			/>
 
 			<SettingsModal

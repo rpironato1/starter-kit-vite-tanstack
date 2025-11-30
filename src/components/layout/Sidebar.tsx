@@ -1,3 +1,4 @@
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
 	ChevronDown,
@@ -101,8 +102,7 @@ interface SidebarProps {
 	onClose: () => void;
 	onNewChat: () => void;
 	onOpenSettings: () => void;
-	currentView: "chat" | "photo" | "doc" | "canvas";
-	onNavigate?: (viewId: string) => void;
+	currentView?: "chat" | "photo" | "doc" | "canvas";
 	userName?: string;
 	userInitials?: string;
 	activeChatId?: string | null;
@@ -116,18 +116,27 @@ export function Sidebar({
 	onNewChat,
 	onOpenSettings,
 	currentView,
-	onNavigate,
 	userName = "Usuário",
 	userInitials = "U",
 	activeChatId,
 	onSelectChat,
 	chatHistory,
 }: SidebarProps) {
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [historyExpanded, setHistoryExpanded] = useState(false);
 	const history = chatHistory ?? defaultHistory;
 
+	// Calcular view ativa baseado na URL (com override opcional via prop)
+	const activeView =
+		currentView ??
+		(location.pathname === "/"
+			? "chat"
+			: (location.pathname.slice(1) as "photo" | "doc" | "canvas"));
+
 	const handleNavigate = (viewId: string) => {
-		onNavigate?.(viewId);
+		const route = viewId === "chat" ? "/" : `/${viewId}`;
+		navigate({ to: route });
 		onClose();
 	};
 
@@ -173,7 +182,7 @@ export function Sidebar({
 									onClick={() => handleNavigate(item.id)}
 									className={cn(
 										"w-full flex items-center gap-3 p-3 rounded-xl transition-colors",
-										currentView === item.id
+										activeView === item.id
 											? "bg-bg-hover text-text-primary font-medium border border-border-default/50"
 											: "text-text-secondary hover:bg-bg-hover hover:text-text-primary border border-transparent",
 									)}

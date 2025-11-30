@@ -155,7 +155,7 @@ export function AIMessage({
 													className={cn(
 														"group inline-flex items-center gap-1.5",
 														"text-xs px-2.5 py-1 rounded-full",
-														"bg-bg-surface/80 backdrop-blur-sm",
+														"bg-zinc-900/50 backdrop-blur-sm",
 														"text-text-secondary",
 														"border border-border-default",
 														"hover:bg-bg-hover hover:text-text-primary",
@@ -175,7 +175,7 @@ export function AIMessage({
 												className={cn(
 													"group inline-flex items-center gap-1.5",
 													"text-xs px-2.5 py-1 rounded-full",
-													"bg-bg-surface/80 backdrop-blur-sm",
+													"bg-zinc-900/50 backdrop-blur-sm",
 													"text-text-secondary",
 													"border border-border-default",
 												)}
@@ -202,7 +202,7 @@ export function AIMessage({
 
 			{/* Action buttons footer */}
 			{!isLoading && (
-				<div className="mt-3 flex items-center justify-between opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+				<div className="mt-3 flex items-center justify-between opacity-50 hover:opacity-100 transition-opacity duration-200">
 					<div className="flex items-center gap-1">
 						<button
 							type="button"
