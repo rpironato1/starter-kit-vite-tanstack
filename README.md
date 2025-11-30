@@ -1,4 +1,6 @@
-Welcome to your new TanStack app! 
+# Zane Chat AI
+
+Welcome to Zane Chat AI - An intelligent chat application powered by AI.
 
 # Getting Started
 
@@ -69,9 +71,9 @@ console.log(env.VITE_APP_TITLE);
 
 
 
-# TanStack Chat Application
+# Zane Chat AI Application
 
-Am example chat application built with TanStack Start, TanStack Store, and Claude AI.
+A powerful chat application built with TanStack Start, TanStack Store, and Claude AI.
 
 ## .env Updates
 

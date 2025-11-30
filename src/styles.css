@@ -4,21 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
-  @apply m-0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 :root {
+  /* ===== EXISTING SHADCN TOKENS ===== */
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -52,9 +39,35 @@ code {
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
+
+  /* ===== ZANE DESIGN TOKENS - LIGHT MODE ===== */
+  /* Backgrounds */
+  --bg-main: #f4f4f5;
+  --bg-sidebar: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-hover: #e4e4e7;
+
+  /* Text */
+  --text-primary: #18181b;
+  --text-secondary: #71717a;
+
+  /* Accents (fixos - não mudam com tema) */
+  --accent-primary: #246B31;
+  --accent-hover: #1e5a29;
+  --accent-textHighlight: #eecfa1;
+
+  /* Borders */
+  --border-default: #e4e4e7;
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 }
 
 .dark {
+  /* ===== EXISTING SHADCN TOKENS - DARK MODE ===== */
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.141 0.005 285.823);
@@ -87,9 +100,25 @@ code {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
+
+  /* ===== ZANE DESIGN TOKENS - DARK MODE ===== */
+  /* Backgrounds */
+  --bg-main: #18181b;
+  --bg-sidebar: #121212;
+  --bg-surface: #27272a;
+  --bg-modal: #1c1c1e;
+  --bg-hover: #2c2c2e;
+
+  /* Text */
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+
+  /* Borders */
+  --border-default: #3f3f46;
 }
 
 @theme inline {
+  /* ===== EXISTING SHADCN COLOR TOKENS ===== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -126,6 +155,31 @@ code {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ===== ZANE DESIGN TOKENS ===== */
+  /* Background Colors */
+  --color-bg-main: var(--bg-main);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-modal: var(--bg-modal);
+  --color-bg-hover: var(--bg-hover);
+
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Accent Colors */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-highlight: var(--accent-textHighlight);
+
+  /* Border Colors */
+  --color-border-default: var(--border-default);
+
+  /* Typography */
+  --font-family-sans: var(--font-sans);
+  --font-family-serif: var(--font-serif);
+  --font-family-mono: var(--font-mono);
 }
 
 @layer base {
@@ -133,6 +187,76 @@ code {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-bg-main text-text-primary font-sans antialiased m-0;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+  code {
+    font-family: var(--font-mono);
+  }
+}
+
+/* ===== CUSTOM KEYFRAME ANIMATIONS ===== */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+/* Scrollbar hiding utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animation utilities */
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

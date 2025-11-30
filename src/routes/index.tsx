@@ -1,118 +1,183 @@
-import { createFileRoute } from '@tanstack/react-router'
-import {
-  Zap,
-  Server,
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
-} from 'lucide-react'
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Header } from "@/components/layout/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { InputBar } from "@/components/layout/InputBar";
+import { UserMessage } from "@/components/chat/UserMessage";
+import { AIMessage } from "@/components/chat/AIMessage";
+import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { EmptyState } from "@/components/chat/EmptyState";
+import { ModelSelector } from "@/components/selectors/ModelSelector";
+import { SettingsModal } from "@/components/settings/SettingsModal";
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute("/")({ component: ChatPage });
 
-function App() {
-  const features = [
-    {
-      icon: <Zap className="w-12 h-12 text-cyan-400" />,
-      title: 'Powerful Server Functions',
-      description:
-        'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.',
-    },
-    {
-      icon: <Server className="w-12 h-12 text-cyan-400" />,
-      title: 'Flexible Server Side Rendering',
-      description:
-        'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.',
-    },
-    {
-      icon: <RouteIcon className="w-12 h-12 text-cyan-400" />,
-      title: 'API Routes',
-      description:
-        'Build type-safe API endpoints alongside your application. No separate backend needed.',
-    },
-    {
-      icon: <Shield className="w-12 h-12 text-cyan-400" />,
-      title: 'Strongly Typed Everything',
-      description:
-        'End-to-end type safety from server to client. Catch errors before they reach production.',
-    },
-    {
-      icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Full Streaming Support',
-      description:
-        'Stream data from server to client progressively. Perfect for AI applications and real-time updates.',
-    },
-    {
-      icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Next Generation Ready',
-      description:
-        'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.',
-    },
-  ]
+interface ChatMessage {
+	id: string;
+	role: "user" | "assistant";
+	content: string;
+	imageUrl?: string;
+	timestamp: Date;
+}
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <section className="relative py-20 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
-        <div className="relative max-w-5xl mx-auto">
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <img
-              src="/tanstack-circle-logo.png"
-              alt="TanStack Logo"
-              className="w-24 h-24 md:w-32 md:h-32"
-            />
-            <h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-              <span className="text-gray-300">TANSTACK</span>{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                START
-              </span>
-            </h1>
-          </div>
-          <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
-            The framework for next generation AI applications
-          </p>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-            Full-stack framework powered by TanStack Router for React and Solid.
-            Build modern applications with server functions, streaming, and type
-            safety.
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-            >
-              Documentation
-            </a>
-            <p className="text-gray-400 text-sm mt-2">
-              Begin your TanStack Start journey by editing{' '}
-              <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
-                /src/routes/index.tsx
-              </code>
-            </p>
-          </div>
-        </div>
-      </section>
+function ChatPage() {
+	const [messages, setMessages] = useState<ChatMessage[]>([]);
+	const [inputValue, setInputValue] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [currentModel, setCurrentModel] = useState("Zane Pro");
+	const [reasoningLevel, setReasoningLevel] = useState<"soft" | "medium" | "max" | "disabled">("soft");
+	const [attachedImage, setAttachedImage] = useState<string | null>(null);
+	
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const inputRef = useRef<HTMLTextAreaElement>(null);
 
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
-            >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  )
+	// Auto-scroll to bottom when new messages arrive
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages, isLoading]);
+
+	const handleSend = async () => {
+		if (!inputValue.trim() && !attachedImage) return;
+
+		const userMessage: ChatMessage = {
+			id: crypto.randomUUID(),
+			role: "user",
+			content: inputValue.trim(),
+			imageUrl: attachedImage || undefined,
+			timestamp: new Date(),
+		};
+
+		setMessages(prev => [...prev, userMessage]);
+		setInputValue("");
+		setAttachedImage(null);
+		setIsLoading(true);
+
+		// Simulate AI response (replace with actual API call)
+		setTimeout(() => {
+			const aiMessage: ChatMessage = {
+				id: crypto.randomUUID(),
+				role: "assistant",
+				content: `This is a simulated response to: "${userMessage.content}"\n\nIn production, this would be powered by Claude via the Anthropic API.`,
+				timestamp: new Date(),
+			};
+			setMessages(prev => [...prev, aiMessage]);
+			setIsLoading(false);
+		}, 1500);
+	};
+
+	const handleModelSelect = (model: string) => {
+		setCurrentModel(model);
+		setIsModelSelectorOpen(false);
+	};
+
+	const handleImageAttach = (imageUrl: string) => {
+		setAttachedImage(imageUrl);
+	};
+
+	const handleRemoveImage = () => {
+		setAttachedImage(null);
+	};
+
+	const handleNewChat = () => {
+		setMessages([]);
+		setIsSidebarOpen(false);
+	};
+
+	return (
+		<div className="h-screen flex flex-col bg-bg-main overflow-hidden">
+			{/* Header */}
+			<Header
+				onMenuClick={() => setIsSidebarOpen(true)}
+				onModelClick={() => setIsModelSelectorOpen(true)}
+				currentModel={currentModel}
+			/>
+
+			{/* Sidebar */}
+			<Sidebar
+				isOpen={isSidebarOpen}
+				onClose={() => setIsSidebarOpen(false)}
+				onNewChat={handleNewChat}
+				onOpenSettings={() => {
+					setIsSidebarOpen(false);
+					setIsSettingsOpen(true);
+				}}
+				currentView="chat"
+			/>
+
+			{/* Model Selector */}
+			<ModelSelector
+				isOpen={isModelSelectorOpen}
+				onClose={() => setIsModelSelectorOpen(false)}
+				currentModel={currentModel}
+				onSelect={handleModelSelect}
+			/>
+
+			{/* Settings Modal */}
+			<SettingsModal
+				isOpen={isSettingsOpen}
+				onClose={() => setIsSettingsOpen(false)}
+			/>
+
+			{/* Main Content */}
+			<main className="flex-1 overflow-hidden relative">
+				{/* Messages Area */}
+				<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
+					<div className="max-w-3xl mx-auto py-6 space-y-6">
+						<AnimatePresence mode="popLayout">
+							{messages.length === 0 && !isLoading ? (
+								<EmptyState variant="chat" />
+							) : (
+								<>
+									{messages.map((message) => (
+										<motion.div
+											key={message.id}
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ type: "spring", stiffness: 300, damping: 30 }}
+										>
+											{message.role === "user" ? (
+												<UserMessage
+													content={message.content}
+													imageUrl={message.imageUrl}
+												/>
+											) : (
+												<AIMessage content={message.content} />
+											)}
+										</motion.div>
+									))}
+									{isLoading && (
+										<motion.div
+											initial={{ opacity: 0, y: 10 }}
+											animate={{ opacity: 1, y: 0 }}
+										>
+											<LoadingIndicator />
+										</motion.div>
+									)}
+								</>
+							)}
+						</AnimatePresence>
+						<div ref={messagesEndRef} />
+					</div>
+				</div>
+
+				{/* Input Bar */}
+				<InputBar
+					value={inputValue}
+					onChange={setInputValue}
+					onSend={handleSend}
+					onImageAttach={handleImageAttach}
+					attachedImage={attachedImage}
+					onRemoveImage={handleRemoveImage}
+					isLoading={isLoading}
+					reasoningLevel={reasoningLevel}
+					onReasoningChange={setReasoningLevel}
+					inputRef={inputRef}
+				/>
+			</main>
+		</div>
+	);
 }
