@@ -51,7 +51,7 @@ function CanvasPage() {
 	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Canvas Pro");
 	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "disabled"
+		"soft" | "medium" | "max" | "off"
 	>("soft");
 	const [activeArtifact, setActiveArtifact] = useState<CanvasArtifact | null>(
 		null,

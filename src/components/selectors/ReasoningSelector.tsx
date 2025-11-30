@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Brain, ChevronDown, Sparkles, Zap } from "lucide-react";
+import { Brain, Check, CircleOff, Sparkles, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -16,36 +16,39 @@ const REASONING_LEVELS = {
 	off: {
 		label: "Desativado",
 		description: "Respostas rápidas",
-		color: "text-[var(--text-secondary)]",
-		icon: Zap,
+		color: "text-text-secondary",
+		bgColor: "bg-text-secondary/10",
+		icon: CircleOff,
 	},
 	soft: {
 		label: "Soft",
-		description: "Análise básica",
-		color: "text-blue-400",
-		icon: Brain,
+		description: "Rápido e direto (1k tokens)",
+		color: "text-green-400",
+		bgColor: "bg-accent-primary/10",
+		icon: Zap,
 	},
 	medium: {
 		label: "Médio",
-		description: "Análise detalhada",
-		color: "text-amber-400",
+		description: "Equilibrado (2k tokens)",
+		color: "text-yellow-400",
+		bgColor: "bg-yellow-500/10",
 		icon: Brain,
 	},
 	max: {
 		label: "Max",
-		description: "Análise profunda",
-		color: "text-red-400",
+		description: "Análise profunda (4k tokens)",
+		color: "text-[#15803d]",
+		bgColor: "bg-[#15803d]/10",
 		icon: Sparkles,
 	},
 } as const;
 
-const LEVELS: ReasoningLevel[] = ["off", "soft", "medium", "max"];
+const LEVELS: ReasoningLevel[] = ["soft", "medium", "max", "off"];
 
 const springConfig = {
 	type: "spring" as const,
-	stiffness: 350,
-	damping: 25,
-	mass: 0.8,
+	stiffness: 400,
+	damping: 30,
 };
 
 export function ReasoningSelector({
@@ -140,87 +143,120 @@ function DropdownSelector({
 
 	return (
 		<div ref={containerRef} className={cn("relative", className)}>
+			{/* Trigger Button */}
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
 				className={cn(
-					"flex items-center gap-2 px-3 py-2 rounded-lg",
-					"text-sm font-medium transition-colors",
-					"bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)]",
-					"border border-zinc-700/50",
+					"p-2.5 rounded-full transition-colors group",
+					"hover:bg-bg-hover",
 				)}
+				title={`Raciocínio: ${selected.label}`}
 			>
-				<Icon className={cn("size-4", selected.color)} />
-				<span className={selected.color}>{selected.label}</span>
-				<motion.div
-					animate={{ rotate: isOpen ? 180 : 0 }}
-					transition={springConfig}
-				>
-					<ChevronDown className="size-4 text-[var(--text-secondary)]" />
-				</motion.div>
+				<Icon className={cn("size-5 scale-x-[-1]", selected.color)} />
 			</button>
 
+			{/* Popup Menu - Opens Upward */}
 			<AnimatePresence>
 				{isOpen && (
-					<motion.div
-						initial={{ opacity: 0, y: -8, scale: 0.95 }}
-						animate={{ opacity: 1, y: 0, scale: 1 }}
-						exit={{ opacity: 0, y: -8, scale: 0.95 }}
-						transition={springConfig}
-						className={cn(
-							"absolute top-full left-0 mt-2 z-50",
-							"min-w-[200px] p-1 rounded-xl",
-							"bg-[var(--bg-surface)] border border-zinc-700/50",
-							"shadow-lg shadow-black/20",
-						)}
-					>
-						{LEVELS.map((level) => {
-							const config = REASONING_LEVELS[level];
-							const LevelIcon = config.icon;
-							const isSelected = level === value;
-							return (
-								<button
-									key={level}
-									type="button"
-									onClick={() => {
-										onChange(level);
-										setIsOpen(false);
-									}}
-									className={cn(
-										"w-full flex items-center gap-3 px-3 py-2 rounded-lg",
-										"text-left transition-colors hover:bg-[var(--bg-hover)]",
-									)}
-								>
-									<LevelIcon className={cn("size-4", config.color)} />
-									<div className="flex-1 min-w-0">
-										<p
+					<>
+						{/* Backdrop */}
+						<button
+							type="button"
+							aria-label="Fechar menu"
+							className="fixed inset-0 z-20 cursor-default"
+							onClick={() => setIsOpen(false)}
+						/>
+
+						{/* Dropdown Panel */}
+						<motion.div
+							initial={{ opacity: 0, scale: 0.95, y: 10 }}
+							animate={{ opacity: 1, scale: 1, y: 0 }}
+							exit={{ opacity: 0, scale: 0.95, y: 10 }}
+							transition={springConfig}
+							className={cn(
+								"absolute bottom-full mb-2 left-0 z-30",
+								"w-[240px] p-1.5 rounded-2xl",
+								"bg-bg-modal/95 backdrop-blur-xl",
+								"border border-border-default",
+								"shadow-xl shadow-black/20",
+							)}
+						>
+							{/* Header */}
+							<div className="px-3 py-2 flex items-center gap-2">
+								<Brain className="size-4 text-text-secondary scale-x-[-1]" />
+								<span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+									Reasoning
+								</span>
+							</div>
+
+							{/* Options */}
+							<div className="space-y-0.5">
+								{LEVELS.map((level) => {
+									const config = REASONING_LEVELS[level];
+									const LevelIcon = config.icon;
+									const isSelected = level === value;
+									return (
+										<button
+											key={level}
+											type="button"
+											onClick={() => {
+												onChange(level);
+												setIsOpen(false);
+											}}
 											className={cn(
-												"text-sm font-medium",
+												"w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl",
+												"text-left transition-all duration-200",
 												isSelected
-													? config.color
-													: "text-[var(--text-primary)]",
+													? "bg-[#15803d]/15 ring-1 ring-accent-primary"
+													: "hover:bg-bg-hover",
 											)}
 										>
-											{config.label}
-										</p>
-										<p className="text-xs text-[var(--text-secondary)]">
-											{config.description}
-										</p>
-									</div>
-									{isSelected && (
-										<motion.div
-											initial={{ scale: 0 }}
-											animate={{ scale: 1 }}
-											className={cn(
-												"size-2 rounded-full",
-												config.color.replace("text-", "bg-"),
+											{/* Icon Container */}
+											<div
+												className={cn(
+													"p-1.5 rounded-lg",
+													isSelected ? "bg-accent-primary/20" : config.bgColor,
+												)}
+											>
+												<LevelIcon
+													className={cn("size-4 scale-x-[-1]", config.color)}
+												/>
+											</div>
+
+											{/* Text Content */}
+											<div className="flex-1 min-w-0">
+												<p
+													className={cn(
+														"text-sm font-medium",
+														isSelected
+															? "text-text-primary"
+															: "text-text-secondary",
+													)}
+												>
+													{config.label}
+												</p>
+												<p className="text-[10px] text-text-secondary leading-tight opacity-70">
+													{config.description}
+												</p>
+											</div>
+
+											{/* Check Indicator */}
+											{isSelected && (
+												<motion.div
+													initial={{ scale: 0 }}
+													animate={{ scale: 1 }}
+													transition={springConfig}
+												>
+													<Check className="size-4 text-accent-primary" />
+												</motion.div>
 											)}
-										/>
-									)}
-								</button>
-							);
-						})}
-					</motion.div>
+										</button>
+									);
+								})}
+							</div>
+						</motion.div>
+					</>
 				)}
 			</AnimatePresence>
 		</div>

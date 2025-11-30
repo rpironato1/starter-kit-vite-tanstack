@@ -6,6 +6,12 @@ interface UserMessageProps {
 	timestamp?: Date;
 }
 
+const springTransition = {
+	type: "spring",
+	stiffness: 500,
+	damping: 30,
+} as const;
+
 export function UserMessage({
 	content,
 	imageUrl,
@@ -15,26 +21,24 @@ export function UserMessage({
 		<motion.div
 			initial={{ opacity: 0, x: 20 }}
 			animate={{ opacity: 1, x: 0 }}
-			transition={{
-				type: "spring",
-				stiffness: 500,
-				damping: 30,
-			}}
+			transition={springTransition}
 			className="ml-auto max-w-[85%] md:max-w-md"
 		>
-			<div className="rounded-[20px] rounded-tr-[4px] bg-bg-surface px-4 py-3 border border-border-default">
+			<div className="rounded-2xl rounded-tr-sm bg-bg-surface px-4 py-3 shadow-sm border border-white/5">
 				{imageUrl && (
-					<div className="mb-2">
+					<div className="mb-3">
 						<img
 							src={imageUrl}
-							alt="Attached"
-							className="w-full max-w-[200px] rounded-lg object-cover"
+							alt="Imagem anexada"
+							className="max-w-xs max-h-48 w-auto rounded-xl object-cover border border-white/10"
 						/>
 					</div>
 				)}
-				<p className="text-[15px] text-text-primary">{content}</p>
+				<p className="text-base text-text-primary whitespace-pre-wrap leading-relaxed font-light">
+					{content}
+				</p>
 				{timestamp && (
-					<time className="mt-1 block text-xs text-text-secondary">
+					<time className="mt-2 block text-xs text-text-secondary">
 						{timestamp.toLocaleTimeString([], {
 							hour: "2-digit",
 							minute: "2-digit",

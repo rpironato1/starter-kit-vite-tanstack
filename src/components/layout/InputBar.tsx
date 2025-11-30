@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
-import { Brain, Mic, Plus, Send, X } from "lucide-react";
+import { Mic, Plus, Send, X } from "lucide-react";
 import type { RefObject } from "react";
+import { useState } from "react";
+import { AttachMenu } from "@/components/selectors/AttachMenu";
+import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
 import { cn } from "@/lib/utils";
 
-type ReasoningLevel = "soft" | "medium" | "max" | "disabled";
+type ReasoningLevel = "soft" | "medium" | "max" | "off";
 
 interface InputBarProps {
 	value: string;
@@ -19,7 +22,6 @@ interface InputBarProps {
 	placeholder?: string;
 	onAttachClick?: () => void;
 	onMicClick?: () => void;
-	attachMenuOpen?: boolean;
 	className?: string;
 }
 
@@ -37,12 +39,11 @@ export function InputBar({
 	placeholder = "Chat com Zane",
 	onAttachClick,
 	onMicClick,
-	attachMenuOpen = false,
 	className,
 }: InputBarProps) {
+	const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 	const hasContent = value.trim().length > 0 || !!attachedImage;
 	const canSend = hasContent && !isLoading;
-	const reasoningActive = reasoningLevel !== "disabled";
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey && canSend) {
@@ -51,20 +52,24 @@ export function InputBar({
 		}
 	};
 
-	const cycleReasoningLevel = () => {
-		const levels: ReasoningLevel[] = ["disabled", "soft", "medium", "max"];
-		const currentIndex = levels.indexOf(reasoningLevel);
-		const nextIndex = (currentIndex + 1) % levels.length;
-		onReasoningChange(levels[nextIndex]);
-	};
-
-	const handleAttachClick = () => {
-		if (onImageAttach) {
-			// Simular seleção de imagem - em produção usaria input file
-			const fakeImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
-			onImageAttach(fakeImageUrl);
-		} else if (onAttachClick) {
-			onAttachClick();
+	const handleAttachSelect = (type: "camera" | "gallery" | "files") => {
+		if (type === "camera") {
+			// Simular captura de câmera
+			if (onImageAttach) {
+				const fakeImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
+				onImageAttach(fakeImageUrl);
+			}
+		} else if (type === "gallery") {
+			// Simular seleção de galeria
+			if (onImageAttach) {
+				const fakeImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
+				onImageAttach(fakeImageUrl);
+			}
+		} else if (type === "files") {
+			// Simular upload de arquivo - em produção abriria file picker
+			if (onAttachClick) {
+				onAttachClick();
+			}
 		}
 	};
 
@@ -99,44 +104,36 @@ export function InputBar({
 				)}
 
 				<div className="flex items-center">
-					{/* Plus/Attach Button */}
-					<button
-						type="button"
-						onClick={handleAttachClick}
-						className={cn(
-							"p-3 rounded-full transition-all duration-300",
-							attachMenuOpen
-								? "bg-bg-hover text-text-primary rotate-45"
-								: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
-						)}
-						aria-label="Anexar arquivo"
-					>
-						<Plus className="w-6 h-6" />
-					</button>
+					{/* Attach Menu Button */}
+					<div className="relative">
+						<button
+							type="button"
+							onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+							className={cn(
+								"p-3 rounded-full transition-all duration-300",
+								attachMenuOpen
+									? "bg-bg-hover text-text-primary rotate-45"
+									: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
+							)}
+							aria-label="Anexar arquivo"
+						>
+							<Plus className="w-6 h-6" />
+						</button>
+						<AttachMenu
+							isOpen={attachMenuOpen}
+							onClose={() => setAttachMenuOpen(false)}
+							onSelect={handleAttachSelect}
+						/>
+					</div>
 
 					{/* Divider */}
 					<div className="w-px h-5 bg-border-default mx-0.5" />
 
-					{/* Reasoning Button (Brain) */}
-					<button
-						type="button"
-						onClick={cycleReasoningLevel}
-						className={cn(
-							"p-2.5 rounded-full transition-all duration-200 relative",
-							reasoningActive
-								? "text-accent-primary bg-accent-primary/10"
-								: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
-						)}
-						aria-label={`Nível de raciocínio: ${reasoningLevel}`}
-						title={`Raciocínio: ${reasoningLevel}`}
-					>
-						<Brain className="w-5 h-5" />
-						{reasoningActive && (
-							<span className="absolute -top-1 -right-1 text-[10px] font-bold text-accent-primary">
-								{reasoningLevel[0].toUpperCase()}
-							</span>
-						)}
-					</button>
+					{/* Reasoning Selector */}
+					<ReasoningSelector
+						value={reasoningLevel}
+						onChange={onReasoningChange}
+					/>
 
 					{/* Text Input */}
 					<textarea

@@ -30,7 +30,7 @@ function ChatPage() {
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Pro");
 	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "disabled"
+		"soft" | "medium" | "max" | "off"
 	>("soft");
 	const [attachedImage, setAttachedImage] = useState<string | null>(null);
 

@@ -9,17 +9,25 @@ import {
 	ThumbsUp,
 } from "lucide-react";
 import { useState } from "react";
+import { ZaneBadge } from "@/components/ui/zane-badge";
 import { cn } from "@/lib/utils";
 import type { TokenUsage } from "@/types";
 import { MessageRenderer } from "./MessageRenderer";
 import { TodoListPanel } from "./TodoListPanel";
+
+/** Interface for Source Chips */
+interface Source {
+	title: string;
+	url?: string;
+	uri?: string;
+}
 
 interface AIMessageProps {
 	content: string;
 	timestamp?: Date;
 	isLoading?: boolean;
 	image?: string;
-	sources?: Array<{ title: string; uri: string }>;
+	sources?: Source[];
 	usage?: TokenUsage;
 	executionPlan?: string[];
 	hideCodeBlocks?: boolean;
@@ -68,10 +76,8 @@ export function AIMessage({
 			className="group mr-auto max-w-[90%] md:max-w-2xl"
 		>
 			{/* Header with Zane AI badge */}
-			<div className="mb-2">
-				<span className="inline-flex items-center rounded-full bg-gradient-to-r from-accent-primary to-emerald-600 px-3 py-1 text-xs font-medium text-white">
-					Zane AI
-				</span>
+			<div className="mb-2 pl-1">
+				<ZaneBadge variant="default" />
 			</div>
 
 			{/* Message content */}
@@ -120,21 +126,64 @@ export function AIMessage({
 
 						{/* Sources Chips */}
 						{sources && sources.length > 0 && (
-							<div className="mt-3 pt-3 border-t border-border-default">
-								<p className="text-xs text-text-secondary mb-2">Fontes:</p>
+							<div className="mt-4 pt-3 border-t border-border-default/50">
 								<div className="flex flex-wrap gap-2">
-									{sources.map((source, idx) => (
-										<a
-											key={`source-${source.title}-${idx}`}
-											href={source.uri}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="inline-flex items-center gap-1 text-xs text-accent-primary hover:underline bg-accent-primary/10 px-2 py-1 rounded"
-										>
-											<ExternalLink className="w-3 h-3" />
-											{source.title}
-										</a>
-									))}
+									{sources.map((source, idx) => {
+										const sourceUrl = source.url || source.uri;
+										const ChipContent = (
+											<>
+												{/* Green Dot */}
+												<span className="w-1.5 h-1.5 rounded-full bg-accent-primary shrink-0" />
+												{/* Title */}
+												<span className="truncate max-w-[180px]">
+													{source.title}
+												</span>
+												{/* External Link Icon (visible on hover if URL exists) */}
+												{sourceUrl && (
+													<ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+												)}
+											</>
+										);
+
+										if (sourceUrl) {
+											return (
+												<a
+													key={`source-${source.title}-${idx}`}
+													href={sourceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													className={cn(
+														"group inline-flex items-center gap-1.5",
+														"text-xs px-2.5 py-1 rounded-full",
+														"bg-bg-surface/80 backdrop-blur-sm",
+														"text-text-secondary",
+														"border border-border-default",
+														"hover:bg-bg-hover hover:text-text-primary",
+														"hover:shadow-[0_0_8px_rgba(36,107,49,0.3)]",
+														"transition-all duration-200",
+														"no-underline cursor-pointer",
+													)}
+												>
+													{ChipContent}
+												</a>
+											);
+										}
+
+										return (
+											<span
+												key={`source-${source.title}-${idx}`}
+												className={cn(
+													"group inline-flex items-center gap-1.5",
+													"text-xs px-2.5 py-1 rounded-full",
+													"bg-bg-surface/80 backdrop-blur-sm",
+													"text-text-secondary",
+													"border border-border-default",
+												)}
+											>
+												{ChipContent}
+											</span>
+										);
+									})}
 								</div>
 							</div>
 						)}

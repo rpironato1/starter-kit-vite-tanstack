@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, FileText, FolderOpen, Image, Link2 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Camera, FileText, Image } from "lucide-react";
+import { type ComponentType, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-type AttachType = "camera" | "gallery" | "files" | "folder" | "link";
+type AttachType = "camera" | "gallery" | "files";
 
 interface AttachMenuProps {
 	isOpen: boolean;
@@ -12,12 +12,16 @@ interface AttachMenuProps {
 	className?: string;
 }
 
-const menuItems: { type: AttachType; icon: typeof Camera; label: string }[] = [
-	{ type: "camera", icon: Camera, label: "Tirar foto" },
-	{ type: "gallery", icon: Image, label: "Escolher da galeria" },
-	{ type: "files", icon: FileText, label: "Enviar arquivo" },
-	{ type: "folder", icon: FolderOpen, label: "Abrir pasta" },
-	{ type: "link", icon: Link2, label: "Colar link" },
+interface MenuItem {
+	type: AttachType;
+	icon: ComponentType<{ className?: string }>;
+	label: string;
+}
+
+const menuItems: MenuItem[] = [
+	{ type: "camera", icon: Camera, label: "Câmera" },
+	{ type: "gallery", icon: Image, label: "Fotos" },
+	{ type: "files", icon: FileText, label: "Arquivos" },
 ];
 
 const springTransition = {
@@ -74,10 +78,10 @@ export function AttachMenu({
 					transition={springTransition}
 					className={cn(
 						"absolute bottom-full mb-2 left-0 origin-bottom",
-						"min-w-[200px] rounded-xl p-1.5",
-						"bg-white dark:bg-zinc-800",
-						"border border-zinc-200 dark:border-zinc-700",
-						"shadow-lg dark:shadow-zinc-900/50",
+						"min-w-[200px] rounded-2xl p-1.5",
+						"bg-bg-modal/95 backdrop-blur-xl",
+						"border border-border-default",
+						"shadow-2xl",
 						className,
 					)}
 				>
@@ -88,15 +92,15 @@ export function AttachMenu({
 									type="button"
 									onClick={() => handleSelect(type)}
 									className={cn(
-										"flex w-full items-center gap-3 px-3 py-2.5 rounded-lg",
-										"text-sm text-zinc-700 dark:text-zinc-200",
-										"hover:bg-zinc-100 dark:hover:bg-zinc-700",
+										"flex w-full items-center gap-3 px-4 py-3 rounded-xl",
+										"text-sm text-text-primary",
+										"hover:bg-bg-hover",
 										"transition-colors duration-150",
-										"focus:outline-none focus:ring-2 focus:ring-blue-500/50",
+										"focus:outline-none focus:ring-2 focus:ring-accent-primary/50",
 									)}
 								>
-									<Icon className="size-5 text-zinc-500 dark:text-zinc-400" />
-									<span>{label}</span>
+									<Icon className="size-5 text-text-secondary" />
+									<span className="font-medium">{label}</span>
 								</button>
 							</li>
 						))}

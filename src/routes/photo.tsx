@@ -52,7 +52,7 @@ function PhotoPage() {
 	const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
 	const [generatedImages, setGeneratedImages] = useState<string[]>([]);
 	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "disabled"
+		"soft" | "medium" | "max" | "off"
 	>("soft");
 	const [attachedImage, setAttachedImage] = useState<string | null>(null);
 

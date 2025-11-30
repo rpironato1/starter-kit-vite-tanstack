@@ -61,7 +61,7 @@ function DocPage() {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Doc Pro");
 	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "disabled"
+		"soft" | "medium" | "max" | "off"
 	>("soft");
 	const [attachedFiles, setAttachedFiles] = useState<UploadedDocument[]>([]);
 
