@@ -4,6 +4,7 @@ import {
 	Lock,
 	LogOut,
 	SlidersHorizontal,
+	Sparkles,
 	User,
 } from "lucide-react";
 import { SettingsItem } from "./SettingsItem";
@@ -34,6 +35,13 @@ export function MainView({ pushView }: MainViewProps) {
 				label="Plan"
 				description="Subscription & billing"
 				onClick={() => pushView("plan")}
+			/>
+
+			<SettingsItem
+				icon={Sparkles}
+				label="Refinamento"
+				description="Personalize como Zane trabalha com você"
+				onClick={() => pushView("refinement")}
 			/>
 
 			<SettingsItem

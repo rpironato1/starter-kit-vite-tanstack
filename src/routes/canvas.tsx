@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { type CanvasArtifact, CanvasWorkspace } from "@/components/canvas";
+import { CanvasWorkspace } from "@/components/canvas";
 import { ArtifactCard } from "@/components/canvas/ArtifactCard";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
@@ -11,15 +11,17 @@ import { InputBar } from "@/components/layout/InputBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
+import type { CanvasArtifact } from "@/types";
+import { parseArtifactFromMessage } from "@/utils/canvas";
 
 export const Route = createFileRoute("/canvas")({ component: CanvasPage });
 
 interface CanvasMessage {
 	id: string;
-	role: "user" | "assistant";
+	role: "user" | "ai";
 	content: string;
+	image?: string;
 	artifact?: CanvasArtifact;
-	timestamp: Date;
 }
 
 const CANVAS_MODELS = [
@@ -59,18 +61,18 @@ function CanvasPage() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
-	useEffect(() => {
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, []);
+	useEffect(
+		() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
+		[],
+	);
 
-	const handleSend = async () => {
-		if (!inputValue.trim()) return;
+	const handleSend = () => {
+		if (!inputValue.trim() || isLoading) return;
 
 		const userMessage: CanvasMessage = {
-			id: crypto.randomUUID(),
+			id: `msg-${Date.now()}`,
 			role: "user",
 			content: inputValue.trim(),
-			timestamp: new Date(),
 		};
 
 		setMessages((prev) => [...prev, userMessage]);
@@ -82,9 +84,12 @@ function CanvasPage() {
 			setIsWorkspaceOpen(false);
 		}
 
-		// Simulate code generation
+		// Simulate AI response with code generation
 		setTimeout(() => {
-			const generatedCode = `<!DOCTYPE html>
+			const aiResponseContent = `Aqui está o código que você pediu:
+
+\`\`\`html
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -101,27 +106,26 @@ function CanvasPage() {
     </button>
   </div>
 </body>
-</html>`;
+</html>
+\`\`\`
 
-			const artifact: CanvasArtifact = {
-				id: crypto.randomUUID(),
-				title: "Web Application",
-				type: "code",
-				language: "html",
-				content: generatedCode,
-			};
+O código acima cria uma aplicação web baseada no seu pedido.`;
+
+			// Parse automático do artefato
+			const parsedArtifact = parseArtifactFromMessage(aiResponseContent);
 
 			const aiMessage: CanvasMessage = {
-				id: crypto.randomUUID(),
-				role: "assistant",
-				content: `I've created a web application based on your request. Click the card below to open it in the Canvas workspace.`,
-				artifact,
-				timestamp: new Date(),
+				id: `msg-${Date.now()}`,
+				role: "ai",
+				content: aiResponseContent,
+				artifact: parsedArtifact || undefined,
 			};
 
 			setMessages((prev) => [...prev, aiMessage]);
-			setActiveArtifact(artifact);
-			setIsWorkspaceOpen(true);
+			if (parsedArtifact) {
+				setActiveArtifact(parsedArtifact);
+				setIsWorkspaceOpen(true);
+			}
 			setIsLoading(false);
 		}, 2000);
 	};
@@ -131,11 +135,6 @@ function CanvasPage() {
 		setActiveArtifact(null);
 		setIsWorkspaceOpen(false);
 		setIsSidebarOpen(false);
-	};
-
-	const handleOpenArtifact = (artifact: CanvasArtifact) => {
-		setActiveArtifact(artifact);
-		setIsWorkspaceOpen(true);
 	};
 
 	return (
@@ -217,15 +216,18 @@ function CanvasPage() {
 															content={message.content}
 															hideCodeBlocks
 														/>
-														{message.artifact && (
-															<ArtifactCard
-																artifact={message.artifact}
-																onClick={() => {
-																	if (message.artifact) {
-																		handleOpenArtifact(message.artifact);
-																	}
-																}}
-															/>
+														{message.role === "ai" && message.artifact && (
+															<div className="mt-3">
+																<ArtifactCard
+																	artifact={message.artifact}
+																	onClick={() => {
+																		if (message.artifact) {
+																			setActiveArtifact(message.artifact);
+																			setIsWorkspaceOpen(true);
+																		}
+																	}}
+																/>
+															</div>
 														)}
 													</div>
 												)}

@@ -1,15 +1,36 @@
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
+	ChevronDown,
 	ChevronRight,
 	FileText,
+	History,
 	ImageIcon,
 	LayoutGrid,
 	MessageSquare,
 	Plus,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { Backdrop } from "@/components/ui/backdrop";
 import { cn } from "@/lib/utils";
+
+// Dados mockados para histórico
+const defaultHistory = [
+	{
+		id: "chat-1",
+		title: "Conversa sobre React",
+		timestamp: new Date("2024-11-25"),
+	},
+	{
+		id: "chat-2",
+		title: "Análise de documentos",
+		timestamp: new Date("2024-11-24"),
+	},
+	{
+		id: "chat-3",
+		title: "Geração de imagens",
+		timestamp: new Date("2024-11-23"),
+	},
+];
 
 // Variants para animação do sidebar
 const sidebarVariants: Variants = {
@@ -84,6 +105,9 @@ interface SidebarProps {
 	onNavigate?: (viewId: string) => void;
 	userName?: string;
 	userInitials?: string;
+	activeChatId?: string | null;
+	onSelectChat?: (chatId: string) => void;
+	chatHistory?: Array<{ id: string; title: string; timestamp: Date }>;
 }
 
 export function Sidebar({
@@ -95,7 +119,13 @@ export function Sidebar({
 	onNavigate,
 	userName = "Usuário",
 	userInitials = "U",
+	activeChatId,
+	onSelectChat,
+	chatHistory,
 }: SidebarProps) {
+	const [historyExpanded, setHistoryExpanded] = useState(false);
+	const history = chatHistory ?? defaultHistory;
+
 	const handleNavigate = (viewId: string) => {
 		onNavigate?.(viewId);
 		onClose();
@@ -154,15 +184,67 @@ export function Sidebar({
 							))}
 						</nav>
 
-						{/* History Section (placeholder) */}
-						<motion.div variants={itemVariants} className="px-4 py-2">
-							<div className="flex items-center justify-between text-text-secondary text-xs font-medium uppercase tracking-wider mb-2">
-								<span>Histórico</span>
-								<ChevronRight className="w-4 h-4" />
-							</div>
-							<div className="text-text-secondary text-sm italic">
-								Nenhum histórico
-							</div>
+						{/* History Accordion Section */}
+						<motion.div
+							variants={itemVariants}
+							className="px-3 py-2 flex-1 overflow-hidden"
+						>
+							<button
+								type="button"
+								onClick={() => setHistoryExpanded(!historyExpanded)}
+								className="flex items-center justify-between w-full px-3 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-bg-hover"
+							>
+								<span className="flex items-center gap-2">
+									<History className="w-4 h-4" />
+									Histórico Recente
+								</span>
+								<ChevronDown
+									className={cn(
+										"w-4 h-4 transition-transform duration-200",
+										historyExpanded && "rotate-180",
+									)}
+								/>
+							</button>
+
+							<AnimatePresence>
+								{historyExpanded && (
+									<motion.div
+										initial={{ height: 0, opacity: 0 }}
+										animate={{ height: "auto", opacity: 1 }}
+										exit={{ height: 0, opacity: 0 }}
+										transition={{ duration: 0.2 }}
+										className="overflow-hidden"
+									>
+										<div className="py-1 space-y-1">
+											{history.length > 0 ? (
+												history.map((chat) => (
+													<button
+														key={chat.id}
+														type="button"
+														onClick={() => {
+															onSelectChat?.(chat.id);
+															onClose();
+														}}
+														className={cn(
+															"w-full px-3 py-2 text-left text-sm truncate rounded-lg transition-colors",
+															"hover:bg-bg-hover",
+															activeChatId === chat.id
+																? "bg-bg-hover text-text-primary font-medium"
+																: "text-text-secondary hover:text-text-primary",
+														)}
+													>
+														{chat.title}
+													</button>
+												))
+											) : (
+												<div className="px-3 py-2 text-xs text-text-secondary italic">
+													Nenhum histórico
+												</div>
+											)}
+										</div>
+									</motion.div>
+								)}
+							</AnimatePresence>
 						</motion.div>
 
 						{/* User Profile Button */}

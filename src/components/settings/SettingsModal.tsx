@@ -2,10 +2,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import { MainView } from "./MainView";
-import { MemoryView } from "./MemoryView";
+import { MemoryFactsView } from "./MemoryFactsView";
+import { MemoryMenuView } from "./MemoryMenuView";
+import { MemoryTimelineView } from "./MemoryTimelineView";
 import { PlanView } from "./PlanView";
 import { PrivacyView } from "./PrivacyView";
 import { ProfileView } from "./ProfileView";
+import { RefinementView } from "./RefinementView";
 import { SystemView } from "./SystemView";
 
 export type SettingsView =
@@ -14,7 +17,10 @@ export type SettingsView =
 	| "plan"
 	| "privacy"
 	| "system"
-	| "memory";
+	| "memory"
+	| "memory-facts"
+	| "memory-timeline"
+	| "refinement";
 
 interface SettingsModalProps {
 	isOpen: boolean;
@@ -28,6 +34,9 @@ const VIEW_TITLES: Record<SettingsView, string> = {
 	privacy: "Privacy",
 	system: "System",
 	memory: "Memory",
+	"memory-facts": "Fatos Memorizados",
+	"memory-timeline": "Linha do Tempo",
+	refinement: "Refinamento",
 };
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
@@ -66,7 +75,13 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 			case "system":
 				return <SystemView {...props} />;
 			case "memory":
-				return <MemoryView {...props} />;
+				return <MemoryMenuView {...props} />;
+			case "memory-facts":
+				return <MemoryFactsView {...props} />;
+			case "memory-timeline":
+				return <MemoryTimelineView {...props} />;
+			case "refinement":
+				return <RefinementView {...props} />;
 			default:
 				return <MainView {...props} />;
 		}
