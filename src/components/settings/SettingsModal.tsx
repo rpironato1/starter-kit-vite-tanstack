@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { MainView } from "./MainView";
-import { ProfileView } from "./ProfileView";
+import { MemoryView } from "./MemoryView";
 import { PlanView } from "./PlanView";
 import { PrivacyView } from "./PrivacyView";
+import { ProfileView } from "./ProfileView";
 import { SystemView } from "./SystemView";
-import { MemoryView } from "./MemoryView";
 
 export type SettingsView =
 	| "main"
@@ -88,7 +88,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 					onClick={canGoBack ? popView : handleClose}
 					className="p-2 rounded-full bg-bg-hover text-text-secondary hover:text-text-primary"
 				>
-					{canGoBack ? <ArrowLeft className="w-5 h-5" /> : <X className="w-5 h-5" />}
+					{canGoBack ? (
+						<ArrowLeft className="w-5 h-5" />
+					) : (
+						<X className="w-5 h-5" />
+					)}
 				</button>
 				<h2 className="text-lg font-semibold text-text-primary">
 					{VIEW_TITLES[currentView]}
@@ -100,9 +104,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 				<AnimatePresence mode="wait" initial={false}>
 					<motion.div
 						key={currentView}
-						initial={{ x: direction * 100 + "%", opacity: 0 }}
+						initial={{ x: `${direction * 100}%`, opacity: 0 }}
 						animate={{ x: 0, opacity: 1 }}
-						exit={{ x: direction * -100 + "%", opacity: 0 }}
+						exit={{ x: `${direction * -100}%`, opacity: 0 }}
 						transition={{ type: "spring", damping: 25, stiffness: 300 }}
 						className="absolute inset-0 overflow-y-auto p-4"
 					>

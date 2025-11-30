@@ -1,4 +1,4 @@
-export { CanvasWorkspace, type CanvasArtifact } from "./CanvasWorkspace";
+export { ArtifactCard } from "./ArtifactCard";
+export { type CanvasArtifact, CanvasWorkspace } from "./CanvasWorkspace";
 export { CodeEditor } from "./CodeEditor";
 export { Preview } from "./Preview";
-export { ArtifactCard } from "./ArtifactCard";

@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { InputBar } from "@/components/layout/InputBar";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { SettingsModal } from "@/components/settings/SettingsModal";
-import { CanvasWorkspace, type CanvasArtifact } from "@/components/canvas";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { type CanvasArtifact, CanvasWorkspace } from "@/components/canvas";
 import { ArtifactCard } from "@/components/canvas/ArtifactCard";
+import { AIMessage } from "@/components/chat/AIMessage";
+import { EmptyState } from "@/components/chat/EmptyState";
+import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { Header } from "@/components/layout/Header";
+import { InputBar } from "@/components/layout/InputBar";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
+import { SettingsModal } from "@/components/settings/SettingsModal";
 
 export const Route = createFileRoute("/canvas")({ component: CanvasPage });
 
@@ -23,9 +23,21 @@ interface CanvasMessage {
 }
 
 const CANVAS_MODELS = [
-	{ id: "draft", name: "Zane Canvas Draft", description: "Quick drafts and initial ideation" },
-	{ id: "pro", name: "Zane Canvas Pro", description: "Structured writing and expanded context" },
-	{ id: "studio", name: "Zane Canvas Studio", description: "Complex creative production" },
+	{
+		id: "draft",
+		name: "Zane Canvas Draft",
+		description: "Quick drafts and initial ideation",
+	},
+	{
+		id: "pro",
+		name: "Zane Canvas Pro",
+		description: "Structured writing and expanded context",
+	},
+	{
+		id: "studio",
+		name: "Zane Canvas Studio",
+		description: "Complex creative production",
+	},
 ];
 
 function CanvasPage() {
@@ -36,16 +48,20 @@ function CanvasPage() {
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Canvas Pro");
-	const [reasoningLevel, setReasoningLevel] = useState<"soft" | "medium" | "max" | "disabled">("soft");
-	const [activeArtifact, setActiveArtifact] = useState<CanvasArtifact | null>(null);
+	const [reasoningLevel, setReasoningLevel] = useState<
+		"soft" | "medium" | "max" | "disabled"
+	>("soft");
+	const [activeArtifact, setActiveArtifact] = useState<CanvasArtifact | null>(
+		null,
+	);
 	const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
-	
+
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, isLoading]);
+	}, []);
 
 	const handleSend = async () => {
 		if (!inputValue.trim()) return;
@@ -57,7 +73,7 @@ function CanvasPage() {
 			timestamp: new Date(),
 		};
 
-		setMessages(prev => [...prev, userMessage]);
+		setMessages((prev) => [...prev, userMessage]);
 		setInputValue("");
 		setIsLoading(true);
 
@@ -102,8 +118,8 @@ function CanvasPage() {
 				artifact,
 				timestamp: new Date(),
 			};
-			
-			setMessages(prev => [...prev, aiMessage]);
+
+			setMessages((prev) => [...prev, aiMessage]);
 			setActiveArtifact(artifact);
 			setIsWorkspaceOpen(true);
 			setIsLoading(false);
@@ -149,7 +165,7 @@ function CanvasPage() {
 					setCurrentModel(model);
 					setIsModelSelectorOpen(false);
 				}}
-				models={CANVAS_MODELS.map(m => ({
+				models={CANVAS_MODELS.map((m) => ({
 					id: m.id,
 					name: m.name,
 					description: m.description,
@@ -164,9 +180,11 @@ function CanvasPage() {
 			{/* Main Content with Split View */}
 			<main className="flex-1 overflow-hidden relative flex">
 				{/* Chat Panel */}
-				<div className={`flex-1 overflow-hidden relative transition-all duration-300 ${
-					isWorkspaceOpen ? "w-full md:w-[40%]" : "w-full"
-				}`}>
+				<div
+					className={`flex-1 overflow-hidden relative transition-all duration-300 ${
+						isWorkspaceOpen ? "w-full md:w-[40%]" : "w-full"
+					}`}
+				>
 					<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
 						<div className="max-w-3xl mx-auto py-6 space-y-6">
 							<AnimatePresence mode="popLayout">
@@ -179,28 +197,43 @@ function CanvasPage() {
 												key={message.id}
 												initial={{ opacity: 0, y: 20 }}
 												animate={{ opacity: 1, y: 0 }}
-												transition={{ type: "spring", stiffness: 300, damping: 30 }}
+												transition={{
+													type: "spring",
+													stiffness: 300,
+													damping: 30,
+												}}
 											>
 												{message.role === "user" ? (
 													<div className="flex justify-end">
 														<div className="max-w-[85%] md:max-w-[65%] bg-bg-surface text-text-primary px-5 py-3.5 rounded-[20px] rounded-tr-[4px] border border-border shadow-sm">
-															<p className="text-[15px] leading-relaxed">{message.content}</p>
+															<p className="text-[15px] leading-relaxed">
+																{message.content}
+															</p>
 														</div>
 													</div>
 												) : (
 													<div className="space-y-2">
-														<AIMessage content={message.content} hideCodeBlocks />
+														<AIMessage
+															content={message.content}
+															hideCodeBlocks
+														/>
 														{message.artifact && (
 															<ArtifactCard
 																artifact={message.artifact}
-																onClick={() => handleOpenArtifact(message.artifact!)}
+																onClick={() => {
+																	if (message.artifact) {
+																		handleOpenArtifact(message.artifact);
+																	}
+																}}
 															/>
 														)}
 													</div>
 												)}
 											</motion.div>
 										))}
-										{isLoading && <LoadingIndicator text="Generating code..." />}
+										{isLoading && (
+											<LoadingIndicator text="Generating code..." />
+										)}
 									</>
 								)}
 							</AnimatePresence>

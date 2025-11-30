@@ -1,16 +1,15 @@
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
-	MessageSquare,
-	ImageIcon,
-	FileText,
-	LayoutGrid,
-	Plus,
 	ChevronRight,
+	FileText,
+	ImageIcon,
+	LayoutGrid,
+	MessageSquare,
+	Plus,
 } from "lucide-react";
-import { useSidebar } from "@/hooks/useSidebar";
+import type { ReactNode } from "react";
 import { Backdrop } from "@/components/ui/backdrop";
 import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
 
 // Variants para animação do sidebar
 const sidebarVariants: Variants = {
@@ -77,33 +76,35 @@ const menuItems: MenuItem[] = [
 ];
 
 interface SidebarProps {
-	currentView?: string;
+	isOpen: boolean;
+	onClose: () => void;
+	onNewChat: () => void;
+	onOpenSettings: () => void;
+	currentView: "chat" | "photo" | "doc" | "canvas";
 	onNavigate?: (viewId: string) => void;
-	onNewChat?: () => void;
-	onSettingsClick?: () => void;
 	userName?: string;
 	userInitials?: string;
 }
 
 export function Sidebar({
-	currentView = "chat",
-	onNavigate,
+	isOpen,
+	onClose,
 	onNewChat,
-	onSettingsClick,
+	onOpenSettings,
+	currentView,
+	onNavigate,
 	userName = "Usuário",
 	userInitials = "U",
 }: SidebarProps) {
-	const { isOpen, close } = useSidebar();
-
 	const handleNavigate = (viewId: string) => {
 		onNavigate?.(viewId);
-		close();
+		onClose();
 	};
 
 	return (
 		<>
 			{/* Backdrop */}
-			<Backdrop isOpen={isOpen} onClick={close} />
+			<Backdrop isOpen={isOpen} onClick={onClose} />
 
 			{/* Sidebar Panel */}
 			<AnimatePresence>
@@ -144,7 +145,7 @@ export function Sidebar({
 										"w-full flex items-center gap-3 p-3 rounded-xl transition-colors",
 										currentView === item.id
 											? "bg-bg-hover text-text-primary font-medium border border-border-default/50"
-											: "text-text-secondary hover:bg-bg-hover hover:text-text-primary border border-transparent"
+											: "text-text-secondary hover:bg-bg-hover hover:text-text-primary border border-transparent",
 									)}
 								>
 									{item.icon}
@@ -171,7 +172,7 @@ export function Sidebar({
 						>
 							<button
 								type="button"
-								onClick={onSettingsClick}
+								onClick={onOpenSettings}
 								title="Configurações do usuário"
 								aria-label="Configurações do usuário"
 								className="flex items-center gap-3 bg-bg-surface p-2 pr-4 rounded-full border border-border-default hover:bg-bg-hover transition-colors w-full text-left group"

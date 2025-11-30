@@ -1,4 +1,4 @@
-import { Code, ChevronRight } from "lucide-react";
+import { ChevronRight, Code } from "lucide-react";
 import type { CanvasArtifact } from "./CanvasWorkspace";
 
 interface ArtifactCardProps {

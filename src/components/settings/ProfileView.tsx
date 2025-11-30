@@ -50,16 +50,16 @@ export function ProfileView(_props: ProfileViewProps) {
 			{/* Info Section */}
 			<div className="space-y-4">
 				<div className="bg-bg-surface rounded-xl p-4">
-					<label className="text-xs text-text-secondary uppercase tracking-wide">
+					<span className="text-xs text-text-secondary uppercase tracking-wide">
 						Name
-					</label>
+					</span>
 					<p className="text-text-primary font-medium mt-1">{user.name}</p>
 				</div>
 
 				<div className="bg-bg-surface rounded-xl p-4">
-					<label className="text-xs text-text-secondary uppercase tracking-wide">
+					<span className="text-xs text-text-secondary uppercase tracking-wide">
 						Email
-					</label>
+					</span>
 					<p className="text-text-primary font-medium mt-1">{user.email}</p>
 				</div>
 			</div>

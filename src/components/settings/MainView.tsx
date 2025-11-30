@@ -1,13 +1,13 @@
 import {
-	User,
 	CreditCard,
-	SlidersHorizontal,
 	Database,
 	Lock,
 	LogOut,
+	SlidersHorizontal,
+	User,
 } from "lucide-react";
-import type { SettingsView } from "./SettingsModal";
 import { SettingsItem } from "./SettingsItem";
+import type { SettingsView } from "./SettingsModal";
 
 interface MainViewProps {
 	pushView: (view: SettingsView) => void;

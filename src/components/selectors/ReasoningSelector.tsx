@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Brain, ChevronDown, Sparkles, Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type ReasoningLevel = "off" | "soft" | "medium" | "max";
@@ -41,7 +41,12 @@ const REASONING_LEVELS = {
 
 const LEVELS: ReasoningLevel[] = ["off", "soft", "medium", "max"];
 
-const springConfig = { type: "spring" as const, stiffness: 350, damping: 25, mass: 0.8 };
+const springConfig = {
+	type: "spring" as const,
+	stiffness: 350,
+	damping: 25,
+	mass: 0.8,
+};
 
 export function ReasoningSelector({
 	value,
@@ -50,9 +55,13 @@ export function ReasoningSelector({
 	className,
 }: ReasoningSelectorProps) {
 	if (variant === "inline") {
-		return <InlineSelector value={value} onChange={onChange} className={className} />;
+		return (
+			<InlineSelector value={value} onChange={onChange} className={className} />
+		);
 	}
-	return <DropdownSelector value={value} onChange={onChange} className={className} />;
+	return (
+		<DropdownSelector value={value} onChange={onChange} className={className} />
+	);
 }
 
 function InlineSelector({
@@ -61,7 +70,12 @@ function InlineSelector({
 	className,
 }: Omit<ReasoningSelectorProps, "variant">) {
 	return (
-		<div className={cn("flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-surface)]", className)}>
+		<div
+			className={cn(
+				"flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-surface)]",
+				className,
+			)}
+		>
 			{LEVELS.map((level) => {
 				const config = REASONING_LEVELS[level];
 				const isSelected = level === value;
@@ -72,7 +86,9 @@ function InlineSelector({
 						onClick={() => onChange(level)}
 						className={cn(
 							"relative px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-							isSelected ? config.color : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
+							isSelected
+								? config.color
+								: "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
 						)}
 					>
 						{isSelected && (
@@ -102,7 +118,10 @@ function DropdownSelector({
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
-			if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
 				setIsOpen(false);
 			}
 		}
@@ -133,7 +152,10 @@ function DropdownSelector({
 			>
 				<Icon className={cn("size-4", selected.color)} />
 				<span className={selected.color}>{selected.label}</span>
-				<motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={springConfig}>
+				<motion.div
+					animate={{ rotate: isOpen ? 180 : 0 }}
+					transition={springConfig}
+				>
 					<ChevronDown className="size-4 text-[var(--text-secondary)]" />
 				</motion.div>
 			</button>
@@ -160,7 +182,10 @@ function DropdownSelector({
 								<button
 									key={level}
 									type="button"
-									onClick={() => { onChange(level); setIsOpen(false); }}
+									onClick={() => {
+										onChange(level);
+										setIsOpen(false);
+									}}
 									className={cn(
 										"w-full flex items-center gap-3 px-3 py-2 rounded-lg",
 										"text-left transition-colors hover:bg-[var(--bg-hover)]",
@@ -168,16 +193,28 @@ function DropdownSelector({
 								>
 									<LevelIcon className={cn("size-4", config.color)} />
 									<div className="flex-1 min-w-0">
-										<p className={cn("text-sm font-medium", isSelected ? config.color : "text-[var(--text-primary)]")}>
+										<p
+											className={cn(
+												"text-sm font-medium",
+												isSelected
+													? config.color
+													: "text-[var(--text-primary)]",
+											)}
+										>
 											{config.label}
 										</p>
-										<p className="text-xs text-[var(--text-secondary)]">{config.description}</p>
+										<p className="text-xs text-[var(--text-secondary)]">
+											{config.description}
+										</p>
 									</div>
 									{isSelected && (
 										<motion.div
 											initial={{ scale: 0 }}
 											animate={{ scale: 1 }}
-											className={cn("size-2 rounded-full", config.color.replace("text-", "bg-"))}
+											className={cn(
+												"size-2 rounded-full",
+												config.color.replace("text-", "bg-"),
+											)}
 										/>
 									)}
 								</button>

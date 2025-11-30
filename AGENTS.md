@@ -7,6 +7,7 @@ Este arquivo orienta agentes e assistentes que trabalham neste repositório. Ele
 - Padrão: mantenha consistência de estilo do código existente e evite alterações desnecessárias.
 
 ---
+# You must always use agents/sub-agents to perform tasks act as an orchestrator for the tasks.
 
 ## REGRAS INEGOCIÁVEIS DO PROJETO
 

@@ -1,6 +1,6 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { Camera, FileText, FolderOpen, Image, Link2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Image, FileText, FolderOpen, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type AttachType = "camera" | "gallery" | "files" | "folder" | "link";
@@ -20,7 +20,11 @@ const menuItems: { type: AttachType; icon: typeof Camera; label: string }[] = [
 	{ type: "link", icon: Link2, label: "Colar link" },
 ];
 
-const springTransition = { type: "spring", stiffness: 400, damping: 30 } as const;
+const springTransition = {
+	type: "spring",
+	stiffness: 400,
+	damping: 30,
+} as const;
 
 export function AttachMenu({
 	isOpen,
@@ -77,9 +81,9 @@ export function AttachMenu({
 						className,
 					)}
 				>
-					<ul className="flex flex-col gap-0.5" role="menu">
+					<ul className="flex flex-col gap-0.5">
 						{menuItems.map(({ type, icon: Icon, label }) => (
-							<li key={type} role="menuitem">
+							<li key={type}>
 								<button
 									type="button"
 									onClick={() => handleSelect(type)}

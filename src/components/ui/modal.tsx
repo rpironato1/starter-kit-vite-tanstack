@@ -1,4 +1,4 @@
-import { AnimatePresence, type Variants, motion } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";

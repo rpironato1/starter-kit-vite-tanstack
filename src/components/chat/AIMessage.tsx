@@ -1,12 +1,13 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Check, Copy, ThumbsDown, ThumbsUp } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface AIMessageProps {
 	content: string;
 	timestamp?: Date;
 	isLoading?: boolean;
+	hideCodeBlocks?: boolean;
 	onCopy?: () => void;
 	onLike?: () => void;
 	onDislike?: () => void;
@@ -16,6 +17,7 @@ export function AIMessage({
 	content,
 	timestamp,
 	isLoading = false,
+	hideCodeBlocks: _hideCodeBlocks = false,
 	onCopy,
 	onLike,
 	onDislike,
@@ -36,7 +38,7 @@ export function AIMessage({
 	const renderContent = (text: string) => {
 		return text.split("\n").map((line, index) => (
 			<motion.span
-				key={index}
+				key={`line-${index}-${line.slice(0, 20)}`}
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: index * 0.05, duration: 0.3 }}
@@ -109,7 +111,7 @@ export function AIMessage({
 						onClick={handleCopy}
 						className={cn(
 							"flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary",
-							copied && "text-accent-primary"
+							copied && "text-accent-primary",
 						)}
 						aria-label={copied ? "Copied" : "Copy message"}
 					>

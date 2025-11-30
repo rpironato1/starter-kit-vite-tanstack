@@ -1,9 +1,5 @@
+import { Bell, Globe, Info, Moon, Sun } from "lucide-react";
 import { useState } from "react";
-import { Sun, Moon, Globe, Bell, Info } from "lucide-react";
-import type { SettingsView } from "./SettingsModal";
-import { SettingsItem } from "./SettingsItem";
-import { ZaneToggle } from "@/components/ui/switch";
-import { useTheme } from "@/hooks/useTheme";
 import {
 	Select,
 	SelectContent,
@@ -11,6 +7,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { ZaneToggle } from "@/components/ui/switch";
+import { useTheme } from "@/hooks/useTheme";
+import { SettingsItem } from "./SettingsItem";
+import type { SettingsView } from "./SettingsModal";
 
 interface SystemViewProps {
 	pushView: (view: SettingsView) => void;
@@ -38,10 +38,12 @@ export function SystemView(_props: SystemViewProps) {
 				<SettingsItem
 					icon={isDark ? Moon : Sun}
 					label="Dark Mode"
-					description={isDark ? "Currently using dark theme" : "Currently using light theme"}
-					rightElement={
-						<ZaneToggle isOn={isDark} onToggle={toggleTheme} />
+					description={
+						isDark
+							? "Currently using dark theme"
+							: "Currently using light theme"
 					}
+					rightElement={<ZaneToggle isOn={isDark} onToggle={toggleTheme} />}
 				/>
 
 				<SettingsItem
@@ -66,7 +68,9 @@ export function SystemView(_props: SystemViewProps) {
 						</div>
 						<div>
 							<p className="text-sm font-medium text-text-primary">Language</p>
-							<p className="text-xs text-text-secondary">App display language</p>
+							<p className="text-xs text-text-secondary">
+								App display language
+							</p>
 						</div>
 					</div>
 

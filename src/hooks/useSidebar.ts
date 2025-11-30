@@ -1,5 +1,5 @@
-import { Store } from "@tanstack/store";
 import { useStore } from "@tanstack/react-store";
+import { Store } from "@tanstack/store";
 
 interface SidebarState {
 	isOpen: boolean;

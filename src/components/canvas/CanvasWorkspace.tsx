@@ -1,8 +1,8 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Code, Copy, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, RefreshCw, Copy, Check, Code } from "lucide-react";
 import { CodeEditor } from "./CodeEditor";
 import { Preview } from "./Preview";
 
@@ -48,9 +48,13 @@ export function CanvasWorkspace({
 		setArtifact((prev) => ({ ...prev, content: newContent }));
 	};
 
-	const isWebPreviewable = ["html", "react", "javascript", "jsx", "tsx"].includes(
-		artifact.language,
-	);
+	const isWebPreviewable = [
+		"html",
+		"react",
+		"javascript",
+		"jsx",
+		"tsx",
+	].includes(artifact.language);
 
 	return (
 		<AnimatePresence>

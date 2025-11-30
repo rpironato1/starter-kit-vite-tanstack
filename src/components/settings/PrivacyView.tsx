@@ -1,8 +1,8 @@
+import { History, Share2, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { History, Share2, Trash2, Shield } from "lucide-react";
-import type { SettingsView } from "./SettingsModal";
-import { SettingsItem } from "./SettingsItem";
 import { ZaneToggle } from "@/components/ui/switch";
+import { SettingsItem } from "./SettingsItem";
+import type { SettingsView } from "./SettingsModal";
 
 interface PrivacyViewProps {
 	pushView: (view: SettingsView) => void;

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface BackdropProps {
@@ -26,7 +26,7 @@ export function Backdrop({
 					className={cn(
 						"fixed inset-0 z-40 bg-black/60",
 						blur && "backdrop-blur-[2px]",
-						className
+						className,
 					)}
 				/>
 			)}

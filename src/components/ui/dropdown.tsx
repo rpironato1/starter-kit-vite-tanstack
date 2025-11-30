@@ -1,6 +1,6 @@
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface DropdownProps {
 	isOpen: boolean;
@@ -49,7 +49,12 @@ export function Dropdown({
 			{isOpen && (
 				<>
 					{/* Backdrop invisível para fechar ao clicar fora */}
-					<div className="fixed inset-0 z-30" onClick={onClose} />
+					<button
+						type="button"
+						className="fixed inset-0 z-30 cursor-default bg-transparent border-none"
+						onClick={onClose}
+						aria-label="Close dropdown"
+					/>
 
 					<motion.div
 						variants={dropdownVariants}

@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { InputBar } from "@/components/layout/InputBar";
-import { UserMessage } from "@/components/chat/UserMessage";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { AIMessage } from "@/components/chat/AIMessage";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { EmptyState } from "@/components/chat/EmptyState";
+import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { UserMessage } from "@/components/chat/UserMessage";
+import { Header } from "@/components/layout/Header";
+import { InputBar } from "@/components/layout/InputBar";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 
@@ -29,16 +29,18 @@ function ChatPage() {
 	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Pro");
-	const [reasoningLevel, setReasoningLevel] = useState<"soft" | "medium" | "max" | "disabled">("soft");
+	const [reasoningLevel, setReasoningLevel] = useState<
+		"soft" | "medium" | "max" | "disabled"
+	>("soft");
 	const [attachedImage, setAttachedImage] = useState<string | null>(null);
-	
+
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	// Auto-scroll to bottom when new messages arrive
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, isLoading]);
+	}, []);
 
 	const handleSend = async () => {
 		if (!inputValue.trim() && !attachedImage) return;
@@ -51,7 +53,7 @@ function ChatPage() {
 			timestamp: new Date(),
 		};
 
-		setMessages(prev => [...prev, userMessage]);
+		setMessages((prev) => [...prev, userMessage]);
 		setInputValue("");
 		setAttachedImage(null);
 		setIsLoading(true);
@@ -64,7 +66,7 @@ function ChatPage() {
 				content: `This is a simulated response to: "${userMessage.content}"\n\nIn production, this would be powered by Claude via the Anthropic API.`,
 				timestamp: new Date(),
 			};
-			setMessages(prev => [...prev, aiMessage]);
+			setMessages((prev) => [...prev, aiMessage]);
 			setIsLoading(false);
 		}, 1500);
 	};
@@ -137,7 +139,11 @@ function ChatPage() {
 											key={message.id}
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
-											transition={{ type: "spring", stiffness: 300, damping: 30 }}
+											transition={{
+												type: "spring",
+												stiffness: 300,
+												damping: 30,
+											}}
 										>
 											{message.role === "user" ? (
 												<UserMessage

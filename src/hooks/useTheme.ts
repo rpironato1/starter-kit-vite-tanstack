@@ -1,5 +1,5 @@
-import { Store } from "@tanstack/store";
 import { useStore } from "@tanstack/react-store";
+import { Store } from "@tanstack/store";
 import { useEffect } from "react";
 
 type Theme = "light" | "dark";

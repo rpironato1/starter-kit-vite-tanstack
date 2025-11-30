@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { InputBar } from "@/components/layout/InputBar";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { AIMessage } from "@/components/chat/AIMessage";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { EmptyState } from "@/components/chat/EmptyState";
+import { Header } from "@/components/layout/Header";
+import { InputBar } from "@/components/layout/InputBar";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 
 export const Route = createFileRoute("/photo")({ component: PhotoPage });
@@ -26,15 +25,17 @@ function PhotoPage() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-	const [reasoningLevel, setReasoningLevel] = useState<"soft" | "medium" | "max" | "disabled">("soft");
+	const [reasoningLevel, setReasoningLevel] = useState<
+		"soft" | "medium" | "max" | "disabled"
+	>("soft");
 	const [attachedImage, setAttachedImage] = useState<string | null>(null);
-	
+
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, isLoading]);
+	}, []);
 
 	const handleSend = async () => {
 		if (!inputValue.trim()) return;
@@ -47,7 +48,7 @@ function PhotoPage() {
 			timestamp: new Date(),
 		};
 
-		setMessages(prev => [...prev, userMessage]);
+		setMessages((prev) => [...prev, userMessage]);
 		setInputValue("");
 		setAttachedImage(null);
 		setIsLoading(true);
@@ -58,10 +59,10 @@ function PhotoPage() {
 				id: crypto.randomUUID(),
 				role: "assistant",
 				content: `Image generated based on: "${userMessage.content}"`,
-				generatedImageUrl: "https://picsum.photos/512/512?random=" + Date.now(),
+				generatedImageUrl: `https://picsum.photos/512/512?random=${Date.now()}`,
 				timestamp: new Date(),
 			};
-			setMessages(prev => [...prev, aiMessage]);
+			setMessages((prev) => [...prev, aiMessage]);
 			setIsLoading(false);
 		}, 2000);
 	};
@@ -108,21 +109,27 @@ function PhotoPage() {
 											key={message.id}
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
-											transition={{ type: "spring", stiffness: 300, damping: 30 }}
+											transition={{
+												type: "spring",
+												stiffness: 300,
+												damping: 30,
+											}}
 										>
 											{message.role === "user" ? (
 												<div className="flex justify-end">
 													<div className="max-w-[85%] md:max-w-[65%] bg-bg-surface text-text-primary px-5 py-3.5 rounded-[20px] rounded-tr-[4px] border border-border shadow-sm">
-														<p className="text-[15px] leading-relaxed">{message.content}</p>
+														<p className="text-[15px] leading-relaxed">
+															{message.content}
+														</p>
 													</div>
 												</div>
 											) : (
 												<div className="space-y-3">
 													{message.generatedImageUrl && (
 														<div className="rounded-2xl overflow-hidden border border-border shadow-2xl bg-black/40 max-w-md">
-															<img 
-																src={message.generatedImageUrl} 
-																alt="Generated" 
+															<img
+																src={message.generatedImageUrl}
+																alt="Generated"
 																className="w-full h-auto object-cover"
 															/>
 														</div>
@@ -142,7 +149,9 @@ function PhotoPage() {
 												<div className="absolute inset-0 border-4 border-accent-primary/20 rounded-full" />
 												<div className="absolute inset-0 border-4 border-accent-primary border-t-transparent rounded-full animate-spin" />
 											</div>
-											<span className="text-sm font-medium">Creating your artwork...</span>
+											<span className="text-sm font-medium">
+												Creating your artwork...
+											</span>
 										</motion.div>
 									)}
 								</>

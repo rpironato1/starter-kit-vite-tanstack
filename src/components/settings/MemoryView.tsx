@@ -1,8 +1,8 @@
+import { Calendar, MessageSquare, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { MessageSquare, Calendar, Trash2, Search } from "lucide-react";
-import type { SettingsView } from "./SettingsModal";
-import { SettingsItem } from "./SettingsItem";
 import { ZaneToggle } from "@/components/ui/switch";
+import { SettingsItem } from "./SettingsItem";
+import type { SettingsView } from "./SettingsModal";
 
 interface MemoryViewProps {
 	pushView: (view: SettingsView) => void;

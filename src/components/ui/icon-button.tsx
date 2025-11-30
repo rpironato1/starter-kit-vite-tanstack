@@ -1,6 +1,6 @@
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
@@ -25,7 +25,15 @@ const variantClasses = {
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 	(
-		{ children, variant = "ghost", size = "md", active, className, disabled, ...props },
+		{
+			children,
+			variant = "ghost",
+			size = "md",
+			active,
+			className,
+			disabled,
+			...props
+		},
 		ref,
 	) => {
 		return (

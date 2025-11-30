@@ -1,10 +1,11 @@
-import { Menu, ChevronDown } from "lucide-react";
-import { useSidebar } from "@/hooks/useSidebar";
+import { ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
-	currentModel?: string;
+	onMenuClick: () => void;
 	onModelClick?: () => void;
+	currentModel: string;
+	hideModelSelector?: boolean;
 	modelMenuOpen?: boolean;
 	showAvatar?: boolean;
 	onAvatarClick?: () => void;
@@ -12,15 +13,15 @@ interface HeaderProps {
 }
 
 export function Header({
-	currentModel = "Zane Pro",
+	onMenuClick,
 	onModelClick,
+	currentModel,
+	hideModelSelector = false,
 	modelMenuOpen = false,
 	showAvatar = true,
 	onAvatarClick,
 	className,
 }: HeaderProps) {
-	const { toggle } = useSidebar();
-
 	return (
 		<header
 			className={cn(
@@ -32,7 +33,7 @@ export function Header({
 			{/* Menu Button (Left) */}
 			<button
 				type="button"
-				onClick={toggle}
+				onClick={onMenuClick}
 				className="p-2 rounded-full hover:bg-bg-hover transition-colors"
 				aria-label="Toggle sidebar"
 			>
@@ -40,25 +41,29 @@ export function Header({
 			</button>
 
 			{/* Model Selector (Center) */}
-			<button
-				type="button"
-				onClick={onModelClick}
-				className="flex items-center gap-2 text-text-primary font-medium hover:text-text-secondary transition-colors"
-			>
-				<span
-					className={cn(
-						currentModel.includes("Ultra") && "text-amber-400 font-bold",
-					)}
+			{hideModelSelector ? (
+				<span className="text-text-primary font-medium">{currentModel}</span>
+			) : (
+				<button
+					type="button"
+					onClick={onModelClick}
+					className="flex items-center gap-2 text-text-primary font-medium hover:text-text-secondary transition-colors"
 				>
-					{currentModel}
-				</span>
-				<ChevronDown
-					className={cn(
-						"w-4 h-4 text-text-secondary transition-transform duration-300",
-						modelMenuOpen && "rotate-180",
-					)}
-				/>
-			</button>
+					<span
+						className={cn(
+							currentModel.includes("Ultra") && "text-amber-400 font-bold",
+						)}
+					>
+						{currentModel}
+					</span>
+					<ChevronDown
+						className={cn(
+							"w-4 h-4 text-text-secondary transition-transform duration-300",
+							modelMenuOpen && "rotate-180",
+						)}
+					/>
+				</button>
+			)}
 
 			{/* Avatar/Settings Button (Right) */}
 			{showAvatar ? (
