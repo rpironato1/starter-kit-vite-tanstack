@@ -210,7 +210,7 @@ export function ChatInputArea({
 								"p-3 rounded-full transition-colors",
 								canSend
 									? "bg-accent-primary text-white hover:bg-accent-hover shadow-lg shadow-green-900/20"
-									: "bg-bg-hover text-text-primary hover:bg-bg-surface", // Prototype "active/inactive" logic
+									: "bg-transparent text-text-secondary hover:bg-bg-hover",
 							)}
 						>
 							<Send className="w-5 h-5 ml-0.5" />

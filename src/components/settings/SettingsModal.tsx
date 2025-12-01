@@ -118,7 +118,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 			transition={{ type: "spring", damping: 25, stiffness: 300 }}
 			className="fixed inset-0 z-[60] bg-bg-modal flex flex-col"
 		>
-			<header className="flex items-center justify-between p-4 pt-6 border-b border-border-default">
+			<header className="flex items-center justify-between p-4 pt-6">
 				<button
 					type="button"
 					onClick={canGoBack ? popView : handleClose}
@@ -133,7 +133,14 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 				<h2 className="text-lg font-semibold text-text-primary">
 					{viewTitles[currentView]}
 				</h2>
-				<div className="w-9 h-9" />
+				<button
+					type="button"
+					className="p-2 rounded-full bg-bg-hover text-text-secondary hover:text-text-primary"
+				>
+					<span className="flex items-center justify-center w-5 h-5 border border-current rounded-full text-[10px] font-bold">
+						i
+					</span>
+				</button>
 			</header>
 
 			<div className="flex-1 overflow-hidden relative">

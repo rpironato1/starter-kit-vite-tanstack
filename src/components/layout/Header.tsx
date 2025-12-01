@@ -34,7 +34,7 @@ export function Header({
 		<header
 			className={cn(
 				"flex justify-between items-center p-4 z-10 relative shrink-0",
-				"h-16 bg-bg-main/80 backdrop-blur-md border-b border-border-default/50",
+				"h-16 bg-bg-main/80 backdrop-blur-md",
 				className,
 			)}
 		>

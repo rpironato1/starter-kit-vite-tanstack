@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "@/hooks/useI18n";
@@ -287,12 +287,6 @@ export function ModelSelector({
 							{availableModels.map((model, index) => {
 								const isSelected =
 									model.id === currentModel || model.name === currentModel;
-								const badgeLabel = model.badgeKey
-									? t.modelsBadges[model.badgeKey]
-									: undefined;
-								const modelMeta = model.descriptionKey
-									? t.modelsMeta?.[model.descriptionKey]
-									: undefined;
 								const optionId = model.id;
 
 								return (
@@ -330,50 +324,23 @@ export function ModelSelector({
 											</AnimatePresence>
 										</div>
 										<div className="min-w-0 flex-1">
-											<div className="flex flex-wrap items-center gap-2">
-												<p
-													className={cn(
-														"font-medium text-[15px]",
-														model.highlightClass ??
-															(isSelected
-																? "text-accent-primary"
-																: "text-text-primary"),
-														isSelected && model.highlightClass
-															? "drop-shadow-[0_0_8px_rgba(36,107,49,0.35)]"
-															: undefined,
-													)}
-												>
-													{model.name}
-												</p>
-												{badgeLabel && (
-													<span className="rounded-full border border-border-default/40 bg-bg-main/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
-														{badgeLabel}
-													</span>
+											<p
+												className={cn(
+													"font-medium text-[15px]",
+													model.highlightClass ??
+														(isSelected
+															? "text-accent-primary"
+															: "text-text-primary"),
+													isSelected && model.highlightClass
+														? "drop-shadow-[0_0_8px_rgba(36,107,49,0.35)]"
+														: undefined,
 												)}
-											</div>
+											>
+												{model.name}
+											</p>
 											<p className="mt-0.5 text-xs leading-snug text-text-secondary">
 												{getModelDescription(model)}
 											</p>
-
-											{modelMeta && (
-												<div className="mt-2 space-y-1 text-[11px] text-text-secondary/90">
-													<div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.25em]">
-														<span className="rounded-full border border-border-default/40 px-2 py-0.5 font-semibold">
-															{modelMeta.tier}
-														</span>
-														<span className="rounded-full bg-bg-hover/70 px-2 py-0.5 font-semibold tracking-tight text-[10px] text-text-primary/80">
-															{modelMeta.contextWindow}
-														</span>
-														<span className="flex items-center gap-1 tracking-tight text-[11px] normal-case text-text-secondary">
-															<span className="h-1.5 w-1.5 rounded-full bg-accent-primary shadow-[0_0_6px_rgba(36,107,49,0.6)]" />
-															{modelMeta.latency}
-														</span>
-													</div>
-													<p className="text-[11px] leading-snug tracking-normal text-text-secondary">
-														{modelMeta.bestFor}
-													</p>
-												</div>
-											)}
 										</div>
 									</button>
 								);

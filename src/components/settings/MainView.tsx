@@ -48,9 +48,9 @@ export function MainView({ pushView }: MainViewProps) {
 	const userEmail = "usuario@email.com";
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 pb-6">
 			{/* Email Card */}
-			<div className="bg-bg-surface rounded-xl p-4 flex items-center justify-center border border-border-default">
+			<div className="bg-bg-surface rounded-xl p-4 flex items-center justify-center">
 				<span className="text-text-primary font-medium">{userEmail}</span>
 			</div>
 
@@ -59,41 +59,37 @@ export function MainView({ pushView }: MainViewProps) {
 				<SettingsItem
 					icon={User}
 					label={t.settings.profile}
-					description={t.profile.title}
 					onClick={() => pushView("profile")}
 				/>
 
 				<SettingsItem
 					icon={CreditCard}
 					label={t.settings.plan}
-					description={t.plan.currentPlanName}
+					value={t.plan.currentPlanName}
 					onClick={() => pushView("plan")}
 				/>
 
 				<SettingsItem
 					icon={SlidersHorizontal}
 					label={t.settings.features}
-					description={t.settings.features}
 					onClick={() => console.log("Features clicked")}
 				/>
 
 				<SettingsItem
 					icon={Sparkles}
 					label={t.settings.refinement}
-					description={t.refinement.title}
 					onClick={() => pushView("refinement")}
 				/>
 
 				<SettingsItem
 					icon={Database}
 					label={t.settings.memory}
-					description={t.memory.title}
 					onClick={() => pushView("memory")}
 				/>
 			</div>
 
 			{/* Separator */}
-			<div className="h-px bg-border-default w-full" />
+			<div className="h-px bg-border-default/20 w-full my-2" />
 
 			{/* Preferences Section */}
 			<div className="space-y-1">
@@ -104,18 +100,12 @@ export function MainView({ pushView }: MainViewProps) {
 					rightElement={<ZaneToggle isOn={isDark} onToggle={toggleTheme} />}
 				/>
 
-				{/* Language - Inline Selector */}
+				{/* Language - Clickable Row with Value */}
 				<SettingsItem
 					icon={Globe}
 					label={t.settings.language}
-					rightElement={
-						<button
-							onClick={handleLanguageChange}
-							className="text-sm text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2"
-						>
-							{currentLangLabel}
-						</button>
-					}
+					value={currentLangLabel}
+					onClick={handleLanguageChange}
 				/>
 
 				<SettingsItem
@@ -127,22 +117,21 @@ export function MainView({ pushView }: MainViewProps) {
 				<SettingsItem
 					icon={Lock}
 					label={t.settings.privacy}
-					description={t.privacy.title}
 					onClick={() => pushView("privacy")}
 				/>
 
 				<SettingsItem
 					icon={Terminal}
-					label={t.settings.system}
+					label="Sistema e Diagnóstico"
 					onClick={() => pushView("system")}
 				/>
 			</div>
 
 			{/* Separator */}
-			<div className="h-px bg-border-default w-full" />
+			<div className="h-px bg-border-default/20 w-full my-2" />
 
 			{/* Logout */}
-			<div className="space-y-1">
+			<div>
 				<SettingsItem
 					icon={LogOut}
 					label={t.settings.logout}
