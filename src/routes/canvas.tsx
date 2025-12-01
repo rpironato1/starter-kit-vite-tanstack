@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { CanvasWorkspace } from "@/components/canvas";
 import { ArtifactCard } from "@/components/canvas/ArtifactCard";
-import { CanvasCommandBar } from "@/components/canvas/CanvasCommandBar";
+import { CanvasInputArea } from "@/components/canvas/CanvasInputArea";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
 import { ReasoningBubble } from "@/components/chat/ReasoningBubble";
@@ -141,7 +141,8 @@ function CanvasPage() {
 		setTimeout(() => {
 			const aiResponseContent = `Aqui está o código que você pediu:
 
-\`\`\`html
+\
+\
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,7 +161,8 @@ function CanvasPage() {
   </div>
 </body>
 </html>
-\`\`\`
+\
+\
 
 O código acima cria uma aplicação web baseada no seu pedido.`;
 
@@ -185,9 +187,9 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 		}, 2000);
 	};
 
-	const handleSparkAutomation = () => {
-		setIsWorkspaceOpen(true);
-		inputRef.current?.focus();
+	// Placeholder for attach (would be handled here if we add logic)
+	const handleAttachClick = (type: "camera" | "photo" | "file") => {
+		console.log("Attach:", type);
 	};
 
 	const handleNewChat = () => {
@@ -252,87 +254,86 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 						<div className="max-w-3xl mx-auto py-6 space-y-6">
 							<AnimatePresence mode="popLayout">
 								{messages.length === 0 && !isLoading ? (
-									<EmptyState variant="canvas" />
+									<EmptyState key="canvas-empty" variant="canvas" />
 								) : (
-									<>
-										{messages.map((message) => (
-											<motion.div
-												key={message.id}
-												initial={{ opacity: 0, y: 20 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{
-													type: "spring",
-													stiffness: 300,
-													damping: 30,
-												}}
-											>
-												{message.role === "user" ? (
-													<div className="flex justify-end">
-														<div className="max-w-[85%] md:max-w-[65%] rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
-															<p className="text-[15px] leading-relaxed">
-																{message.content}
-															</p>
-														</div>
+									messages.map((message) => (
+										<motion.div
+											key={message.id}
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{
+												type: "spring",
+												stiffness: 300,
+												damping: 30,
+											}}
+										>
+											{message.role === "user" ? (
+												<div className="flex justify-end">
+													<div className="max-w-[85%] md:max-w-[65%] rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
+														<p className="text-[15px] leading-relaxed">
+															{message.content}
+														</p>
 													</div>
-												) : (
-													<div className="space-y-3">
-														<AIMessage
-															content={message.content}
-															executionPlan={message.executionPlan}
-															onTokenDetails={openTokenUsage}
-															usage={message.usage}
-															isLastMessage={
+												</div>
+											) : (
+												<div className="space-y-3">
+													<AIMessage
+														content={message.content}
+														executionPlan={message.executionPlan}
+														onTokenDetails={openTokenUsage}
+														usage={message.usage}
+														isLastMessage={
 																messages[messages.length - 1]?.id === message.id
-															}
-														/>
-														{message.artifact && (
-															<div className="mt-3">
-																<ArtifactCard
-																	artifact={message.artifact}
-																	onClick={() => {
-																		setActiveArtifact(message.artifact ?? null);
-																		setIsWorkspaceOpen(true);
-																	}}
-																/>
-															</div>
-														)}
-													</div>
-												)}
-											</motion.div>
-										))}
-										{isLoading && (
-											<ReasoningBubble steps={CANVAS_EXECUTION_PLAN} />
-										)}
-									</>
+																}
+													/>
+													{message.artifact && (
+														<div className="mt-3">
+															<ArtifactCard
+																						artifact={message.artifact}
+																						onClick={() => {
+																							setActiveArtifact(message.artifact ?? null);
+																							setIsWorkspaceOpen(true);
+																						}}
+																	/>
+														</div>
+													)}
+												</div>
+											)}
+										</motion.div>
+									))
+								)}
+								{isLoading && (
+									<ReasoningBubble
+										key="reasoning-bubble"
+										steps={CANVAS_EXECUTION_PLAN}
+									/>
 								)}
 							</AnimatePresence>
 							<div ref={messagesEndRef} />
 						</div>
 					</div>
 
-					<CanvasCommandBar
+					{/* REPLACED CanvasCommandBar with CanvasInputArea */}
+					<CanvasInputArea
 						value={inputValue}
 						onChange={setInputValue}
 						onSend={handleSend}
 						isLoading={isLoading}
 						reasoningLevel={reasoningLevel}
 						onReasoningChange={setReasoningLevel}
-						onToggleWorkspace={() => setIsWorkspaceOpen((prev) => !prev)}
-						isWorkspaceOpen={isWorkspaceOpen}
-						onSpark={handleSparkAutomation}
+						onAttachClick={handleAttachClick}
 						inputRef={inputRef}
-						placeholder="Descreva o que você quer construir..."
 					/>
 				</div>
 
-				{/* Canvas Workspace */}
-				{activeArtifact && (
-					<CanvasWorkspace
-						artifact={activeArtifact}
-						isOpen={isWorkspaceOpen}
-						onClose={() => setIsWorkspaceOpen(false)}
-					/>
-				)}
+        {/* Canvas Workspace */}
+        {activeArtifact && (
+          <CanvasWorkspace
+            artifact={activeArtifact}
+            isOpen={isWorkspaceOpen}
+            onClose={() => setIsWorkspaceOpen(false)}
+          />
+        )}
 			</main>
 		</div>
 	);

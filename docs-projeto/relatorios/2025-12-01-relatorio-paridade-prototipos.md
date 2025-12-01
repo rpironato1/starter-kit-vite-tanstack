@@ -120,6 +120,26 @@
 
 ---
 
+## 🔄 Atualização 01/12/2025 – Rodada complementar
+
+### Build & Static Analysis (20:32–20:36 BRT)
+- `npm run check` → ✅ (lint/format Biome)
+- `npm run build` → ✅ (inclui tsc; garante produção após ajustes Photo/Canvas)
+- `npx tsc --noEmit` → ✅ (sanidade adicional pós-build)
+
+### MCP Manual Sweeps (Desktop 1440×900 / Tablet 1024×768 / Mobile 390×844)
+| Rota | Escopo validado | Resultado |
+|------|-----------------|-----------|
+| Conversas | ModelSelector hero, menu móvel, command bar novo | ✅ Sem erros (apenas logs CSR informativos) |
+| Canvas | ReasoningBubble loader, workspace toggle, command bar spark | ⚠️ Warning `Invalid prop ref supplied to React.Fragment` detectado; corrigido convertendo `ReasoningBubble` em `forwardRef` + ajuste do `AnimatePresence`. Reteste ✅ |
+| Photo | Toolbar (proporção + galeria), command bar, enhancer gating | ✅ Sem erros (somente warnings conhecidos do iframe/galleria mock) |
+
+### Observações
+- Warnings `cdn.tailwindcss.com` e `allow-scripts/allow-same-origin` persistem porque o mock do Canvas injeta HTML Tailwind dentro de `about:srcdoc`.
+- Dev server foi desligado ao final da bateria; basta executar `npm run dev -- --host=0.0.0.0 --port=3027` caso precise repetir as inspeções.
+
+---
+
 ## 📁 ARQUIVOS MODIFICADOS
 
 ```

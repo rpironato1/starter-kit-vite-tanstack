@@ -284,6 +284,7 @@
 - [src/components/photo/PhotoCommandBar.tsx](src/components/photo/PhotoCommandBar.tsx): concentrei anexos + sparkles, removi o seletor duplicado e acrescentei footer com status do enhancer (disponível vs bloqueado) reutilizando i18n.
 - [src/routes/photo.tsx](src/routes/photo.tsx): conectei a toolbar ao estado de proporção/galleria e mantive o command bar sincronizado.
 - [src/components/chat/ReasoningBubble.tsx](src/components/chat/ReasoningBubble.tsx) + [src/routes/canvas.tsx](src/routes/canvas.tsx): introduzi a bolha de raciocínio compartilhada, exibida durante `isLoading`, garantindo que Canvas use o mesmo visual brain-style.
+- **Correção (21:20)**: durante o sweep de Canvas detectei warnings `Invalid prop ref supplied to React.Fragment` originados pelo novo loader; corrigi removendo o fragmento do `AnimatePresence` e convertendo `ReasoningBubble` em `forwardRef` para os clones do Framer Motion (sem novos warnings na retest).
 
 ### Item 4 – Model selector popover
 **Graph of Thoughts**
@@ -299,3 +300,19 @@
 3. Enriquecer o card de cada modelo com badges/meta (latência, melhor uso) usando apenas tokens existentes e textos do dicionário.
 4. Garantir fechamento por clique externo/ESC, foco retornando ao trigger e backdrop com blur discreto igual ao protótipo.
 5. Testar em mobile/desktop (todas as rotas) para confirmar posicionamento, scroll lock e destaque do modelo selecionado.
+
+## Validações e Checklist Final (21:25)
+
+**Automatizadas (01/12)**
+- `npm run check` → ✅ (20:32) – Biome sem infrações.
+- `npm run build` → ✅ (20:34) – Build + tsc integrados passaram sem regressões.
+- `npx tsc --noEmit` → ✅ (20:36) – Narrow check pós-build para garantir type safety após refactors.
+
+**Manuais – Playwright MCP Sweeps**
+- Conversas (Desktop 1440 × 900 / Tablet 1024 × 768 / Mobile 390 × 844): hero do ModelSelector + menu móvel revisados, nada além dos logs informativos do shell CSR.
+- Canvas (mesmos breakpoints): reproduzi o fluxo “Gerar artefato” e verifiquei ReasoningBubble/Workspace; bug de Fragment foi corrigido e o reteste mostrou console limpo (apenas avisos conhecidos do sandbox Tailwind na prévia do iframe).
+- Photo (Desktop/Tablet/Mobile): toolbar mostra modelo + proporção ativa com popover funcional, CTA “Abrir galeria” no topo e command bar com sparkles/enhancer. Nenhum erro além dos avisos esperados da galeria mock.
+
+**Observações adicionais**
+- Logs `about:srcdoc` e `cdn.tailwindcss.com` continuam aparecendo quando o iframe mock do Canvas renderiza código Tailwind; mantidos como risco conhecido do mock.
+- Dev server foi encerrado após os testes para liberar a porta 3027; basta rodar `npm run dev -- --host=0.0.0.0 --port=3027` se precisar de uma nova inspeção visual.

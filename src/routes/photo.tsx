@@ -8,7 +8,7 @@ import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ZaneGallery } from "@/components/photo";
-import { PhotoCommandBar } from "@/components/photo/PhotoCommandBar";
+import { PhotoInputArea } from "@/components/photo/PhotoInputArea";
 import { PhotoToolbar } from "@/components/photo/PhotoToolbar";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
@@ -131,12 +131,15 @@ function PhotoPage() {
 		event.target.value = "";
 	};
 
-	const triggerCameraCapture = () => {
-		cameraInputRef.current?.click();
-	};
-
-	const triggerFilePicker = () => {
-		galleryInputRef.current?.click();
+	// Handlers for new PhotoInputArea
+	const handleAttachClick = (type: "camera" | "photo" | "gallery") => {
+		if (type === "camera") {
+			cameraInputRef.current?.click();
+		} else if (type === "photo") {
+			galleryInputRef.current?.click();
+		} else if (type === "gallery") {
+			setGalleryOpen(true);
+		}
 	};
 
 	const canEnhancePrompt =
@@ -253,12 +256,20 @@ function PhotoPage() {
 				images={generatedImages}
 			/>
 
-			<PhotoToolbar
-				currentModel={currentModel}
-				aspectRatio={aspectRatio}
-				onAspectRatioChange={setAspectRatio}
-				onOpenGallery={() => setGalleryOpen(true)}
-			/>
+			{/* Original toolbar - leaving it or removing? 
+          The prototype uses the new InputArea instead of a top toolbar?
+          Actually, PhotoToolbar might be redundant or used for other settings.
+          Prototype ZanePhotoModule.tsx header only had model selector.
+          I'll keep PhotoToolbar if it provides functionality not covered, 
+          BUT the instruction was PARITY. 
+          The prototype header has: Menu, Model Selector.
+          The prototype footer has: Input, Attach, Magic, Ratio, Send.
+          So PhotoToolbar (if it's a separate bar) should probably be removed or integrated.
+          Looking at `src/routes/photo.tsx` content I read:
+          <PhotoToolbar ... /> was there.
+          Prototype ZanePhotoModule.tsx DOES NOT HAVE a secondary toolbar.
+          I will REMOVE PhotoToolbar to match prototype.
+      */}
 
 			<main className="flex-1 overflow-hidden relative">
 				<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
@@ -271,10 +282,6 @@ function PhotoPage() {
 									className="flex flex-col items-center gap-6"
 								>
 									<EmptyState variant="photo" modelName={currentModel} />
-									<p className="text-center text-sm text-text-secondary">
-										Ajuste proporções e abra a galeria diretamente pelo command
-										bar inferior.
-									</p>
 								</motion.div>
 							) : (
 								<>
@@ -313,7 +320,6 @@ function PhotoPage() {
 																alt="Generated"
 																className="w-full h-auto object-cover"
 															/>
-															{/* Download overlay */}
 															<div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
 																<button
 																	type="button"
@@ -356,21 +362,22 @@ function PhotoPage() {
 					</div>
 				</div>
 
-				<PhotoCommandBar
+				{/* REPLACED PhotoCommandBar with PhotoInputArea */}
+				<PhotoInputArea
 					value={inputValue}
 					onChange={setInputValue}
 					onSend={handleSend}
 					isLoading={isLoading}
 					aspectRatio={aspectRatio}
-					onOpenGallery={() => setGalleryOpen(true)}
-					onPickFromCamera={triggerCameraCapture}
-					onPickFromFiles={triggerFilePicker}
+					onAspectRatioChange={setAspectRatio}
+					onAttachClick={handleAttachClick}
 					onEnhancePrompt={handleEnhancePrompt}
 					canEnhance={canEnhancePrompt}
 					isEnhancing={isEnhancing}
 					attachedImage={attachedImage}
-					onRemoveAttachment={() => setAttachedImage(null)}
+					onRemoveImage={() => setAttachedImage(null)}
 					inputRef={inputRef}
+					currentModel={currentModel}
 				/>
 			</main>
 		</div>

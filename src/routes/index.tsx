@@ -2,11 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { AIMessage } from "@/components/chat/AIMessage";
+import { ChatInputArea } from "@/components/chat/ChatInputArea";
 import { EmptyState } from "@/components/chat/EmptyState";
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { UserMessage } from "@/components/chat/UserMessage";
 import { Header } from "@/components/layout/Header";
-import { InputBar } from "@/components/layout/InputBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
@@ -115,7 +115,7 @@ function ChatPage() {
 				id: crypto.randomUUID(),
 				role: "assistant",
 				content: `Este é um exemplo de resposta para: "${userMessage.content}".\n\nNa versão completa, os agentes Zane analisariam sua solicitação, fariam grounding e entregariam um plano estruturado.`,
-				timestamp: new Date(),
+			timestamp: new Date(),
 				usage: createMockUsage(userMessage.content),
 				executionPlan: PLAN_STEPS,
 			};
@@ -151,8 +151,18 @@ function ChatPage() {
 		setIsModelSelectorOpen(false);
 	};
 
-	const handleImageAttach = (imageUrl: string) => {
-		setAttachedImage(imageUrl);
+	// Specific handlers for new ChatInputArea
+	const handleAttachClick = (type: "camera" | "photo" | "file") => {
+		if (type === "camera") {
+			// Mock camera behavior
+			setAttachedImage(`https://picsum.photos/200/200?random=${Date.now()}`);
+		} else if (type === "photo") {
+			// Mock photo picker
+			setAttachedImage(`https://picsum.photos/200/200?random=${Date.now()}`);
+		} else if (type === "file") {
+			// Trigger hidden file input
+			fileInputRef.current?.click();
+		}
 	};
 
 	const handleFilePickerAttach = (
@@ -256,8 +266,8 @@ function ChatPage() {
 													onTokenDetails={(usage) => openTokenUsage(usage)}
 													onRetry={handleRetry}
 													isLastMessage={
-														messages[messages.length - 1]?.id === message.id
-													}
+																messages[messages.length - 1]?.id === message.id
+														}
 												/>
 											)}
 										</motion.div>
@@ -277,19 +287,18 @@ function ChatPage() {
 					</div>
 				</div>
 
-				{/* Input Bar */}
-				<InputBar
+				{/* REPLACED Input Bar with ChatInputArea */}
+				<ChatInputArea
 					value={inputValue}
 					onChange={setInputValue}
 					onSend={handleSend}
-					onImageAttach={handleImageAttach}
-					attachedImage={attachedImage}
-					onRemoveImage={handleRemoveImage}
 					isLoading={isLoading}
 					reasoningLevel={reasoningLevel}
 					onReasoningChange={setReasoningLevel}
+					onAttachClick={handleAttachClick}
+					onRemoveImage={handleRemoveImage}
+					attachedImage={attachedImage}
 					inputRef={inputRef}
-					onAttachClick={() => fileInputRef.current?.click()}
 				/>
 			</main>
 		</div>

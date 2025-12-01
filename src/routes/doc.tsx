@@ -6,7 +6,7 @@ import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { ContextDrawer, type UploadedDocument } from "@/components/doc";
-import { DocCommandBar } from "@/components/doc/DocCommandBar";
+import { DocInputArea } from "@/components/doc/DocInputArea";
 import { Header } from "@/components/layout/Header";
 import { Sidebar as AppSidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
@@ -110,6 +110,9 @@ function DocPage() {
 	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [currentModel, setCurrentModel] = useState("Zane Doc Pro");
+	const [reasoningLevel, setReasoningLevel] = useState<
+		"soft" | "medium" | "max" | "off"
+	>("soft");
 	const [attachedFiles, setAttachedFiles] = useState<UploadedDocument[]>([]);
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -158,7 +161,7 @@ function DocPage() {
 			id: crypto.randomUUID(),
 			role: "user",
 			content:
-				inputValue.trim() || `Analisar ${attachedFiles.length} arquivo(s)`,
+				issue.trim() || `Analisar ${attachedFiles.length} arquivo(s)`,
 			attachedFiles: attachedFiles.length > 0 ? [...attachedFiles] : undefined,
 			timestamp: new Date(),
 		};
@@ -196,7 +199,7 @@ function DocPage() {
 	const removeFile = (id: string) =>
 		setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
 
-	const contextButton = (
+	const contextButton =
 		<button
 			type="button"
 			onClick={() => setIsDrawerOpen(true)}
@@ -209,8 +212,7 @@ function DocPage() {
 					{attachedFiles.length}
 				</span>
 			)}
-		</button>
-	);
+		</button>;
 
 	return (
 		<div className="h-screen flex flex-col bg-bg-main overflow-hidden">
@@ -307,32 +309,32 @@ function DocPage() {
 														{message.attachedFiles &&
 															message.attachedFiles.length > 0 && (
 																<div className="flex flex-wrap gap-2 mb-3">
-																	{message.attachedFiles.map((file) => (
+																{message.attachedFiles.map((file) => (
 																		<div
 																			key={file.id}
-																			className="flex items-center gap-2 px-3 py-1.5 bg-bg-hover rounded-lg text-xs"
-																		>
-																			<FileText className="w-3 h-3 text-blue-400" />
-																			<span className="text-text-secondary truncate max-w-[150px]">
-																				{file.name}
-																			</span>
-																		</div>
-																	))}
+																	className="flex items-center gap-2 px-3 py-1.5 bg-bg-hover rounded-lg text-xs"
+															>
+																<FileText className="w-3 h-3 text-blue-400" />
+																<span className="text-text-secondary truncate max-w-[150px]">
+																	{file.name}
+															</span>
 																</div>
-															)}
-														<p className="text-[15px] leading-relaxed">
-															{message.content}
-														</p>
-													</div>
+															))}
+														</div>
+													)}
+													<p className="text-[15px] leading-relaxed">
+														{message.content}
+													</p>
 												</div>
-											) : (
-												<AIMessage
-													content={message.content}
-													usage={message.usage}
-													executionPlan={message.executionPlan}
-													onTokenDetails={(usage) => openTokenUsage(usage)}
-												/>
-											)}
+												</div>
+									) : (
+										<AIMessage
+												content={message.content}
+												usage={message.usage}
+												executionPlan={message.executionPlan}
+												onTokenDetails={(usage) => openTokenUsage(usage)}
+										/>
+									)}
 										</motion.div>
 									))}
 									{isLoading && (
@@ -348,14 +350,15 @@ function DocPage() {
 					</div>
 				</div>
 
-				<DocCommandBar
+				{/* REPLACED DocCommandBar with DocInputArea */}
+				<DocInputArea
 					value={inputValue}
 					onChange={setInputValue}
 					onSend={handleSend}
 					isLoading={isLoading}
-					onUploadClick={triggerFileUpload}
-					attachedFiles={attachedFiles}
-					onRemoveFile={removeFile}
+					reasoningLevel={reasoningLevel}
+					onReasoningChange={setReasoningLevel}
+					onFileSelect={handleFileUpload}
 					inputRef={inputRef}
 				/>
 			</main>
