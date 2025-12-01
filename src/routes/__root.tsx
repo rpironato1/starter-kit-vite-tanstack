@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useEffect } from "react";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ApiAccessProvider } from "@/hooks/useApiAccess";
 import { TokenUsageProvider } from "@/hooks/useTokenUsage";
 import {
@@ -82,11 +83,13 @@ function RootComponent() {
 	}, []);
 
 	return (
-		<ApiAccessProvider>
-			<TokenUsageProvider>
-				<Outlet />
-			</TokenUsageProvider>
-		</ApiAccessProvider>
+		<LanguageProvider>
+			<ApiAccessProvider>
+				<TokenUsageProvider>
+					<Outlet />
+				</TokenUsageProvider>
+			</ApiAccessProvider>
+		</LanguageProvider>
 	);
 }
 

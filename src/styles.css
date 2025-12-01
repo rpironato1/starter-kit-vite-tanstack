@@ -113,6 +113,11 @@
   --text-primary: #e4e4e7;
   --text-secondary: #a1a1aa;
 
+  /* Accents */
+  --accent-primary: #246B31;
+  --accent-hover: #1e5a29;
+  --accent-textHighlight: #eecfa1;
+
   /* Borders */
   --border-default: #3f3f46;
 }

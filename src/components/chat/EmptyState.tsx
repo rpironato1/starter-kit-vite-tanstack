@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { FileText, LayoutGrid, MessageSquare, Wand2 } from "lucide-react";
 import type { ElementType } from "react";
+import { useTranslation } from "@/hooks/useI18n";
 
 type EmptyStateVariant = "chat" | "photo" | "doc" | "canvas";
 
@@ -12,8 +13,6 @@ interface EmptyStateProps {
 
 interface VariantConfig {
 	icon: ElementType;
-	title: string;
-	subtitle: string;
 	iconClassName: string;
 	blurClassName: string;
 }
@@ -21,32 +20,21 @@ interface VariantConfig {
 const variantConfigs: Record<EmptyStateVariant, VariantConfig> = {
 	chat: {
 		icon: MessageSquare,
-		title: "Olá! Como posso ajudar?",
-		subtitle: "Faça uma pergunta para começar",
 		iconClassName: "text-accent-primary",
 		blurClassName: "bg-accent-primary/20",
 	},
 	photo: {
 		icon: Wand2,
-		title: "Zane Photo Studio",
-		subtitle:
-			"Imagine, descreva e crie. Use o poder do Zane para dar vida às suas ideias.",
 		iconClassName: "text-accent-primary",
 		blurClassName: "bg-accent-primary/20",
 	},
 	doc: {
 		icon: FileText,
-		title: "Zane Doc",
-		subtitle:
-			"Faça upload de documentos de texto ou código e converse com eles.",
 		iconClassName: "text-blue-500",
 		blurClassName: "bg-blue-500/10",
 	},
 	canvas: {
 		icon: LayoutGrid,
-		title: "Zane Canvas",
-		subtitle:
-			"Um espaço dedicado para construção de ideias, escrita longa e projetos complexos.",
 		iconClassName: "text-purple-500",
 		blurClassName: "bg-purple-500/10",
 	},
@@ -57,11 +45,13 @@ export function EmptyState({
 	customTitle,
 	customSubtitle,
 }: EmptyStateProps) {
+	const { t } = useTranslation();
 	const config = variantConfigs[variant];
 	const Icon = config.icon;
 
-	const title = customTitle ?? config.title;
-	const subtitle = customSubtitle ?? config.subtitle;
+	const variantTexts = t.emptyState[variant];
+	const title = customTitle ?? variantTexts.title;
+	const subtitle = customSubtitle ?? variantTexts.subtitle;
 
 	return (
 		<motion.div

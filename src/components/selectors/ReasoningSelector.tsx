@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Brain, Check, CircleOff, Sparkles, Zap } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
 type ReasoningLevel = "off" | "soft" | "medium" | "max";
@@ -12,36 +13,44 @@ interface ReasoningSelectorProps {
 	className?: string;
 }
 
-const REASONING_LEVELS = {
+interface ReasoningLevelConfig {
+	labelKey: ReasoningLevel;
+	descriptionKey: ReasoningLevel;
+	color: string;
+	bgColor: string;
+	icon: ComponentType<{ className?: string }>;
+}
+
+const REASONING_LEVELS_CONFIG: Record<ReasoningLevel, ReasoningLevelConfig> = {
 	off: {
-		label: "Desativado",
-		description: "Respostas rápidas",
+		labelKey: "off",
+		descriptionKey: "off",
 		color: "text-text-secondary",
 		bgColor: "bg-text-secondary/10",
 		icon: CircleOff,
 	},
 	soft: {
-		label: "Soft",
-		description: "Rápido e direto (1k tokens)",
+		labelKey: "soft",
+		descriptionKey: "soft",
 		color: "text-green-400",
 		bgColor: "bg-accent-primary/10",
 		icon: Zap,
 	},
 	medium: {
-		label: "Médio",
-		description: "Equilibrado (2k tokens)",
+		labelKey: "medium",
+		descriptionKey: "medium",
 		color: "text-yellow-400",
 		bgColor: "bg-yellow-500/10",
 		icon: Brain,
 	},
 	max: {
-		label: "Max",
-		description: "Análise profunda (4k tokens)",
+		labelKey: "max",
+		descriptionKey: "max",
 		color: "text-[#15803d]",
 		bgColor: "bg-[#15803d]/10",
 		icon: Sparkles,
 	},
-} as const;
+};
 
 const LEVELS: ReasoningLevel[] = ["soft", "medium", "max", "off"];
 
@@ -72,6 +81,15 @@ function InlineSelector({
 	onChange,
 	className,
 }: Omit<ReasoningSelectorProps, "variant">) {
+	const { t } = useTranslation();
+
+	function getLabel(level: ReasoningLevel): string {
+		if (level === "off") return t.reasoning.off;
+		if (level === "soft") return "Soft";
+		if (level === "medium") return "Medium";
+		return "Max";
+	}
+
 	return (
 		<div
 			className={cn(
@@ -80,7 +98,7 @@ function InlineSelector({
 			)}
 		>
 			{LEVELS.map((level) => {
-				const config = REASONING_LEVELS[level];
+				const config = REASONING_LEVELS_CONFIG[level];
 				const isSelected = level === value;
 				return (
 					<button
@@ -101,7 +119,7 @@ function InlineSelector({
 								transition={springConfig}
 							/>
 						)}
-						<span className="relative z-10">{config.label}</span>
+						<span className="relative z-10">{getLabel(level)}</span>
 					</button>
 				);
 			})}
@@ -116,8 +134,21 @@ function DropdownSelector({
 }: Omit<ReasoningSelectorProps, "variant">) {
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const selected = REASONING_LEVELS[value];
+	const { t } = useTranslation();
+	const selected = REASONING_LEVELS_CONFIG[value];
 	const Icon = selected.icon;
+
+	function getLabel(level: ReasoningLevel): string {
+		if (level === "off") return t.reasoning.off;
+		if (level === "soft") return "Soft";
+		if (level === "medium") return "Medium";
+		return "Max";
+	}
+
+	function getDescription(level: ReasoningLevel): string {
+		if (level === "off") return t.reasoning.offDescription;
+		return t.reasoning[level];
+	}
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
@@ -138,7 +169,7 @@ function DropdownSelector({
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 			document.removeEventListener("keydown", handleKeyDown);
-		};
+		};${t.reasoning.title}: ${getLabel(value)
 	}, [isOpen]);
 
 	return (
@@ -186,14 +217,14 @@ function DropdownSelector({
 							<div className="px-3 py-2 flex items-center gap-2">
 								<Brain className="size-4 text-text-secondary scale-x-[-1]" />
 								<span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-									Nível de Raciocínio
+									{t.reasoning.title}
 								</span>
 							</div>
 
 							{/* Options */}
 							<div className="space-y-0.5">
 								{LEVELS.map((level) => {
-									const config = REASONING_LEVELS[level];
+									const config = REASONING_LEVELS_CONFIG[level];
 									const LevelIcon = config.icon;
 									const isSelected = level === value;
 									return (
@@ -234,10 +265,10 @@ function DropdownSelector({
 															: "text-text-secondary",
 													)}
 												>
-													{config.label}
+													{getLabel(level)}
 												</p>
 												<p className="text-[10px] text-text-secondary leading-tight opacity-70">
-													{config.description}
+													{getDescription(level)}
 												</p>
 											</div>
 

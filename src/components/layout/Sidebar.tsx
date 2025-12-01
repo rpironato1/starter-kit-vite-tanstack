@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Backdrop } from "@/components/ui/backdrop";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
 // Dados mockados para histórico
@@ -69,7 +70,7 @@ const itemVariants: Variants = {
 
 interface MenuItem {
 	id: string;
-	label: string;
+	labelKey: "chats" | "photo" | "doc" | "canvas";
 	icon: ReactNode;
 	href?: string;
 }
@@ -77,22 +78,22 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
 	{
 		id: "chat",
-		label: "Conversas",
+		labelKey: "chats",
 		icon: <MessageSquare className="w-5 h-5" />,
 	},
 	{
 		id: "photo",
-		label: "Zane Photo",
+		labelKey: "photo",
 		icon: <ImageIcon className="w-5 h-5" />,
 	},
 	{
 		id: "doc",
-		label: "Zane Doc",
+		labelKey: "doc",
 		icon: <FileText className="w-5 h-5" />,
 	},
 	{
 		id: "canvas",
-		label: "Zane Canvas",
+		labelKey: "canvas",
 		icon: <LayoutGrid className="w-5 h-5" />,
 	},
 ];
@@ -124,6 +125,7 @@ export function Sidebar({
 }: SidebarProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { t } = useTranslation();
 	const [historyExpanded, setHistoryExpanded] = useState(false);
 	const history = chatHistory ?? defaultHistory;
 
@@ -159,12 +161,12 @@ export function Sidebar({
 						<motion.div
 							variants={itemVariants}
 							className="p-4 flex items-center justify-between"
-						>
-							<h2 className="text-lg font-semibold">Menu</h2>
+						>{t.sidebar.menu}</h2>
 							<button
 								type="button"
 								onClick={onNewChat}
-								title="Nova conversa"
+								title={t.sidebar.newChat}
+								aria-label={t.sidebar.newChat}
 								aria-label="Nova conversa"
 								className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-white shadow-lg shadow-green-900/20 active:scale-95 transition-transform hover:bg-accent-hover"
 							>
@@ -188,7 +190,7 @@ export function Sidebar({
 									)}
 								>
 									{item.icon}
-									<span className="font-medium text-[15px]">{item.label}</span>
+									<span className="font-medium text-[15px]">{t.sidebar[item.labelKey]}</span>
 								</motion.button>
 							))}
 						</nav>
@@ -205,7 +207,7 @@ export function Sidebar({
 							>
 								<span className="flex items-center gap-2">
 									<History className="w-4 h-4" />
-									Histórico Recente
+									{t.sidebar.history}
 								</span>
 								<ChevronDown
 									className={cn(
@@ -247,7 +249,7 @@ export function Sidebar({
 												))
 											) : (
 												<div className="px-3 py-2 text-xs text-text-secondary italic">
-													Nenhum histórico
+													{t.sidebar.noHistory}
 												</div>
 											)}
 										</div>

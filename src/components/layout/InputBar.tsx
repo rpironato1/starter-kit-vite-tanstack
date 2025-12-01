@@ -159,9 +159,9 @@ export function InputBar({
 					disabled={!canSend}
 					whileTap={{ scale: 0.95 }}
 					className={cn(
-						"rounded-full p-3 transition-all duration-200",
+						"rounded-full p-3 transition-all duration-200 hover:scale-105",
 						canSend
-							? "bg-accent-primary text-white shadow-lg shadow-green-900/20 hover:bg-accent-hover"
+							? "bg-accent-primary text-white shadow-lg shadow-accent-primary/20 hover:bg-accent-hover"
 							: "cursor-not-allowed bg-bg-hover text-text-secondary opacity-50",
 					)}
 					aria-label="Enviar mensagem"

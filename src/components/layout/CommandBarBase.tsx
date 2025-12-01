@@ -25,7 +25,7 @@ export function CommandBarBase({
 		>
 			<div className={cn("mx-auto w-full max-w-3xl", containerClassName)}>
 				{attachmentPreview}
-				<div className="relative flex flex-col rounded-[32px] border border-border-default bg-bg-surface p-2 shadow-lg ring-1 ring-white/5">
+				<div className="relative flex flex-col rounded-[32px] border border-border-default bg-bg-surface p-2 shadow-lg ring-1 ring-border-default/20">
 					{children}
 				</div>
 			</div>

@@ -155,7 +155,7 @@ export function AIMessage({
 													className={cn(
 														"group inline-flex items-center gap-1.5",
 														"text-xs px-2.5 py-1 rounded-full",
-														"bg-zinc-900/50 backdrop-blur-sm",
+														"bg-bg-surface/50 backdrop-blur-sm",
 														"text-text-secondary",
 														"border border-border-default",
 														"hover:bg-bg-hover hover:text-text-primary",
@@ -175,7 +175,7 @@ export function AIMessage({
 												className={cn(
 													"group inline-flex items-center gap-1.5",
 													"text-xs px-2.5 py-1 rounded-full",
-													"bg-zinc-900/50 backdrop-blur-sm",
+													"bg-bg-surface/50 backdrop-blur-sm",
 													"text-text-secondary",
 													"border border-border-default",
 												)}

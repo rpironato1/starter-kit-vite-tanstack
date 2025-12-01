@@ -24,13 +24,13 @@ export function UserMessage({
 			transition={springTransition}
 			className="ml-auto max-w-[85%] md:max-w-md"
 		>
-			<div className="rounded-2xl rounded-tr-sm bg-bg-surface px-4 py-3 shadow-sm border border-white/5">
+			<div className="rounded-2xl rounded-tr-sm bg-bg-surface px-4 py-3 shadow-sm border border-border-default/30">
 				{imageUrl && (
 					<div className="mb-3">
 						<img
 							src={imageUrl}
 							alt="Imagem anexada"
-							className="max-w-xs max-h-48 w-auto rounded-xl object-cover border border-white/10"
+							className="max-w-xs max-h-48 w-auto rounded-xl object-cover border border-border-default/50"
 						/>
 					</div>
 				)}

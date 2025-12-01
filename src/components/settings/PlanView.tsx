@@ -1,4 +1,4 @@
-import { Check, Sparkles } from "lucide-react";
+import { Crown, RotateCcw } from "lucide-react";
 import type { SettingsView } from "./SettingsModal";
 
 interface PlanViewProps {
@@ -6,88 +6,45 @@ interface PlanViewProps {
 	popView: () => void;
 }
 
-const FREE_BENEFITS = [
-	"Basic AI conversations",
-	"Limited message history",
-	"Standard response time",
-];
-
-const PRO_BENEFITS = [
-	"Unlimited AI conversations",
-	"Full message history",
-	"Priority response time",
-	"Advanced AI models",
-	"Custom instructions",
-	"API access",
-];
-
 export function PlanView(_props: PlanViewProps) {
-	// TODO: Replace with actual plan data
-	const currentPlan = "free" as "free" | "pro";
-	const isPro = currentPlan === "pro";
+	const handleManageAccount = () => {
+		// TODO: Implement manage account flow
+		console.log("Manage account clicked");
+	};
 
-	const handleUpgrade = () => {
-		// TODO: Implement upgrade flow
-		console.log("Upgrade clicked");
+	const handleRestorePurchases = () => {
+		// TODO: Implement restore purchases flow
+		console.log("Restore purchases clicked");
 	};
 
 	return (
-		<div className="space-y-6">
-			{/* Current Plan Card */}
-			<div className="bg-bg-surface rounded-xl p-6">
-				<div className="flex items-center gap-3 mb-4">
-					<div className="w-12 h-12 rounded-full bg-accent-primary/20 flex items-center justify-center">
-						<Sparkles className="w-6 h-6 text-accent-primary" />
-					</div>
-					<div>
-						<p className="text-xs text-text-secondary uppercase tracking-wide">
-							Current Plan
-						</p>
-						<p className="text-xl font-semibold text-text-primary">
-							{isPro ? "Pro" : "Free"}
-						</p>
-					</div>
+		<div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6 bg-bg-modal no-scrollbar">
+			<div className="flex flex-col items-center text-center space-y-4">
+				<div className="w-20 h-20 rounded-full bg-accent-primary/20 flex items-center justify-center">
+					<Crown className="w-10 h-10 text-accent-primary" />
 				</div>
-
-				<div className="space-y-3">
-					{(isPro ? PRO_BENEFITS : FREE_BENEFITS).map((benefit) => (
-						<div key={benefit} className="flex items-center gap-3">
-							<Check className="w-4 h-4 text-accent-primary shrink-0" />
-							<span className="text-sm text-text-secondary">{benefit}</span>
-						</div>
-					))}
+				<div>
+					<p className="text-sm text-text-secondary">Plano atual</p>
+					<h2 className="text-3xl font-bold text-text-primary mt-1">Pro</h2>
 				</div>
 			</div>
 
-			{/* Upgrade Card (only show for free users) */}
-			{!isPro && (
-				<div className="bg-gradient-to-br from-accent-primary/20 to-accent-primary/5 rounded-xl p-6 border border-accent-primary/30">
-					<h3 className="text-lg font-semibold text-text-primary mb-2">
-						Upgrade to Pro
-					</h3>
-					<p className="text-sm text-text-secondary mb-4">
-						Unlock all features and get the most out of Zane AI.
-					</p>
+			<button
+				type="button"
+				onClick={handleManageAccount}
+				className="w-full max-w-xs py-3 bg-bg-surface rounded-xl text-text-primary font-semibold hover:bg-bg-hover transition-colors flex items-center justify-center gap-2"
+			>
+				Gerenciar Conta
+			</button>
 
-					<div className="space-y-2 mb-6">
-						{PRO_BENEFITS.slice(0, 3).map((benefit) => (
-							<div key={benefit} className="flex items-center gap-3">
-								<Check className="w-4 h-4 text-accent-primary shrink-0" />
-								<span className="text-sm text-text-primary">{benefit}</span>
-							</div>
-						))}
-					</div>
-
-					<button
-						type="button"
-						onClick={handleUpgrade}
-						className="w-full flex items-center justify-center gap-2 p-4 rounded-xl bg-accent-primary text-white font-medium hover:bg-accent-primary/90 transition-colors"
-					>
-						<Sparkles className="w-5 h-5" />
-						Upgrade Now
-					</button>
-				</div>
-			)}
+			<button
+				type="button"
+				onClick={handleRestorePurchases}
+				className="flex items-center justify-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm"
+			>
+				<RotateCcw className="w-4 h-4" />
+				Restaurar Compras
+			</button>
 		</div>
 	);
 }

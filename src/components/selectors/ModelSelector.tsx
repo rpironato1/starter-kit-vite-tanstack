@@ -2,36 +2,40 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Backdrop } from "@/components/ui/backdrop";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_MODELS = [
 	{
 		id: "zane-mini",
 		name: "Zane Mini 1.0",
-		description: "Pesquisa (Google Grounding) e tarefas rápidas",
+		descriptionKey: "mini" as const,
 	},
 	{
 		id: "zane-solo",
 		name: "Zane Solo 1.0",
-		description: "Respostas ultrarrápidas (Lite)",
+		descriptionKey: "solo" as const,
 	},
 	{
 		id: "zane-pro",
 		name: "Zane Pro 1.0",
-		description: "Raciocínio complexo e tarefas longas",
+		descriptionKey: "pro" as const,
 	},
 	{
 		id: "zane-ultra",
 		name: "Zane Ultra 1.0",
-		description: "Geração de Imagem (1K/2K/4K) e edições",
+		descriptionKey: "ultra" as const,
 		highlightClass: "text-amber-400 font-semibold",
 	},
 ];
 
+type ModelDescriptionKey = "mini" | "solo" | "pro" | "ultra";
+
 interface Model {
 	id: string;
 	name: string;
-	description: string;
+	descriptionKey?: ModelDescriptionKey;
+	description?: string;
 	highlightClass?: string;
 }
 
@@ -44,11 +48,19 @@ interface ModelSelectorProps {
 	className?: string;
 }
 
-const springConfig = {
+// Animação do dropdown menu (spring config do protótipo)
+const dropdownSpringConfig = {
 	type: "spring" as const,
 	stiffness: 350,
 	damping: 25,
 	mass: 0.8,
+};
+
+// Animação específica para o check icon (valores do protótipo)
+const checkIconSpringConfig = {
+	type: "spring" as const,
+	stiffness: 300,
+	damping: 20,
 };
 
 export function ModelSelector({
@@ -57,9 +69,7 @@ export function ModelSelector({
 	currentModel,
 	onSelect,
 	models,
-	className,
-}: ModelSelectorProps) {
-	const containerRef = useRef<HTMLDivElement>(null);
+	classN{ t } = useTranslation();
 	const availableModels = models ?? DEFAULT_MODELS;
 
 	useEffect(() => {
@@ -83,27 +93,41 @@ export function ModelSelector({
 		onClose();
 	}
 
+	function getModelDescription(model: Model): string {
+		if (model.descriptionKey) {
+			return t.models[model.descriptionKey];
+		}
+		return model.description ?? ""
+	function handleSelect(modelId: string) {
+		onSelect(modelId);
+		onClose();
+	}
+
 	return (
 		<>
-			<Backdrop isOpen={isOpen} onClick={onClose} />
+			<Backdrop
+				isOpen={isOpen}
+				onClick={onClose}
+				className="bg-black/40 backdrop-blur-[2px]"
+			/>
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
 						ref={containerRef}
-						initial={{ opacity: 0, scale: 0.95, y: -20 }}
+						initial={{ opacity: 0, scale: 0.9, y: -20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
-						exit={{ opacity: 0, scale: 0.95, y: -20 }}
-						transition={springConfig}
+						exit={{ opacity: 0, scale: 0.95, y: -10 }}
+						transition={dropdownSpringConfig}
 						className={cn(
 							"fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50",
 							"w-[90%] max-w-md p-4 rounded-2xl",
-							"bg-bg-surface border border-border-default",
-							"shadow-2xl",
-							className,
-						)}
-					>
-						{/* Header */}
-						<div className="flex items-center justify-between mb-4">
+							"{t.models.selectModel}
+							</h2>
+							<button
+								type="button"
+								onClick={onClose}
+								className="p-2 rounded-full hover:bg-bg-hover text-text-secondary transition-colors"
+								aria-label={t.models.close} items-center justify-between mb-4">
 							<h2 className="text-lg font-semibold text-text-primary">
 								Select Model
 							</h2>
@@ -140,10 +164,10 @@ export function ModelSelector({
 											<AnimatePresence mode="wait">
 												{isSelected && (
 													<motion.div
-														initial={{ scale: 0, opacity: 0 }}
-														animate={{ scale: 1, opacity: 1 }}
-														exit={{ scale: 0, opacity: 0 }}
-														transition={springConfig}
+														initial={{ scale: 0 }}
+														animate={{ scale: 1 }}
+														exit={{ scale: 0 }}
+														transition={checkIconSpringConfig}
 													>
 														<Check className="w-5 h-5 text-accent-primary" />
 													</motion.div>
@@ -166,7 +190,7 @@ export function ModelSelector({
 												{model.name}
 											</div>
 											<div className="text-sm text-text-secondary">
-												{model.description}
+												{getModelDescription(model)}
 											</div>
 										</div>
 									</button>

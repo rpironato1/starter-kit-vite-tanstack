@@ -1,9 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, FileText, Image } from "lucide-react";
 import { type ComponentType, useEffect, useRef } from "react";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
 type AttachType = "camera" | "gallery" | "files";
+type AttachLabelKey = "camera" | "photos" | "files";
 
 interface AttachMenuProps {
 	isOpen: boolean;
@@ -15,13 +17,13 @@ interface AttachMenuProps {
 interface MenuItem {
 	type: AttachType;
 	icon: ComponentType<{ className?: string }>;
-	label: string;
+	labelKey: AttachLabelKey;
 }
 
 const menuItems: MenuItem[] = [
-	{ type: "camera", icon: Camera, label: "Câmera" },
-	{ type: "gallery", icon: Image, label: "Fotos" },
-	{ type: "files", icon: FileText, label: "Arquivos" },
+	{ type: "camera", icon: Camera, labelKey: "camera" },
+	{ type: "gallery", icon: Image, labelKey: "photos" },
+	{ type: "files", icon: FileText, labelKey: "files" },
 ];
 
 const springTransition = {
@@ -37,6 +39,7 @@ export function AttachMenu({
 	className,
 }: AttachMenuProps) {
 	const menuRef = useRef<HTMLDivElement>(null);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -86,7 +89,7 @@ export function AttachMenu({
 					)}
 				>
 					<ul className="flex flex-col gap-0.5">
-						{menuItems.map(({ type, icon: Icon, label }) => (
+						{menuItems.map(({ type, icon: Icon, labelKey }) => (
 							<li key={type}>
 								<button
 									type="button"
@@ -100,7 +103,7 @@ export function AttachMenu({
 									)}
 								>
 									<Icon className="size-5 text-text-secondary" />
-									<span className="font-medium">{label}</span>
+									<span className="font-medium">{t.input[labelKey]}</span>
 								</button>
 							</li>
 						))}

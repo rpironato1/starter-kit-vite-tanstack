@@ -21,16 +21,21 @@ export function SettingsItem({
 	destructive = false,
 }: SettingsItemProps) {
 	const isClickable = !!onClick;
+	const hasRightElement = !!rightElement;
+
+	// When we have a rightElement (like a toggle), use div to avoid nested buttons
+	const Wrapper = hasRightElement ? "div" : "button";
 
 	return (
-		<button
-			type="button"
-			onClick={onClick}
-			disabled={!isClickable}
+		<Wrapper
+			type={hasRightElement ? undefined : "button"}
+			onClick={hasRightElement ? undefined : onClick}
+			disabled={hasRightElement ? undefined : !isClickable}
 			className={cn(
 				"w-full flex items-center gap-4 p-4 rounded-xl transition-colors text-left",
 				"bg-bg-surface hover:bg-bg-hover",
-				"disabled:cursor-default disabled:hover:bg-bg-surface",
+				!hasRightElement &&
+					"disabled:cursor-default disabled:hover:bg-bg-surface",
 				destructive && "text-red-500",
 			)}
 		>
@@ -69,6 +74,6 @@ export function SettingsItem({
 					<ChevronRight className="w-5 h-5 text-text-secondary shrink-0" />
 				)
 			)}
-		</button>
+		</Wrapper>
 	);
 }

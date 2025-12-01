@@ -5,6 +5,7 @@ import { MainView } from "./MainView";
 import { MemoryFactsView } from "./MemoryFactsView";
 import { MemoryMenuView } from "./MemoryMenuView";
 import { MemoryTimelineView } from "./MemoryTimelineView";
+import { NotificationsView } from "./NotificationsView";
 import { PlanView } from "./PlanView";
 import { PrivacyView } from "./PrivacyView";
 import { ProfileView } from "./ProfileView";
@@ -16,6 +17,7 @@ export type SettingsView =
 	| "profile"
 	| "plan"
 	| "privacy"
+	| "notifications"
 	| "system"
 	| "memory"
 	| "memory-facts"
@@ -32,6 +34,7 @@ const VIEW_TITLES: Record<SettingsView, string> = {
 	profile: "Profile",
 	plan: "Plan",
 	privacy: "Privacy",
+	notifications: "Notificações",
 	system: "System",
 	memory: "Memory",
 	"memory-facts": "Fatos Memorizados",
@@ -72,6 +75,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 				return <PlanView {...props} />;
 			case "privacy":
 				return <PrivacyView {...props} />;
+			case "notifications":
+				return <NotificationsView {...props} />;
 			case "system":
 				return <SystemView {...props} />;
 			case "memory":
