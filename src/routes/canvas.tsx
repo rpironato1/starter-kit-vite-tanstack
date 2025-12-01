@@ -3,15 +3,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { CanvasWorkspace } from "@/components/canvas";
 import { ArtifactCard } from "@/components/canvas/ArtifactCard";
+import { CanvasCommandBar } from "@/components/canvas/CanvasCommandBar";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { Header } from "@/components/layout/Header";
-import { InputBar } from "@/components/layout/InputBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
-import type { CanvasArtifact } from "@/types";
+import { useTokenUsage } from "@/hooks/useTokenUsage";
+import { cn } from "@/lib/utils";
+import type { CanvasArtifact, TokenUsage } from "@/types";
 import { parseArtifactFromMessage } from "@/utils/canvas";
 
 export const Route = createFileRoute("/canvas")({ component: CanvasPage });
@@ -22,6 +24,53 @@ interface CanvasMessage {
 	content: string;
 	image?: string;
 	artifact?: CanvasArtifact;
+	usage?: TokenUsage;
+	executionPlan?: string[];
+}
+
+const CANVAS_EXECUTION_PLAN = [
+	"Compreender o objetivo criativo e definir requisitos.",
+	"Gerar esboço estruturado do artefato com contexto adicional.",
+	"Converter o resultado em código executável no workspace.",
+];
+
+function createCanvasUsage(prompt: string): TokenUsage {
+	const base = Math.max(prompt.length, 140);
+	const inputTokens = 160 + Math.round(base * 0.35);
+	const outputTokens = 320;
+	const thinkingTokens = 120;
+	const cachedContentTokens = 48;
+	const totalTokens =
+		inputTokens +
+		outputTokens +
+		thinkingTokens -
+		Math.floor(cachedContentTokens / 2);
+
+	return {
+		inputTokens,
+		outputTokens,
+		thinkingTokens,
+		cachedContentTokens,
+		totalTokens,
+		steps: [
+			{
+				stepName: "Ideação",
+				tool: "zane-canvas-planner",
+				input: Math.round(inputTokens * 0.5),
+				output: 96,
+				think: 24,
+				cache: 0,
+			},
+			{
+				stepName: "Geração de Código",
+				tool: "zane-canvas-core",
+				input: Math.round(inputTokens * 0.5),
+				output: outputTokens,
+				think: thinkingTokens,
+				cache: cachedContentTokens,
+			},
+		],
+	};
 }
 
 const CANVAS_MODELS = [
@@ -43,6 +92,7 @@ const CANVAS_MODELS = [
 ];
 
 function CanvasPage() {
+	const { openTokenUsage } = useTokenUsage();
 	const [messages, setMessages] = useState<CanvasMessage[]>([]);
 	const [inputValue, setInputValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -119,6 +169,8 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 				role: "ai",
 				content: aiResponseContent,
 				artifact: parsedArtifact || undefined,
+				usage: createCanvasUsage(userMessage.content),
+				executionPlan: CANVAS_EXECUTION_PLAN,
 			};
 
 			setMessages((prev) => [...prev, aiMessage]);
@@ -128,6 +180,11 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 			}
 			setIsLoading(false);
 		}, 2000);
+	};
+
+	const handleSparkAutomation = () => {
+		setIsWorkspaceOpen(true);
+		inputRef.current?.focus();
 	};
 
 	const handleNewChat = () => {
@@ -143,6 +200,7 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 				onMenuClick={() => setIsSidebarOpen(true)}
 				onModelClick={() => setIsModelSelectorOpen(true)}
 				currentModel={currentModel}
+				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
 			<Sidebar
@@ -176,12 +234,13 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 			/>
 
 			{/* Main Content with Split View */}
-			<main className="flex-1 overflow-hidden relative flex">
+			<main className="relative flex flex-1 overflow-hidden">
 				{/* Chat Panel */}
 				<div
-					className={`flex-1 overflow-hidden relative transition-all duration-300 ${
-						isWorkspaceOpen ? "w-full md:w-[40%]" : "w-full"
-					}`}
+					className={cn(
+						"relative flex-1 basis-full overflow-hidden transition-all duration-300",
+						isWorkspaceOpen ? "md:basis-[45%] md:max-w-[45%]" : "md:basis-full",
+					)}
 				>
 					<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
 						<div className="max-w-3xl mx-auto py-6 space-y-6">
@@ -214,6 +273,9 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 														<AIMessage
 															content={message.content}
 															hideCodeBlocks
+															usage={message.usage}
+															executionPlan={message.executionPlan}
+															onTokenDetails={(usage) => openTokenUsage(usage)}
 														/>
 														{message.role === "ai" && message.artifact && (
 															<div className="mt-3">
@@ -242,15 +304,18 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 						</div>
 					</div>
 
-					<InputBar
+					<CanvasCommandBar
 						value={inputValue}
 						onChange={setInputValue}
 						onSend={handleSend}
 						isLoading={isLoading}
 						reasoningLevel={reasoningLevel}
 						onReasoningChange={setReasoningLevel}
+						onToggleWorkspace={() => setIsWorkspaceOpen((prev) => !prev)}
+						isWorkspaceOpen={isWorkspaceOpen}
+						onSpark={handleSparkAutomation}
 						inputRef={inputRef}
-						placeholder="Describe what you want to build..."
+						placeholder="Descreva o que você quer construir..."
 					/>
 				</div>
 

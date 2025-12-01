@@ -4,16 +4,20 @@ import { Download, Image as ImageIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
+import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { Header } from "@/components/layout/Header";
-import { InputBar } from "@/components/layout/InputBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ZaneGallery } from "@/components/photo";
+import { PhotoCommandBar } from "@/components/photo/PhotoCommandBar";
 import {
 	type AspectRatio,
 	AspectRatioSelector,
 } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
+import { useTokenUsage } from "@/hooks/useTokenUsage";
+import PromptEnhancer from "@/services/promptEnhancer";
+import type { TokenUsage } from "@/types";
 
 export const Route = createFileRoute("/photo")({ component: PhotoPage });
 
@@ -38,9 +42,57 @@ interface PhotoMessage {
 	imageUrl?: string;
 	generatedImageUrl?: string;
 	timestamp: Date;
+	usage?: TokenUsage;
+	executionPlan?: string[];
+}
+
+const PHOTO_EXECUTION_PLAN = [
+	"Interpretar o prompt e identificar os elementos principais.",
+	"Aprimorar o briefing visual com detalhes de estilo e luz.",
+	"Solicitar renderização no modelo de imagem selecionado.",
+];
+
+function createPhotoUsage(prompt: string, ratio: AspectRatio): TokenUsage {
+	const base = Math.max(prompt.length, 60);
+	const inputTokens = 80 + Math.round(base * 0.25);
+	const outputTokens = 110;
+	const thinkingTokens = 50;
+	const cachedContentTokens = ratio === "1:1" ? 20 : 32;
+	const totalTokens =
+		inputTokens +
+		outputTokens +
+		thinkingTokens -
+		Math.floor(cachedContentTokens / 2);
+
+	return {
+		inputTokens,
+		outputTokens,
+		thinkingTokens,
+		cachedContentTokens,
+		totalTokens,
+		steps: [
+			{
+				stepName: "Briefing Visual",
+				tool: "zane-photo-brief",
+				input: Math.round(inputTokens * 0.6),
+				output: 48,
+				think: 18,
+				cache: 0,
+			},
+			{
+				stepName: "Render",
+				tool: "zane-img-core",
+				input: Math.round(inputTokens * 0.4),
+				output: outputTokens,
+				think: thinkingTokens,
+				cache: cachedContentTokens,
+			},
+		],
+	};
 }
 
 function PhotoPage() {
+	const { openTokenUsage } = useTokenUsage();
 	const [messages, setMessages] = useState<PhotoMessage[]>([]);
 	const [inputValue, setInputValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -51,13 +103,13 @@ function PhotoPage() {
 	const [currentModel, setCurrentModel] = useState("Zane img Pro");
 	const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
 	const [generatedImages, setGeneratedImages] = useState<string[]>([]);
-	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "off"
-	>("soft");
 	const [attachedImage, setAttachedImage] = useState<string | null>(null);
+	const [isEnhancing, setIsEnhancing] = useState(false);
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const cameraInputRef = useRef<HTMLInputElement>(null);
+	const galleryInputRef = useRef<HTMLInputElement>(null);
 	const messageCount = messages.length;
 
 	useEffect(() => {
@@ -65,6 +117,47 @@ function PhotoPage() {
 			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 		}
 	}, [messageCount]);
+
+	const handleFileUpload = async (
+		event: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			setAttachedImage(reader.result as string);
+		};
+		reader.readAsDataURL(file);
+		event.target.value = "";
+	};
+
+	const triggerCameraCapture = () => {
+		cameraInputRef.current?.click();
+	};
+
+	const triggerFilePicker = () => {
+		galleryInputRef.current?.click();
+	};
+
+	const canEnhancePrompt =
+		(currentModel === "Zane img Lite" || currentModel === "Zane img Pro") &&
+		inputValue.trim().length > 0;
+
+	const handleEnhancePrompt = async () => {
+		if (!canEnhancePrompt || isEnhancing) return;
+		try {
+			setIsEnhancing(true);
+			const enhanced = await PromptEnhancer.enhance(inputValue);
+			if (enhanced) {
+				setInputValue(enhanced);
+			}
+		} catch (error) {
+			console.error("Prompt enhancement failed", error);
+		} finally {
+			setIsEnhancing(false);
+		}
+	};
 
 	const handleSend = async () => {
 		if (!inputValue.trim()) return;
@@ -88,9 +181,11 @@ function PhotoPage() {
 			const aiMessage: PhotoMessage = {
 				id: crypto.randomUUID(),
 				role: "assistant",
-				content: `Imagem gerada com ${currentModel} (${aspectRatio})`,
+				content: `Imagem gerada com ${currentModel} (${aspectRatio}).`,
 				generatedImageUrl: imageUrl,
 				timestamp: new Date(),
+				usage: createPhotoUsage(userMessage.content, aspectRatio),
+				executionPlan: PHOTO_EXECUTION_PLAN,
 			};
 			setMessages((prev) => [...prev, aiMessage]);
 			setGeneratedImages((prev) => [...prev, imageUrl]);
@@ -105,11 +200,27 @@ function PhotoPage() {
 
 	return (
 		<div className="h-screen flex flex-col bg-bg-main overflow-hidden">
+			<input
+				ref={cameraInputRef}
+				type="file"
+				accept="image/*"
+				capture="environment"
+				className="hidden"
+				onChange={handleFileUpload}
+			/>
+			<input
+				ref={galleryInputRef}
+				type="file"
+				accept="image/*"
+				className="hidden"
+				onChange={handleFileUpload}
+			/>
 			<Header
 				onMenuClick={() => setIsSidebarOpen(true)}
 				onModelClick={() => setModelSelectorOpen(true)}
 				currentModel={currentModel}
 				modelMenuOpen={modelSelectorOpen}
+				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
 			<ModelSelector
@@ -180,7 +291,14 @@ function PhotoPage() {
 										>
 											{message.role === "user" ? (
 												<div className="flex justify-end">
-													<div className="max-w-[85%] md:max-w-[65%] bg-bg-surface text-text-primary px-5 py-3.5 rounded-[20px] rounded-tr-[4px] border border-border-default shadow-sm">
+													<div className="max-w-[85%] md:max-w-[65%] space-y-3 rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
+														{message.imageUrl && (
+															<img
+																src={message.imageUrl}
+																alt="Referência enviada"
+																className="max-h-48 w-full rounded-xl border border-border-default object-cover"
+															/>
+														)}
 														<p className="text-[15px] leading-relaxed">
 															{message.content}
 														</p>
@@ -213,7 +331,12 @@ function PhotoPage() {
 															</div>
 														</div>
 													)}
-													<AIMessage content={message.content} />
+													<AIMessage
+														content={message.content}
+														usage={message.usage}
+														executionPlan={message.executionPlan}
+														onTokenDetails={(usage) => openTokenUsage(usage)}
+													/>
 												</div>
 											)}
 										</motion.div>
@@ -222,12 +345,8 @@ function PhotoPage() {
 										<motion.div
 											initial={{ opacity: 0, y: 10 }}
 											animate={{ opacity: 1, y: 0 }}
-											className="flex flex-col items-center gap-3"
 										>
-											<div className="w-12 h-12 rounded-full border-4 border-bg-surface border-t-accent-primary animate-spin" />
-											<span className="text-sm font-medium text-text-secondary">
-												Criando sua obra de arte...
-											</span>
+											<LoadingIndicator moduleVariant="photo" />
 										</motion.div>
 									)}
 								</>
@@ -237,18 +356,22 @@ function PhotoPage() {
 					</div>
 				</div>
 
-				<InputBar
+				<PhotoCommandBar
 					value={inputValue}
 					onChange={setInputValue}
 					onSend={handleSend}
-					onImageAttach={(url) => setAttachedImage(url)}
-					attachedImage={attachedImage}
-					onRemoveImage={() => setAttachedImage(null)}
 					isLoading={isLoading}
-					reasoningLevel={reasoningLevel}
-					onReasoningChange={setReasoningLevel}
+					aspectRatio={aspectRatio}
+					onAspectRatioChange={setAspectRatio}
+					onOpenGallery={() => setGalleryOpen(true)}
+					onPickFromCamera={triggerCameraCapture}
+					onPickFromFiles={triggerFilePicker}
+					onEnhancePrompt={handleEnhancePrompt}
+					canEnhance={canEnhancePrompt}
+					isEnhancing={isEnhancing}
+					attachedImage={attachedImage}
+					onRemoveAttachment={() => setAttachedImage(null)}
 					inputRef={inputRef}
-					placeholder="Descreva a imagem que você quer criar..."
 				/>
 			</main>
 		</div>

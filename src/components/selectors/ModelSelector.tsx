@@ -6,20 +6,33 @@ import { cn } from "@/lib/utils";
 
 const DEFAULT_MODELS = [
 	{
-		id: "claude-sonnet-4",
-		name: "Claude Sonnet 4",
-		description: "Fast and efficient",
+		id: "zane-mini",
+		name: "Zane Mini 1.0",
+		description: "Pesquisa (Google Grounding) e tarefas rápidas",
 	},
-	{ id: "claude-opus-4", name: "Claude Opus 4", description: "Most capable" },
-	{ id: "gpt-4-turbo", name: "GPT-4 Turbo", description: "OpenAI flagship" },
-	{ id: "gpt-4o", name: "GPT-4o", description: "Optimized for speed" },
-	{ id: "gemini-pro", name: "Gemini Pro", description: "Google AI" },
+	{
+		id: "zane-solo",
+		name: "Zane Solo 1.0",
+		description: "Respostas ultrarrápidas (Lite)",
+	},
+	{
+		id: "zane-pro",
+		name: "Zane Pro 1.0",
+		description: "Raciocínio complexo e tarefas longas",
+	},
+	{
+		id: "zane-ultra",
+		name: "Zane Ultra 1.0",
+		description: "Geração de Imagem (1K/2K/4K) e edições",
+		highlightClass: "text-amber-400 font-semibold",
+	},
 ];
 
 interface Model {
 	id: string;
 	name: string;
 	description: string;
+	highlightClass?: string;
 }
 
 interface ModelSelectorProps {
@@ -141,9 +154,13 @@ export function ModelSelector({
 											<div
 												className={cn(
 													"font-medium",
-													isSelected
-														? "text-accent-primary"
-														: "text-text-primary",
+													model.highlightClass ??
+														(isSelected
+															? "text-accent-primary"
+															: "text-text-primary"),
+													isSelected && model.highlightClass
+														? "drop-shadow-[0_0_8px_rgba(36,107,49,0.35)]"
+														: undefined,
 												)}
 											>
 												{model.name}

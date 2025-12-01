@@ -1,4 +1,5 @@
 import { ChevronDown, Menu } from "lucide-react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -10,6 +11,7 @@ interface HeaderProps {
 	showAvatar?: boolean;
 	onAvatarClick?: () => void;
 	className?: string;
+	rightSlot?: ReactNode;
 }
 
 export function Header({
@@ -21,6 +23,7 @@ export function Header({
 	showAvatar = true,
 	onAvatarClick,
 	className,
+	rightSlot,
 }: HeaderProps) {
 	return (
 		<header
@@ -65,18 +68,21 @@ export function Header({
 				</button>
 			)}
 
-			{/* Avatar/Settings Button (Right) */}
-			{showAvatar ? (
-				<button
-					type="button"
-					onClick={onAvatarClick}
-					className="w-10 h-10 rounded-full bg-bg-hover flex items-center justify-center text-text-primary font-bold text-sm hover:bg-bg-hover/80 transition-colors"
-				>
-					U
-				</button>
-			) : (
-				<div className="w-10" /> /* Spacer */
-			)}
+			{/* Avatar/Actions */}
+			<div className="flex items-center gap-2">
+				{rightSlot}
+				{showAvatar ? (
+					<button
+						type="button"
+						onClick={onAvatarClick}
+						className="flex h-10 w-10 items-center justify-center rounded-full bg-bg-hover text-sm font-bold text-text-primary transition-colors hover:bg-bg-hover/80"
+					>
+						U
+					</button>
+				) : (
+					<div className="w-10" />
+				)}
+			</div>
 		</header>
 	);
 }

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AttachMenu } from "@/components/selectors/AttachMenu";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
 import { cn } from "@/lib/utils";
+import { CommandBarBase } from "./CommandBarBase";
 
 type ReasoningLevel = "soft" | "medium" | "max" | "off";
 
@@ -73,112 +74,101 @@ export function InputBar({
 		}
 	};
 
+	const attachmentPreview = attachedImage ? (
+		<div className="px-3 pt-2 pb-1">
+			<div className="relative inline-block">
+				<img
+					src={attachedImage}
+					alt="Anexo"
+					className="h-20 w-20 rounded-lg border border-border-default object-cover"
+				/>
+				<button
+					type="button"
+					onClick={onRemoveImage}
+					className="absolute -right-2 -top-2 rounded-full bg-bg-hover p-1 text-text-secondary transition-colors hover:text-red-400"
+					aria-label="Remover imagem"
+				>
+					<X className="h-4 w-4" />
+				</button>
+			</div>
+		</div>
+	) : null;
+
 	return (
-		<footer
-			className={cn(
-				"absolute bottom-0 left-0 w-full p-4 pb-6 z-20",
-				"bg-gradient-to-t from-bg-main via-bg-main/95 to-transparent backdrop-blur-[2px]",
-				className,
-			)}
-		>
-			<div className="relative bg-bg-surface rounded-[32px] p-2 flex flex-col shadow-lg border border-border-default ring-1 ring-white/5 max-w-3xl mx-auto w-full">
-				{/* Attached Image Preview */}
-				{attachedImage && (
-					<div className="px-3 pt-2 pb-1">
-						<div className="relative inline-block">
-							<img
-								src={attachedImage}
-								alt="Attached"
-								className="w-20 h-20 object-cover rounded-lg border border-border-default"
-							/>
-							<button
-								type="button"
-								onClick={onRemoveImage}
-								className="absolute -top-2 -right-2 p-1 bg-bg-hover rounded-full text-text-secondary hover:text-red-400 transition-colors"
-								aria-label="Remover imagem"
-							>
-								<X className="w-4 h-4" />
-							</button>
-						</div>
-					</div>
-				)}
-
-				<div className="flex items-center">
-					{/* Attach Menu Button */}
-					<div className="relative">
-						<button
-							type="button"
-							onClick={() => setAttachMenuOpen(!attachMenuOpen)}
-							className={cn(
-								"p-3 rounded-full transition-all duration-300",
-								attachMenuOpen
-									? "bg-bg-hover text-text-primary rotate-45"
-									: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
-							)}
-							aria-label="Anexar arquivo"
-						>
-							<Plus className="w-6 h-6" />
-						</button>
-						<AttachMenu
-							isOpen={attachMenuOpen}
-							onClose={() => setAttachMenuOpen(false)}
-							onSelect={handleAttachSelect}
-						/>
-					</div>
-
-					{/* Divider */}
-					<div className="w-px h-5 bg-border-default mx-0.5" />
-
-					{/* Reasoning Selector */}
-					<ReasoningSelector
-						value={reasoningLevel}
-						onChange={onReasoningChange}
-					/>
-
-					{/* Text Input */}
-					<textarea
-						ref={inputRef}
-						value={value}
-						onChange={(e) => onChange(e.target.value)}
-						onKeyDown={handleKeyDown}
-						placeholder={placeholder}
-						disabled={isLoading}
-						rows={1}
-						className={cn(
-							"flex-1 bg-transparent border-none outline-none resize-none",
-							"text-text-primary placeholder-text-secondary",
-							"px-3 text-lg h-12 min-w-0 py-3",
-						)}
-					/>
-
-					{/* Mic Button */}
+		<CommandBarBase attachmentPreview={attachmentPreview} className={className}>
+			<div className="flex items-center">
+				{/* Attach Menu Button */}
+				<div className="relative">
 					<button
 						type="button"
-						onClick={onMicClick}
-						className="p-3 rounded-full hover:bg-bg-hover text-text-secondary transition-colors"
-						aria-label="Gravar áudio"
-					>
-						<Mic className="w-5 h-5" />
-					</button>
-
-					{/* Send Button */}
-					<motion.button
-						type="button"
-						onClick={onSend}
-						disabled={!canSend}
-						whileTap={{ scale: 0.95 }}
+						onClick={() => setAttachMenuOpen(!attachMenuOpen)}
 						className={cn(
-							"p-3 rounded-full transition-all duration-200",
-							canSend
-								? "bg-accent-primary text-white hover:bg-accent-hover shadow-lg shadow-green-900/20"
-								: "bg-bg-hover text-text-secondary cursor-not-allowed opacity-50",
+							"rounded-full p-3 transition-all duration-300",
+							attachMenuOpen
+								? "rotate-45 bg-bg-hover text-text-primary"
+								: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
 						)}
-						aria-label="Enviar mensagem"
+						aria-label="Anexar arquivo"
 					>
-						<Send className="w-5 h-5 ml-0.5" />
-					</motion.button>
+						<Plus className="h-6 w-6" />
+					</button>
+					<AttachMenu
+						isOpen={attachMenuOpen}
+						onClose={() => setAttachMenuOpen(false)}
+						onSelect={handleAttachSelect}
+					/>
 				</div>
+
+				{/* Divider */}
+				<div className="mx-0.5 h-5 w-px bg-border-default" />
+
+				{/* Reasoning Selector */}
+				<ReasoningSelector
+					value={reasoningLevel}
+					onChange={onReasoningChange}
+				/>
+
+				{/* Text Input */}
+				<textarea
+					ref={inputRef}
+					value={value}
+					onChange={(e) => onChange(e.target.value)}
+					onKeyDown={handleKeyDown}
+					placeholder={placeholder}
+					disabled={isLoading}
+					rows={1}
+					className={cn(
+						"flex-1 resize-none border-none bg-transparent px-3 py-3 text-lg text-text-primary outline-none placeholder:text-text-secondary",
+					)}
+				/>
+
+				{/* Mic Button */}
+				<button
+					type="button"
+					onClick={onMicClick}
+					className="rounded-full p-3 text-text-secondary transition-colors hover:bg-bg-hover"
+					aria-label="Gravar áudio"
+				>
+					<Mic className="h-5 w-5" />
+				</button>
+
+				{/* Send Button */}
+				<motion.button
+					type="button"
+					onClick={onSend}
+					disabled={!canSend}
+					whileTap={{ scale: 0.95 }}
+					className={cn(
+						"rounded-full p-3 transition-all duration-200",
+						canSend
+							? "bg-accent-primary text-white shadow-lg shadow-green-900/20 hover:bg-accent-hover"
+							: "cursor-not-allowed bg-bg-hover text-text-secondary opacity-50",
+					)}
+					aria-label="Enviar mensagem"
+				>
+					<Send className="ml-0.5 h-5 w-5" />
+				</motion.button>
 			</div>
-		</footer>
+		</CommandBarBase>
 	);
 }

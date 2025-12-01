@@ -10,6 +10,8 @@ import { InputBar } from "@/components/layout/InputBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
+import { useTokenUsage } from "@/hooks/useTokenUsage";
+import type { TokenUsage } from "@/types";
 
 export const Route = createFileRoute("/")({ component: ChatPage });
 
@@ -19,9 +21,54 @@ interface ChatMessage {
 	content: string;
 	imageUrl?: string;
 	timestamp: Date;
+	usage?: TokenUsage;
+	executionPlan?: string[];
+}
+
+const PLAN_STEPS = [
+	"Interpretar o contexto e identificar o objetivo central.",
+	"Selecionar conhecimentos relevantes do repositório Zane.",
+	"Gerar resposta estruturada com evidências e tom natural.",
+];
+
+function createMockUsage(prompt: string): TokenUsage {
+	const normalizedLength = Math.max(prompt.length, 120);
+	const inputTokens = 120 + Math.round(normalizedLength * 0.2);
+	const thinkingTokens = 80;
+	const outputTokens = 240;
+	const cachedContentTokens = 36;
+	const totalTokens =
+		inputTokens + outputTokens + thinkingTokens - cachedContentTokens / 2;
+
+	return {
+		inputTokens,
+		outputTokens,
+		thinkingTokens,
+		cachedContentTokens,
+		totalTokens,
+		steps: [
+			{
+				stepName: "Planner",
+				tool: "zane-planner",
+				input: Math.round(inputTokens * 0.6),
+				output: 64,
+				think: 24,
+				cache: 0,
+			},
+			{
+				stepName: "Responder",
+				tool: "zane-core",
+				input: Math.round(inputTokens * 0.4),
+				output: outputTokens,
+				think: thinkingTokens,
+				cache: cachedContentTokens,
+			},
+		],
+	};
 }
 
 function ChatPage() {
+	const { openTokenUsage } = useTokenUsage();
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [inputValue, setInputValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -37,10 +84,12 @@ function ChatPage() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
-	// Auto-scroll to bottom when new messages arrive
 	useEffect(() => {
+		if (messages.length === 0) {
+			return;
+		}
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, []);
+	}, [messages]);
 
 	const handleSend = async () => {
 		if (!inputValue.trim() && !attachedImage) return;
@@ -63,8 +112,32 @@ function ChatPage() {
 			const aiMessage: ChatMessage = {
 				id: crypto.randomUUID(),
 				role: "assistant",
-				content: `This is a simulated response to: "${userMessage.content}"\n\nIn production, this would be powered by Claude via the Anthropic API.`,
+				content: `Este é um exemplo de resposta para: "${userMessage.content}".\n\nNa versão completa, os agentes Zane analisariam sua solicitação, fariam grounding e entregariam um plano estruturado.`,
 				timestamp: new Date(),
+				usage: createMockUsage(userMessage.content),
+				executionPlan: PLAN_STEPS,
+			};
+			setMessages((prev) => [...prev, aiMessage]);
+			setIsLoading(false);
+		}, 1500);
+	};
+
+	const handleRetry = () => {
+		if (messages.length === 0) return;
+		const lastUserMessage = [...messages]
+			.reverse()
+			.find((msg) => msg.role === "user");
+		if (!lastUserMessage) return;
+
+		setIsLoading(true);
+		setTimeout(() => {
+			const aiMessage: ChatMessage = {
+				id: crypto.randomUUID(),
+				role: "assistant",
+				content: `Reprocessando o pedido relacionado a "${lastUserMessage.content}" com nova perspectiva.`,
+				timestamp: new Date(),
+				usage: createMockUsage(lastUserMessage.content),
+				executionPlan: PLAN_STEPS,
 			};
 			setMessages((prev) => [...prev, aiMessage]);
 			setIsLoading(false);
@@ -96,6 +169,7 @@ function ChatPage() {
 				onMenuClick={() => setIsSidebarOpen(true)}
 				onModelClick={() => setIsModelSelectorOpen(true)}
 				currentModel={currentModel}
+				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
 			{/* Sidebar */}
@@ -150,7 +224,16 @@ function ChatPage() {
 													imageUrl={message.imageUrl}
 												/>
 											) : (
-												<AIMessage content={message.content} />
+												<AIMessage
+													content={message.content}
+													usage={message.usage}
+													executionPlan={message.executionPlan}
+													onTokenDetails={(usage) => openTokenUsage(usage)}
+													onRetry={handleRetry}
+													isLastMessage={
+														messages[messages.length - 1]?.id === message.id
+													}
+												/>
 											)}
 										</motion.div>
 									))}
@@ -159,7 +242,7 @@ function ChatPage() {
 											initial={{ opacity: 0, y: 10 }}
 											animate={{ opacity: 1, y: 0 }}
 										>
-											<LoadingIndicator />
+											<LoadingIndicator moduleVariant="chat" />
 										</motion.div>
 									)}
 								</>

@@ -1,5 +1,6 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*", "vite.config.ts", "env.d.ts"],
+  "exclude": ["prototipos-zane"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
