@@ -8,8 +8,9 @@ import {
 	ThumbsDown,
 	ThumbsUp,
 } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { ZaneBadge } from "@/components/ui/zane-badge";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 import type { TokenUsage } from "@/types";
 import { MessageRenderer } from "./MessageRenderer";
@@ -39,6 +40,39 @@ interface AIMessageProps {
 	isLastMessage?: boolean;
 }
 
+interface ActionButtonProps {
+	icon: ReactNode;
+	label: string;
+	onClick?: () => void;
+	active?: boolean;
+}
+
+function ActionButton({
+	icon,
+	label,
+	onClick,
+	active = false,
+}: ActionButtonProps) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			title={label}
+			aria-label={label}
+			disabled={!onClick}
+			className={cn(
+				"flex h-9 w-9 items-center justify-center rounded-xl border border-border-default/40 text-text-secondary transition-all",
+				"bg-bg-surface/60 backdrop-blur hover:bg-bg-hover/50 hover:text-text-primary",
+				active &&
+					"bg-accent-primary/20 text-accent-primary border-accent-primary/40",
+				!onClick && "cursor-not-allowed opacity-40",
+			)}
+		>
+			<span className="pointer-events-none">{icon}</span>
+		</button>
+	);
+}
+
 export function AIMessage({
 	content,
 	timestamp,
@@ -56,6 +90,7 @@ export function AIMessage({
 	isLastMessage = false,
 }: AIMessageProps) {
 	const [copied, setCopied] = useState(false);
+	const { t } = useTranslation();
 
 	const handleCopy = async () => {
 		try {
@@ -70,200 +105,164 @@ export function AIMessage({
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, x: -20 }}
-			animate={{ opacity: 1, x: 0 }}
-			transition={{ type: "spring", stiffness: 500, damping: 30 }}
-			className="group mr-auto max-w-[90%] md:max-w-2xl"
+			initial={{ opacity: 0, y: 10 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ type: "spring", stiffness: 400, damping: 35 }}
+			className="flex w-full justify-start"
 		>
-			{/* Header with Zane AI badge */}
-			<div className="mb-2 pl-1">
-				<ZaneBadge variant="default" />
-			</div>
+			<div className="w-full max-w-3xl space-y-4">
+				<div className="pl-1">
+					<ZaneBadge variant="default" />
+				</div>
 
-			{/* Message content */}
-			<div className="px-1">
 				{isLoading ? (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center gap-2 pl-1 text-text-secondary">
 						<motion.span
-							animate={{ opacity: [0.4, 1, 0.4] }}
-							transition={{ duration: 1.5, repeat: Infinity }}
-							className="h-2 w-2 rounded-full bg-accent-primary"
+							animate={{ opacity: [0.3, 1, 0.3] }}
+							transition={{ duration: 1.2, repeat: Infinity }}
+							className="h-2.5 w-2.5 rounded-full bg-accent-primary"
 						/>
 						<motion.span
-							animate={{ opacity: [0.4, 1, 0.4] }}
-							transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-							className="h-2 w-2 rounded-full bg-accent-primary"
+							animate={{ opacity: [0.3, 1, 0.3] }}
+							transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
+							className="h-2.5 w-2.5 rounded-full bg-accent-primary"
 						/>
 						<motion.span
-							animate={{ opacity: [0.4, 1, 0.4] }}
-							transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-							className="h-2 w-2 rounded-full bg-accent-primary"
+							animate={{ opacity: [0.3, 1, 0.3] }}
+							transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
+							className="h-2.5 w-2.5 rounded-full bg-accent-primary"
 						/>
 					</div>
 				) : (
 					<>
-						{/* Execution Plan */}
 						{executionPlan && executionPlan.length > 0 && (
 							<TodoListPanel items={executionPlan} />
 						)}
 
-						{/* Main Content */}
-						<MessageRenderer
-							content={content}
-							hideCodeBlocks={hideCodeBlocks}
-						/>
+						<div className="space-y-4">
+							<MessageRenderer
+								content={content}
+								hideCodeBlocks={hideCodeBlocks}
+							/>
 
-						{/* Generated Image */}
-						{image && (
-							<div className="mt-3">
-								<img
-									src={image}
-									alt="Imagem gerada"
-									className="rounded-lg max-w-full border border-border-default"
-								/>
-							</div>
-						)}
+							{image && (
+								<div className="overflow-hidden rounded-3xl border border-border-default/60">
+									<img
+										src={image}
+										alt="Imagem gerada"
+										className="h-auto w-full object-cover"
+									/>
+								</div>
+							)}
+						</div>
 
-						{/* Sources Chips */}
 						{sources && sources.length > 0 && (
-							<div className="mt-4 pt-3 border-t border-border-default/50">
+							<div className="space-y-3 rounded-2xl border border-border-default/60 bg-bg-surface/60 p-4">
+								<div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
+									<span>{t.message.sources}</span>
+									<div className="h-px flex-1 bg-border-default/60" />
+								</div>
 								<div className="flex flex-wrap gap-2">
 									{sources.map((source, idx) => {
 										const sourceUrl = source.url || source.uri;
-										const ChipContent = (
-											<>
-												{/* Green Dot */}
-												<span className="w-1.5 h-1.5 rounded-full bg-accent-primary shrink-0" />
-												{/* Title */}
-												<span className="truncate max-w-[180px]">
-													{source.title}
-												</span>
-												{/* External Link Icon (visible on hover if URL exists) */}
-												{sourceUrl && (
-													<ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-												)}
-											</>
+										const wrapperClasses = cn(
+											"group inline-flex items-center gap-2 rounded-full border border-border-default/60 bg-bg-modal/70 px-3 py-1.5 text-text-secondary",
+											"hover:border-accent-primary/40 hover:text-text-primary",
 										);
-
-										if (sourceUrl) {
-											return (
-												<a
-													key={`source-${source.title}-${idx}`}
-													href={sourceUrl}
-													target="_blank"
-													rel="noopener noreferrer"
-													className={cn(
-														"group inline-flex items-center gap-1.5",
-														"text-xs px-2.5 py-1 rounded-full",
-														"bg-bg-surface/50 backdrop-blur-sm",
-														"text-text-secondary",
-														"border border-border-default",
-														"hover:bg-bg-hover hover:text-text-primary",
-														"hover:shadow-[0_0_8px_rgba(36,107,49,0.3)]",
-														"transition-all duration-200",
-														"no-underline cursor-pointer",
-													)}
-												>
-													{ChipContent}
-												</a>
-											);
-										}
-
-										return (
+										return sourceUrl ? (
+											<a
+												key={`source-${source.title}-${idx}`}
+												href={sourceUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												className={wrapperClasses}
+											>
+												<div className="flex items-center gap-2">
+													<span className="h-1.5 w-1.5 rounded-full bg-accent-primary shadow-[0_0_6px_rgba(36,107,49,0.6)]" />
+													<span className="text-xs text-text-primary/80">
+														{source.title}
+													</span>
+													<ExternalLink className="h-3 w-3 text-text-secondary/70 transition-opacity duration-200 group-hover:opacity-100" />
+												</div>
+											</a>
+										) : (
 											<span
 												key={`source-${source.title}-${idx}`}
-												className={cn(
-													"group inline-flex items-center gap-1.5",
-													"text-xs px-2.5 py-1 rounded-full",
-													"bg-bg-surface/50 backdrop-blur-sm",
-													"text-text-secondary",
-													"border border-border-default",
-												)}
+												className={wrapperClasses}
 											>
-												{ChipContent}
+												<div className="flex items-center gap-2">
+													<span className="h-1.5 w-1.5 rounded-full bg-accent-primary shadow-[0_0_6px_rgba(36,107,49,0.6)]" />
+													<span className="text-xs text-text-primary/80">
+														{source.title}
+													</span>
+												</div>
 											</span>
 										);
 									})}
 								</div>
 							</div>
 						)}
+
+						{timestamp && (
+							<time className="block text-xs text-text-secondary">
+								{timestamp.toLocaleTimeString([], {
+									hour: "2-digit",
+									minute: "2-digit",
+								})}
+							</time>
+						)}
+
+						<div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+							<div className="flex items-center gap-1.5">
+								<ActionButton
+									icon={
+										copied ? (
+											<Check className="h-4 w-4" />
+										) : (
+											<Copy className="h-4 w-4" />
+										)
+									}
+									label={copied ? t.message.copied : t.message.copy}
+									onClick={handleCopy}
+									active={copied}
+								/>
+								<ActionButton
+									icon={<ThumbsUp className="h-4 w-4" />}
+									label={t.message.like}
+									onClick={onLike}
+								/>
+								<ActionButton
+									icon={<ThumbsDown className="h-4 w-4" />}
+									label={t.message.dislike}
+									onClick={onDislike}
+								/>
+								{isLastMessage && onRetry && (
+									<ActionButton
+										icon={<RotateCcw className="h-4 w-4" />}
+										label={t.message.retry}
+										onClick={onRetry}
+									/>
+								)}
+							</div>
+
+							{onTokenDetails && usage && (
+								<button
+									type="button"
+									onClick={() => onTokenDetails(usage)}
+									className="flex items-center gap-2 rounded-xl border border-border-default/60 bg-bg-surface/60 px-3 py-1.5 text-xs text-text-secondary transition-colors hover:border-accent-primary/40 hover:text-text-primary"
+									title={t.message.tokenUsage}
+									aria-label={t.message.tokenUsage}
+								>
+									<Activity className="h-4 w-4" />
+									<span className="font-mono text-[11px]">
+										{usage.totalTokens.toLocaleString()}
+									</span>
+								</button>
+							)}
+						</div>
 					</>
 				)}
-
-				{timestamp && (
-					<time className="mt-2 block text-xs text-text-secondary">
-						{timestamp.toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
-					</time>
-				)}
 			</div>
-
-			{/* Action buttons footer */}
-			{!isLoading && (
-				<div className="mt-3 flex items-center justify-between opacity-50 hover:opacity-100 transition-opacity duration-200">
-					<div className="flex items-center gap-1">
-						<button
-							type="button"
-							onClick={handleCopy}
-							className={cn(
-								"flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary",
-								copied && "text-accent-primary",
-							)}
-							aria-label={copied ? "Copiado" : "Copiar mensagem"}
-						>
-							{copied ? (
-								<Check className="h-4 w-4" />
-							) : (
-								<Copy className="h-4 w-4" />
-							)}
-						</button>
-
-						<button
-							type="button"
-							onClick={onLike}
-							className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary"
-							aria-label="Gostei"
-						>
-							<ThumbsUp className="h-4 w-4" />
-						</button>
-
-						<button
-							type="button"
-							onClick={onDislike}
-							className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary"
-							aria-label="Não gostei"
-						>
-							<ThumbsDown className="h-4 w-4" />
-						</button>
-
-						{isLastMessage && onRetry && (
-							<button
-								type="button"
-								onClick={onRetry}
-								className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary"
-								aria-label="Tentar novamente"
-							>
-								<RotateCcw className="h-4 w-4" />
-							</button>
-						)}
-					</div>
-
-					{/* Token Usage Button */}
-					{onTokenDetails && usage && (
-						<button
-							type="button"
-							onClick={() => onTokenDetails(usage)}
-							className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-text-secondary hover:bg-bg-hover hover:text-text-primary"
-							aria-label="Ver detalhes de tokens"
-						>
-							<Activity className="h-4 w-4" />
-							<span>{usage.totalTokens.toLocaleString()}</span>
-						</button>
-					)}
-				</div>
-			)}
 		</motion.div>
 	);
 }

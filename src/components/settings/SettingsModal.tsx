@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "@/hooks/useI18n";
 import { MainView } from "./MainView";
 import { MemoryFactsView } from "./MemoryFactsView";
 import { MemoryMenuView } from "./MemoryMenuView";
@@ -29,22 +30,37 @@ interface SettingsModalProps {
 	onClose: () => void;
 }
 
-const VIEW_TITLES: Record<SettingsView, string> = {
-	main: "Settings",
-	profile: "Profile",
-	plan: "Plan",
-	privacy: "Privacy",
-	notifications: "Notificações",
-	system: "System",
-	memory: "Memory",
-	"memory-facts": "Fatos Memorizados",
-	"memory-timeline": "Linha do Tempo",
-	refinement: "Refinamento",
-};
-
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+	const { t } = useTranslation();
 	const [viewStack, setViewStack] = useState<SettingsView[]>(["main"]);
 	const [direction, setDirection] = useState<1 | -1>(1);
+
+	const viewTitles = useMemo<Record<SettingsView, string>>(
+		() => ({
+			main: t.settings.title,
+			profile: t.profile.title,
+			plan: t.plan.title,
+			privacy: t.privacy.title,
+			notifications: t.notifications.title,
+			system: t.system.title,
+			memory: t.settings.memory,
+			"memory-facts": t.memory.factsTitle,
+			"memory-timeline": t.memory.timelineTitle,
+			refinement: t.settings.refinement,
+		}),
+		[
+			t.memory.factsTitle,
+			t.memory.timelineTitle,
+			t.notifications.title,
+			t.plan.title,
+			t.privacy.title,
+			t.profile.title,
+			t.settings.memory,
+			t.settings.refinement,
+			t.settings.title,
+			t.system.title,
+		],
+	);
 
 	const currentView = viewStack[viewStack.length - 1];
 	const canGoBack = viewStack.length > 1;
@@ -115,7 +131,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 					)}
 				</button>
 				<h2 className="text-lg font-semibold text-text-primary">
-					{VIEW_TITLES[currentView]}
+					{viewTitles[currentView]}
 				</h2>
 				<div className="w-9 h-9" />
 			</header>

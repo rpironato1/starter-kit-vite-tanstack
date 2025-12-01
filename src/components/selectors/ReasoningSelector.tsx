@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Brain, Check, CircleOff, Sparkles, Zap } from "lucide-react";
-import { useEffect, useRef, useState, type ComponentType } from "react";
+import { Activity, Brain, Check, CircleOff, Zap } from "lucide-react";
+import { type ComponentType, useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
@@ -41,14 +41,14 @@ const REASONING_LEVELS_CONFIG: Record<ReasoningLevel, ReasoningLevelConfig> = {
 		descriptionKey: "medium",
 		color: "text-yellow-400",
 		bgColor: "bg-yellow-500/10",
-		icon: Brain,
+		icon: Activity,
 	},
 	max: {
 		labelKey: "max",
 		descriptionKey: "max",
 		color: "text-[#15803d]",
 		bgColor: "bg-[#15803d]/10",
-		icon: Sparkles,
+		icon: Brain,
 	},
 };
 
@@ -135,8 +135,7 @@ function DropdownSelector({
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { t } = useTranslation();
-	const selected = REASONING_LEVELS_CONFIG[value];
-	const Icon = selected.icon;
+	const hasEnhancedReasoning = value !== "soft";
 
 	function getLabel(level: ReasoningLevel): string {
 		if (level === "off") return t.reasoning.off;
@@ -169,7 +168,7 @@ function DropdownSelector({
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 			document.removeEventListener("keydown", handleKeyDown);
-		};${t.reasoning.title}: ${getLabel(value)
+		};
 	}, [isOpen]);
 
 	return (
@@ -179,12 +178,23 @@ function DropdownSelector({
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
 				className={cn(
-					"p-2.5 rounded-full transition-colors group",
-					"hover:bg-bg-hover",
+					"relative rounded-full p-2.5 transition-colors",
+					"bg-bg-surface/70 hover:bg-bg-hover",
 				)}
-				title={`Raciocínio: ${selected.label}`}
+				title={`${t.reasoning.title}: ${getLabel(value)}`}
+				aria-expanded={isOpen}
 			>
-				<Icon className={cn("size-5 scale-x-[-1]", selected.color)} />
+				<Brain
+					className={cn(
+						"size-5 transition-colors",
+						hasEnhancedReasoning
+							? "text-accent-textHighlight"
+							: "text-text-secondary",
+					)}
+				/>
+				{hasEnhancedReasoning && (
+					<span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent-textHighlight shadow-[0_0_8px_rgba(238,207,161,0.6)] ring-2 ring-bg-surface" />
+				)}
 			</button>
 
 			{/* Popup Menu - Opens Upward */}
@@ -215,7 +225,7 @@ function DropdownSelector({
 						>
 							{/* Header */}
 							<div className="px-3 py-2 flex items-center gap-2">
-								<Brain className="size-4 text-text-secondary scale-x-[-1]" />
+								<Brain className="size-4 text-text-secondary" />
 								<span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
 									{t.reasoning.title}
 								</span>

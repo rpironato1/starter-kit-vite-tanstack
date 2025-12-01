@@ -4,6 +4,7 @@ import type { RefObject } from "react";
 import { useState } from "react";
 import { AttachMenu } from "@/components/selectors/AttachMenu";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 import { CommandBarBase } from "./CommandBarBase";
 
@@ -43,8 +44,10 @@ export function InputBar({
 	className,
 }: InputBarProps) {
 	const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+	const { t } = useTranslation();
 	const hasContent = value.trim().length > 0 || !!attachedImage;
 	const canSend = hasContent && !isLoading;
+	const resolvedPlaceholder = placeholder ?? t.input.placeholder;
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey && canSend) {
@@ -75,100 +78,105 @@ export function InputBar({
 	};
 
 	const attachmentPreview = attachedImage ? (
-		<div className="px-3 pt-2 pb-1">
-			<div className="relative inline-block">
-				<img
-					src={attachedImage}
-					alt="Anexo"
-					className="h-20 w-20 rounded-lg border border-border-default object-cover"
-				/>
-				<button
-					type="button"
-					onClick={onRemoveImage}
-					className="absolute -right-2 -top-2 rounded-full bg-bg-hover p-1 text-text-secondary transition-colors hover:text-red-400"
-					aria-label="Remover imagem"
-				>
-					<X className="h-4 w-4" />
-				</button>
+		<div className="relative inline-flex items-center gap-3 rounded-2xl border border-border-default bg-bg-modal/70 p-2 pr-3">
+			<img
+				src={attachedImage}
+				alt="Imagem anexada"
+				className="h-16 w-16 rounded-xl border border-border-default/60 object-cover"
+			/>
+			<div className="min-w-0">
+				<p className="text-[11px] uppercase tracking-wider text-text-secondary">
+					{t.input.attached}
+				</p>
+				<p className="text-sm font-medium text-text-primary truncate">
+					Pré-visualização pronta
+				</p>
 			</div>
+			<button
+				type="button"
+				onClick={onRemoveImage}
+				className="rounded-full bg-bg-hover p-1 text-text-secondary transition-colors hover:text-red-400"
+				aria-label="Remover imagem"
+			>
+				<X className="h-4 w-4" />
+			</button>
 		</div>
 	) : null;
 
 	return (
-		<CommandBarBase attachmentPreview={attachmentPreview} className={className}>
-			<div className="flex items-center">
-				{/* Attach Menu Button */}
-				<div className="relative">
-					<button
-						type="button"
-						onClick={() => setAttachMenuOpen(!attachMenuOpen)}
-						className={cn(
-							"rounded-full p-3 transition-all duration-300",
-							attachMenuOpen
-								? "rotate-45 bg-bg-hover text-text-primary"
-								: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
-						)}
-						aria-label="Anexar arquivo"
-					>
-						<Plus className="h-6 w-6" />
-					</button>
-					<AttachMenu
-						isOpen={attachMenuOpen}
-						onClose={() => setAttachMenuOpen(false)}
-						onSelect={handleAttachSelect}
+		<CommandBarBase
+			attachmentPreview={attachmentPreview}
+			className={className}
+			leadingSlot={
+				<>
+					<div className="relative">
+						<button
+							type="button"
+							onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+							className={cn(
+								"rounded-full p-3 transition-all duration-300",
+								attachMenuOpen
+									? "rotate-45 bg-bg-hover text-text-primary"
+									: "text-text-secondary hover:bg-bg-hover hover:text-text-primary",
+							)}
+							aria-label={t.input.files}
+							aria-expanded={attachMenuOpen}
+						>
+							<Plus className="h-6 w-6" />
+						</button>
+						<AttachMenu
+							isOpen={attachMenuOpen}
+							onClose={() => setAttachMenuOpen(false)}
+							onSelect={handleAttachSelect}
+						/>
+					</div>
+					<span className="hidden h-5 w-px bg-border-default sm:block" />
+					<ReasoningSelector
+						value={reasoningLevel}
+						onChange={onReasoningChange}
 					/>
-				</div>
-
-				{/* Divider */}
-				<div className="mx-0.5 h-5 w-px bg-border-default" />
-
-				{/* Reasoning Selector */}
-				<ReasoningSelector
-					value={reasoningLevel}
-					onChange={onReasoningChange}
-				/>
-
-				{/* Text Input */}
+				</>
+			}
+			primarySlot={
 				<textarea
 					ref={inputRef}
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
 					onKeyDown={handleKeyDown}
-					placeholder={placeholder}
+					placeholder={resolvedPlaceholder}
 					disabled={isLoading}
 					rows={1}
-					className={cn(
-						"flex-1 resize-none border-none bg-transparent px-3 py-3 text-lg text-text-primary outline-none placeholder:text-text-secondary",
-					)}
+					className="h-full w-full resize-none border border-transparent bg-transparent px-3 py-3 text-base text-text-primary outline-none placeholder:text-text-secondary md:text-lg"
 				/>
-
-				{/* Mic Button */}
-				<button
-					type="button"
-					onClick={onMicClick}
-					className="rounded-full p-3 text-text-secondary transition-colors hover:bg-bg-hover"
-					aria-label="Gravar áudio"
-				>
-					<Mic className="h-5 w-5" />
-				</button>
-
-				{/* Send Button */}
-				<motion.button
-					type="button"
-					onClick={onSend}
-					disabled={!canSend}
-					whileTap={{ scale: 0.95 }}
-					className={cn(
-						"rounded-full p-3 transition-all duration-200 hover:scale-105",
-						canSend
-							? "bg-accent-primary text-white shadow-lg shadow-accent-primary/20 hover:bg-accent-hover"
-							: "cursor-not-allowed bg-bg-hover text-text-secondary opacity-50",
-					)}
-					aria-label="Enviar mensagem"
-				>
-					<Send className="ml-0.5 h-5 w-5" />
-				</motion.button>
-			</div>
-		</CommandBarBase>
+			}
+			trailingSlot={
+				<>
+					<button
+						type="button"
+						onClick={onMicClick}
+						className="rounded-full p-3 text-text-secondary transition-colors hover:bg-bg-hover"
+						aria-label="Gravar áudio"
+					>
+						<Mic className="h-5 w-5" />
+					</button>
+					<motion.button
+						type="button"
+						onClick={onSend}
+						disabled={!canSend}
+						whileTap={{ scale: 0.95 }}
+						className={cn(
+							"rounded-full p-3 transition-all duration-200",
+							canSend
+								? "bg-accent-primary text-white shadow-lg shadow-accent-primary/20 hover:bg-accent-hover"
+								: "cursor-not-allowed bg-bg-hover text-text-secondary opacity-50",
+						)}
+						aria-label="Enviar mensagem"
+					>
+						<Send className="ml-0.5 h-5 w-5" />
+					</motion.button>
+				</>
+			}
+			footerSlot={<span>{t.input.thinking}</span>}
+		/>
 	);
 }

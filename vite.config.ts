@@ -1,12 +1,13 @@
+import path from "node:path";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
-const config = defineConfig({
+	const config = defineConfig({
 	server: {
 		port: 3027,
 		strictPort: true,
@@ -28,6 +29,28 @@ const config = defineConfig({
 			},
 		}),
 	],
+	resolve: {
+		alias: [
+			{
+				find: "tiny-warning",
+				replacement: path.resolve("./src/lib/tinyWarning.ts"),
+			},
+			{
+				find: "tiny-warning/dist/tiny-warning.cjs.js",
+				replacement: path.resolve("./src/lib/tinyWarning.ts"),
+			},
+		],
+	},
+	test: {
+		environment: "jsdom",
+		setupFiles: ["./vitest.setup.ts"],
+		passWithNoTests: true,
+		server: {
+			deps: {
+				inline: ["tiny-warning"],
+			},
+		},
+	},
 });
 
 export default config;

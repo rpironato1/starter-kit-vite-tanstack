@@ -33,32 +33,31 @@ export function DocCommandBar({
 
 	const attachmentPreview =
 		attachedFiles.length > 0 ? (
-			<div className="px-3 pt-2 pb-1">
-				<div className="flex flex-wrap gap-2">
-					{attachedFiles.map((file) => (
-						<div
-							key={file.id}
-							className="group flex items-center gap-2 rounded-xl border border-border-default bg-bg-modal/70 px-3 py-2 text-sm text-text-primary"
+			<div className="flex flex-wrap gap-2">
+				{attachedFiles.map((file) => (
+					<div
+						key={file.id}
+						className="group inline-flex items-center gap-2 rounded-2xl border border-border-default bg-bg-modal/70 px-3 py-2 text-sm text-text-primary"
+					>
+						<FileText className="h-4 w-4 text-blue-400" />
+						<span className="max-w-[160px] truncate">{file.name}</span>
+						<button
+							type="button"
+							onClick={() => onRemoveFile(file.id)}
+							className="rounded-full bg-bg-hover p-1 text-text-secondary transition-colors hover:text-red-400"
+							aria-label={`Remover ${file.name}`}
 						>
-							<FileText className="h-4 w-4 text-blue-400" />
-							<span className="max-w-[150px] truncate">{file.name}</span>
-							<button
-								type="button"
-								onClick={() => onRemoveFile(file.id)}
-								className="rounded-full bg-bg-hover p-1 text-text-secondary transition-colors hover:text-red-400"
-								aria-label={`Remover ${file.name}`}
-							>
-								<Plus className="h-3 w-3 rotate-45" />
-							</button>
-						</div>
-					))}
-				</div>
+							<Plus className="h-3 w-3 rotate-45" />
+						</button>
+					</div>
+				))}
 			</div>
 		) : null;
 
 	return (
-		<CommandBarBase attachmentPreview={attachmentPreview}>
-			<div className="flex items-center gap-2">
+		<CommandBarBase
+			attachmentPreview={attachmentPreview}
+			leadingSlot={
 				<button
 					type="button"
 					onClick={onUploadClick}
@@ -67,9 +66,8 @@ export function DocCommandBar({
 				>
 					<Plus className="h-6 w-6" />
 				</button>
-
-				<div className="mx-0.5 h-5 w-px bg-border-default" />
-
+			}
+			primarySlot={
 				<textarea
 					ref={inputRef}
 					value={value}
@@ -77,9 +75,10 @@ export function DocCommandBar({
 					placeholder={placeholder}
 					disabled={isLoading}
 					rows={1}
-					className="flex-1 resize-none border-none bg-transparent px-3 py-3 text-base text-text-primary outline-none placeholder:text-text-secondary"
+					className="flex-1 resize-none border border-transparent bg-transparent px-3 py-3 text-base text-text-primary outline-none placeholder:text-text-secondary"
 				/>
-
+			}
+			trailingSlot={
 				<motion.button
 					type="button"
 					onClick={onSend}
@@ -95,8 +94,13 @@ export function DocCommandBar({
 				>
 					<Send className="h-5 w-5" />
 				</motion.button>
-			</div>
-		</CommandBarBase>
+			}
+			footerSlot={
+				<span className="text-[11px] uppercase tracking-wider">
+					Aceito: .txt, .md, .json, .csv, .js, .ts, .tsx, .py
+				</span>
+			}
+		/>
 	);
 }
 

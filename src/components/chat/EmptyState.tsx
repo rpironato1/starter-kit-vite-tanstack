@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { FileText, LayoutGrid, MessageSquare, Wand2 } from "lucide-react";
 import type { ElementType } from "react";
+import { ModeCards } from "@/components/layout/ModeCards";
 import { useTranslation } from "@/hooks/useI18n";
 
 type EmptyStateVariant = "chat" | "photo" | "doc" | "canvas";
@@ -9,6 +10,8 @@ interface EmptyStateProps {
 	variant?: EmptyStateVariant;
 	customTitle?: string;
 	customSubtitle?: string;
+	hideSubtitle?: boolean;
+	modelName?: string;
 }
 
 interface VariantConfig {
@@ -44,14 +47,36 @@ export function EmptyState({
 	variant = "chat",
 	customTitle,
 	customSubtitle,
+	hideSubtitle = false,
+	modelName,
 }: EmptyStateProps) {
-	const { t } = useTranslation();
+	const { t, language } = useTranslation();
 	const config = variantConfigs[variant];
 	const Icon = config.icon;
 
 	const variantTexts = t.emptyState[variant];
-	const title = customTitle ?? variantTexts.title;
-	const subtitle = customSubtitle ?? variantTexts.subtitle;
+	const formatPhotoSubtitle = (modelLabel: string): string => {
+		const template = t.emptyState.photo.subtitleWithModel;
+		if (template) {
+			return template.replace(/\{\{\s*model\s*\}\}/gi, modelLabel);
+		}
+		const fallbackPt = `Imagine, descreva e crie. Use o poder do ${modelLabel} para dar vida às suas ideias.`;
+		const fallbackEn = `Imagine, describe and create. Harness the power of ${modelLabel} to bring your ideas to life.`;
+		return language === "en-US" ? fallbackEn : fallbackPt;
+	};
+
+	// Para Photo com modelName, gerar subtítulo dinâmico
+	const getSubtitle = (): string => {
+		if (customSubtitle) return customSubtitle;
+		if (variant === "photo" && modelName) {
+			return formatPhotoSubtitle(modelName);
+		}
+		return variantTexts.subtitle;
+	};
+
+	const subtitle = getSubtitle();
+	const shouldHideSubtitle =
+		hideSubtitle || (variant === "chat" && !customSubtitle);
 
 	return (
 		<motion.div
@@ -88,17 +113,38 @@ export function EmptyState({
 				transition={{ duration: 0.4, delay: 0.2 }}
 				className="mb-3 font-serif text-3xl md:text-4xl text-[#eecfa1] md:text-text-primary tracking-wide"
 			>
-				{title}
+				{variant === "chat" && !customTitle ? (
+					<>
+						{t.welcome.line1}
+						<br />
+						{t.welcome.line2}
+					</>
+				) : (
+					(customTitle ?? variantTexts.title)
+				)}
 			</motion.h1>
 
-			<motion.p
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ duration: 0.4, delay: 0.3 }}
-				className="max-w-sm text-base text-text-secondary sm:text-lg"
-			>
-				{subtitle}
-			</motion.p>
+			{variant === "chat" && !customTitle && (
+				<motion.div
+					initial={{ opacity: 0, y: 30 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+					className="mt-10 w-full"
+				>
+					<ModeCards />
+				</motion.div>
+			)}
+
+			{!shouldHideSubtitle && (
+				<motion.p
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.4, delay: 0.3 }}
+					className="max-w-sm text-base text-text-secondary sm:text-lg"
+				>
+					{subtitle}
+				</motion.p>
+			)}
 		</motion.div>
 	);
 }

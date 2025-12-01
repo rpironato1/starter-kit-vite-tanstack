@@ -83,6 +83,8 @@ function ChatPage() {
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const modelButtonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
 		if (messages.length === 0) {
@@ -153,6 +155,19 @@ function ChatPage() {
 		setAttachedImage(imageUrl);
 	};
 
+	const handleFilePickerAttach = (
+		event: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			setAttachedImage(reader.result as string);
+		};
+		reader.readAsDataURL(file);
+		event.target.value = "";
+	};
+
 	const handleRemoveImage = () => {
 		setAttachedImage(null);
 	};
@@ -164,11 +179,20 @@ function ChatPage() {
 
 	return (
 		<div className="h-screen flex flex-col bg-bg-main overflow-hidden">
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept="image/*"
+				onChange={handleFilePickerAttach}
+				className="hidden"
+			/>
 			{/* Header */}
 			<Header
 				onMenuClick={() => setIsSidebarOpen(true)}
-				onModelClick={() => setIsModelSelectorOpen(true)}
+				onModelClick={() => setIsModelSelectorOpen((prev) => !prev)}
 				currentModel={currentModel}
+				modelMenuOpen={isModelSelectorOpen}
+				modelButtonRef={modelButtonRef}
 				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
@@ -189,6 +213,7 @@ function ChatPage() {
 				onClose={() => setIsModelSelectorOpen(false)}
 				currentModel={currentModel}
 				onSelect={handleModelSelect}
+				anchorRef={modelButtonRef}
 			/>
 
 			{/* Settings Modal */}
@@ -264,6 +289,7 @@ function ChatPage() {
 					reasoningLevel={reasoningLevel}
 					onReasoningChange={setReasoningLevel}
 					inputRef={inputRef}
+					onAttachClick={() => fileInputRef.current?.click()}
 				/>
 			</main>
 		</div>

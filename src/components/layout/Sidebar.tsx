@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
 	ChevronDown,
-	ChevronRight,
 	FileText,
 	History,
 	ImageIcon,
@@ -157,22 +156,8 @@ export function Sidebar({
 						exit="closed"
 						className="fixed top-0 left-0 h-full w-[85%] max-w-[320px] bg-bg-sidebar z-50 border-r border-border-default shadow-2xl text-text-primary flex flex-col"
 					>
-						{/* Header with New Chat */}
-						<motion.div
-							variants={itemVariants}
-							className="p-4 flex items-center justify-between"
-						>{t.sidebar.menu}</h2>
-							<button
-								type="button"
-								onClick={onNewChat}
-								title={t.sidebar.newChat}
-								aria-label={t.sidebar.newChat}
-								aria-label="Nova conversa"
-								className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-white shadow-lg shadow-green-900/20 active:scale-95 transition-transform hover:bg-accent-hover"
-							>
-								<Plus className="w-6 h-6" />
-							</button>
-						</motion.div>
+						{/* Header */}
+						<div className="pt-14" />
 
 						{/* Navigation Menu */}
 						<nav className="flex-1 px-3 py-2 space-y-1">
@@ -190,7 +175,9 @@ export function Sidebar({
 									)}
 								>
 									{item.icon}
-									<span className="font-medium text-[15px]">{t.sidebar[item.labelKey]}</span>
+									<span className="font-medium text-[15px]">
+										{t.sidebar[item.labelKey]}
+									</span>
 								</motion.button>
 							))}
 						</nav>
@@ -258,26 +245,50 @@ export function Sidebar({
 							</AnimatePresence>
 						</motion.div>
 
-						{/* User Profile Button */}
+						{/* User Badge + Plus Row */}
 						<motion.div
 							variants={itemVariants}
-							className="p-4 border-t border-border-default"
+							className="p-4 border-t border-border-default space-y-2"
 						>
-							<button
-								type="button"
-								onClick={onOpenSettings}
-								title="Configurações do usuário"
-								aria-label="Configurações do usuário"
-								className="flex items-center gap-3 bg-bg-surface p-2 pr-4 rounded-full border border-border-default hover:bg-bg-hover transition-colors w-full text-left group"
-							>
-								<div className="w-8 h-8 rounded-full bg-bg-hover flex items-center justify-center text-xs font-bold text-text-primary group-hover:bg-accent-primary group-hover:text-white transition-colors">
-									{userInitials}
-								</div>
-								<span className="text-sm text-text-primary font-medium truncate flex-1">
-									{userName}
-								</span>
-								<ChevronRight className="w-4 h-4 text-text-secondary" />
-							</button>
+							<div className="flex items-center gap-3 rounded-[32px] border border-border-default/60 bg-bg-surface/80 p-3 shadow-[0_20px_40px_rgba(0,0,0,0.35)]">
+								<button
+									type="button"
+									onClick={onOpenSettings}
+									title={t.settings.title}
+									aria-label={t.settings.title}
+									className="group flex flex-1 items-center gap-3 rounded-2xl text-left"
+								>
+									<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border-default/40 bg-bg-hover text-base font-bold text-text-primary transition-colors group-hover:border-accent-primary/40 group-hover:bg-accent-primary/10">
+										{userInitials}
+									</div>
+									<div className="min-w-0">
+										<p className="truncate text-sm font-semibold text-text-primary">
+											{userName}
+										</p>
+										<p className="text-xs text-text-secondary">
+											{t.plan.accountPlan}:{" "}
+											<span className="font-semibold text-text-primary">
+												{t.plan.currentPlanName}
+											</span>
+										</p>
+									</div>
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										handleNavigate("chat");
+										onNewChat();
+									}}
+									title={t.sidebar.newChat}
+									aria-label={t.sidebar.newChat}
+									className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-primary text-white shadow-lg shadow-green-900/30 transition-transform duration-200 hover:scale-105"
+								>
+									<Plus className="h-5 w-5" />
+								</button>
+							</div>
+							<p className="text-center text-[11px] font-semibold uppercase tracking-[0.4em] text-text-secondary">
+								{t.sidebar.newChat}
+							</p>
 						</motion.div>
 					</motion.aside>
 				)}

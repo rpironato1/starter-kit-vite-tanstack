@@ -23,59 +23,60 @@ export function TodoListPanel({ items }: TodoListPanelProps) {
 
 	return (
 		<div className="mb-4 w-full">
-			<div className="bg-bg-surface rounded-xl border border-border-default overflow-hidden">
-				{/* Header */}
+			<div className="overflow-hidden rounded-2xl border border-border-default/60 bg-bg-surface/70 backdrop-blur">
 				<button
 					type="button"
 					onClick={() => setIsExpanded(!isExpanded)}
-					className="w-full flex items-center justify-between p-3 hover:bg-bg-hover transition-colors group"
+					className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-bg-hover/60"
+					aria-expanded={isExpanded}
 				>
 					<div className="flex items-center gap-3">
 						<div
-							className={`p-1.5 rounded-md transition-colors ${
+							className={`rounded-lg p-1.5 transition-colors ${
 								isExpanded
 									? "bg-accent-primary text-white"
-									: "bg-bg-hover text-text-secondary group-hover:text-text-primary"
+									: "bg-bg-hover text-text-secondary"
 							}`}
 						>
-							<ListTodo className="w-3.5 h-3.5" />
+							<ListTodo className="h-4 w-4" />
 						</div>
-						<span className="text-xs font-semibold text-text-primary uppercase tracking-wider">
-							Planejamento
-						</span>
-						<div className="h-4 w-px bg-border-default mx-1" />
-						<span className="text-[11px] text-text-secondary font-mono">
-							{items.length} etapas
-						</span>
+						<div className="text-text-primary">
+							<p className="text-[12px] font-semibold uppercase tracking-wider">
+								Planejamento
+							</p>
+							<p className="text-[11px] font-mono uppercase text-text-secondary">
+								{items.length} etapas
+							</p>
+						</div>
 					</div>
-
 					<ChevronDown
-						className={`w-4 h-4 text-text-secondary transition-transform duration-300 ${
-							isExpanded ? "rotate-180" : ""
+						className={`h-4 w-4 text-text-secondary transition-transform duration-300 ${
+							isExpanded ? "-scale-y-100" : ""
 						}`}
 					/>
 				</button>
 
-				{/* Content */}
-				<AnimatePresence>
+				<AnimatePresence initial={false}>
 					{isExpanded && (
 						<motion.div
 							initial={{ height: 0, opacity: 0 }}
 							animate={{ height: "auto", opacity: 1 }}
 							exit={{ height: 0, opacity: 0 }}
-							transition={{ duration: 0.3, ease: "easeInOut" }}
-							className="overflow-hidden"
+							transition={{ duration: 0.25 }}
+							className="overflow-hidden border-t border-border-default/50 bg-bg-modal/40"
 						>
-							<div className="p-4 border-t border-border-default space-y-3">
+							<div className="space-y-3 px-4 py-4">
 								{items.map((item) => {
-									const itemKey = `todo-${item.slice(0, 30).replace(/\W/g, "")}-${item.length}`;
+									const itemKey = `todo-${item
+										.slice(0, 30)
+										.replace(/\W/g, "")}-${item.length}`;
 									return (
 										<div
 											key={itemKey}
-											className="flex items-start gap-3 hover:bg-bg-hover/50 rounded-lg p-1.5 -m-1.5 transition-colors"
+											className="flex items-start gap-3 rounded-xl bg-bg-surface/40 p-2 text-sm text-text-secondary"
 										>
-											<CheckCircle2 className="w-4 h-4 text-accent-primary mt-0.5 shrink-0" />
-											<span className="text-sm text-text-secondary leading-relaxed">
+											<CheckCircle2 className="mt-0.5 h-4 w-4 text-accent-primary" />
+											<span className="leading-relaxed">
 												{stripMarkdown(item)}
 											</span>
 										</div>

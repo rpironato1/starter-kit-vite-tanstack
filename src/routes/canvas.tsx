@@ -6,7 +6,7 @@ import { ArtifactCard } from "@/components/canvas/ArtifactCard";
 import { CanvasCommandBar } from "@/components/canvas/CanvasCommandBar";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { ReasoningBubble } from "@/components/chat/ReasoningBubble";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
@@ -110,11 +110,14 @@ function CanvasPage() {
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const modelButtonRef = useRef<HTMLButtonElement>(null);
 
-	useEffect(
-		() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
-		[],
-	);
+	useEffect(() => {
+		if (messages.length === 0) {
+			return;
+		}
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages.length]);
 
 	const handleSend = () => {
 		if (!inputValue.trim() || isLoading) return;
@@ -130,7 +133,7 @@ function CanvasPage() {
 		setIsLoading(true);
 
 		// Close workspace on mobile when sending
-		if (window.innerWidth < 768) {
+		if (typeof window !== "undefined" && window.innerWidth < 768) {
 			setIsWorkspaceOpen(false);
 		}
 
@@ -198,8 +201,10 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 		<div className="h-screen flex flex-col bg-bg-main overflow-hidden">
 			<Header
 				onMenuClick={() => setIsSidebarOpen(true)}
-				onModelClick={() => setIsModelSelectorOpen(true)}
+				onModelClick={() => setIsModelSelectorOpen((prev) => !prev)}
 				currentModel={currentModel}
+				modelMenuOpen={isModelSelectorOpen}
+				modelButtonRef={modelButtonRef}
 				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
@@ -226,6 +231,7 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 					name: m.name,
 					description: m.description,
 				}))}
+				anchorRef={modelButtonRef}
 			/>
 
 			<SettingsModal
@@ -262,30 +268,30 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 											>
 												{message.role === "user" ? (
 													<div className="flex justify-end">
-														<div className="max-w-[85%] md:max-w-[65%] bg-bg-surface text-text-primary px-5 py-3.5 rounded-[20px] rounded-tr-[4px] border border-border shadow-sm">
+														<div className="max-w-[85%] md:max-w-[65%] rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
 															<p className="text-[15px] leading-relaxed">
 																{message.content}
 															</p>
 														</div>
 													</div>
 												) : (
-													<div className="space-y-2">
+													<div className="space-y-3">
 														<AIMessage
 															content={message.content}
-															hideCodeBlocks
-															usage={message.usage}
 															executionPlan={message.executionPlan}
-															onTokenDetails={(usage) => openTokenUsage(usage)}
+															onTokenDetails={openTokenUsage}
+															usage={message.usage}
+															isLastMessage={
+																messages[messages.length - 1]?.id === message.id
+															}
 														/>
-														{message.role === "ai" && message.artifact && (
+														{message.artifact && (
 															<div className="mt-3">
 																<ArtifactCard
 																	artifact={message.artifact}
 																	onClick={() => {
-																		if (message.artifact) {
-																			setActiveArtifact(message.artifact);
-																			setIsWorkspaceOpen(true);
-																		}
+																		setActiveArtifact(message.artifact ?? null);
+																		setIsWorkspaceOpen(true);
 																	}}
 																/>
 															</div>
@@ -295,7 +301,7 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 											</motion.div>
 										))}
 										{isLoading && (
-											<LoadingIndicator text="Generating code..." />
+											<ReasoningBubble steps={CANVAS_EXECUTION_PLAN} />
 										)}
 									</>
 								)}

@@ -12,7 +12,6 @@ import {
 	Terminal,
 	User,
 } from "lucide-react";
-import { useState } from "react";
 import {
 	Select,
 	SelectContent,
@@ -21,7 +20,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { ZaneToggle } from "@/components/ui/switch";
+import { useTranslation } from "@/hooks/useI18n";
 import { useTheme } from "@/hooks/useTheme";
+import type { Language } from "@/lib/i18n";
 import { SettingsItem } from "./SettingsItem";
 import type { SettingsView } from "./SettingsModal";
 
@@ -37,7 +38,13 @@ const LANGUAGES = [
 
 export function MainView({ pushView }: MainViewProps) {
 	const { isDark, toggleTheme } = useTheme();
-	const [language, setLanguage] = useState("pt-BR");
+	const { t, language, setLanguage } = useTranslation();
+
+	const handleLanguageChange = (value: string) => {
+		if (value === "pt-BR" || value === "en-US") {
+			setLanguage(value as Language);
+		}
+	};
 
 	const handleLogout = () => {
 		// TODO: Implement logout logic
@@ -58,22 +65,22 @@ export function MainView({ pushView }: MainViewProps) {
 			<div className="space-y-1">
 				<SettingsItem
 					icon={User}
-					label="Perfil"
-					description="Gerenciar sua conta"
+					label={t.settings.profile}
+					description={t.profile.title}
 					onClick={() => pushView("profile")}
 				/>
 
 				<SettingsItem
 					icon={CreditCard}
-					label="Plano"
-					description="Pro"
+					label={t.settings.plan}
+					description={t.plan.currentPlanName}
 					onClick={() => pushView("plan")}
 				/>
 
 				<SettingsItem
 					icon={SlidersHorizontal}
-					label="Recursos"
-					description="Funcionalidades avançadas"
+					label={t.settings.features}
+					description={t.settings.features}
 					onClick={() => {
 						// TODO: Implement features view
 						console.log("Features clicked");
@@ -82,15 +89,15 @@ export function MainView({ pushView }: MainViewProps) {
 
 				<SettingsItem
 					icon={Sparkles}
-					label="Refinamento"
-					description="Personalize como Zane trabalha"
+					label={t.settings.refinement}
+					description={t.refinement.title}
 					onClick={() => pushView("refinement")}
 				/>
 
 				<SettingsItem
 					icon={Database}
-					label="Memória"
-					description="Histórico de conversas"
+					label={t.settings.memory}
+					description={t.memory.title}
 					onClick={() => pushView("memory")}
 				/>
 			</div>
@@ -103,7 +110,7 @@ export function MainView({ pushView }: MainViewProps) {
 				{/* Appearance - Inline Toggle */}
 				<SettingsItem
 					icon={isDark ? Moon : Sun}
-					label="Aparência"
+					label={t.settings.appearance}
 					rightElement={<ZaneToggle isOn={isDark} onToggle={toggleTheme} />}
 				/>
 
@@ -115,14 +122,16 @@ export function MainView({ pushView }: MainViewProps) {
 								<Globe className="w-5 h-5 text-text-secondary" />
 							</div>
 							<div>
-								<p className="text-sm font-medium text-text-primary">Idioma</p>
+								<p className="text-sm font-medium text-text-primary">
+									{t.settings.language}
+								</p>
 								<p className="text-xs text-text-secondary">
 									{LANGUAGES.find((l) => l.value === language)?.label}
 								</p>
 							</div>
 						</div>
 
-						<Select value={language} onValueChange={setLanguage}>
+						<Select value={language} onValueChange={handleLanguageChange}>
 							<SelectTrigger className="w-36">
 								<SelectValue />
 							</SelectTrigger>
@@ -139,20 +148,20 @@ export function MainView({ pushView }: MainViewProps) {
 
 				<SettingsItem
 					icon={Bell}
-					label="Notificações"
+					label={t.settings.notification}
 					onClick={() => pushView("notifications")}
 				/>
 
 				<SettingsItem
 					icon={Lock}
-					label="Privacidade"
-					description="Dados e segurança"
+					label={t.settings.privacy}
+					description={t.privacy.title}
 					onClick={() => pushView("privacy")}
 				/>
 
 				<SettingsItem
 					icon={Terminal}
-					label="Sistema e Diagnóstico"
+					label={t.settings.system}
 					onClick={() => pushView("system")}
 				/>
 			</div>
@@ -164,7 +173,7 @@ export function MainView({ pushView }: MainViewProps) {
 			<div className="space-y-1">
 				<SettingsItem
 					icon={LogOut}
-					label="Sair"
+					label={t.settings.logout}
 					onClick={handleLogout}
 					destructive
 				/>

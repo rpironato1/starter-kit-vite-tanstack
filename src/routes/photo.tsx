@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Image as ImageIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AIMessage } from "@/components/chat/AIMessage";
 import { EmptyState } from "@/components/chat/EmptyState";
@@ -9,10 +9,8 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ZaneGallery } from "@/components/photo";
 import { PhotoCommandBar } from "@/components/photo/PhotoCommandBar";
-import {
-	type AspectRatio,
-	AspectRatioSelector,
-} from "@/components/selectors/AspectRatioSelector";
+import { PhotoToolbar } from "@/components/photo/PhotoToolbar";
+import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { useTokenUsage } from "@/hooks/useTokenUsage";
@@ -110,6 +108,7 @@ function PhotoPage() {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const cameraInputRef = useRef<HTMLInputElement>(null);
 	const galleryInputRef = useRef<HTMLInputElement>(null);
+	const modelButtonRef = useRef<HTMLButtonElement>(null);
 	const messageCount = messages.length;
 
 	useEffect(() => {
@@ -217,9 +216,10 @@ function PhotoPage() {
 			/>
 			<Header
 				onMenuClick={() => setIsSidebarOpen(true)}
-				onModelClick={() => setModelSelectorOpen(true)}
+				onModelClick={() => setModelSelectorOpen((prev) => !prev)}
 				currentModel={currentModel}
 				modelMenuOpen={modelSelectorOpen}
+				modelButtonRef={modelButtonRef}
 				onAvatarClick={() => setIsSettingsOpen(true)}
 			/>
 
@@ -229,6 +229,7 @@ function PhotoPage() {
 				currentModel={currentModel}
 				onSelect={setCurrentModel}
 				models={PHOTO_MODELS}
+				anchorRef={modelButtonRef}
 			/>
 
 			<Sidebar
@@ -252,6 +253,13 @@ function PhotoPage() {
 				images={generatedImages}
 			/>
 
+			<PhotoToolbar
+				currentModel={currentModel}
+				aspectRatio={aspectRatio}
+				onAspectRatioChange={setAspectRatio}
+				onOpenGallery={() => setGalleryOpen(true)}
+			/>
+
 			<main className="flex-1 overflow-hidden relative">
 				<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
 					<div className="max-w-3xl mx-auto py-6 space-y-6">
@@ -262,19 +270,11 @@ function PhotoPage() {
 									animate={{ opacity: 1, y: 0 }}
 									className="flex flex-col items-center gap-6"
 								>
-									<EmptyState variant="photo" />
-									<AspectRatioSelector
-										value={aspectRatio}
-										onChange={setAspectRatio}
-									/>
-									<button
-										type="button"
-										onClick={() => setGalleryOpen(true)}
-										className="flex items-center gap-2 px-4 py-2 rounded-full bg-bg-surface text-text-secondary hover:bg-bg-hover hover:text-text-primary transition-colors"
-									>
-										<ImageIcon className="w-4 h-4" />
-										<span className="text-sm font-medium">Ver Galeria</span>
-									</button>
+									<EmptyState variant="photo" modelName={currentModel} />
+									<p className="text-center text-sm text-text-secondary">
+										Ajuste proporções e abra a galeria diretamente pelo command
+										bar inferior.
+									</p>
 								</motion.div>
 							) : (
 								<>
@@ -362,7 +362,6 @@ function PhotoPage() {
 					onSend={handleSend}
 					isLoading={isLoading}
 					aspectRatio={aspectRatio}
-					onAspectRatioChange={setAspectRatio}
 					onOpenGallery={() => setGalleryOpen(true)}
 					onPickFromCamera={triggerCameraCapture}
 					onPickFromFiles={triggerFilePicker}

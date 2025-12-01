@@ -5,6 +5,30 @@
 
 export type Language = "pt-BR" | "en-US";
 
+interface ModeCardTranslation {
+	title: string;
+	description: string;
+	action: string;
+	meta: string;
+}
+
+type ModeKey = "chat" | "photo" | "doc" | "canvas";
+type ModelKey = "mini" | "solo" | "pro" | "ultra";
+type ModelBadgeKey = "recommended" | "balanced" | "flagship" | "creative";
+
+interface ModelMetaCopy {
+	tier: string;
+	contextWindow: string;
+	latency: string;
+	bestFor: string;
+}
+
+interface EmptyStateCopy {
+	title: string;
+	subtitle: string;
+	subtitleWithModel?: string;
+}
+
 export interface Translations {
 	welcome: {
 		line1: string;
@@ -95,6 +119,18 @@ export interface Translations {
 		deleteTimeline: string;
 		deleteConfirm: string;
 		emptyMemory: string;
+		mockTime1: string;
+		mockItem1a: string;
+		mockItem1b: string;
+		mockItem1c: string;
+		mockTime2: string;
+		mockItem2a: string;
+		mockItem2b: string;
+		mockTime3: string;
+		mockItem3a: string;
+		mockTime7Days: string;
+		mockTime30Days: string;
+		mockTimeYear: string;
 	};
 	notifications: {
 		title: string;
@@ -140,7 +176,13 @@ export interface Translations {
 		ultra: string;
 		selectModel: string;
 		close: string;
+		heroTitle: string;
+		heroSubtitle: string;
+		activeLabel: string;
+		cta: string;
 	};
+	modelsMeta: Record<ModelKey, ModelMetaCopy>;
+	modelsBadges: Record<ModelBadgeKey, string>;
 	reasoning: {
 		title: string;
 		soft: string;
@@ -149,23 +191,34 @@ export interface Translations {
 		off: string;
 		offDescription: string;
 	};
+	message: {
+		copy: string;
+		copied: string;
+		like: string;
+		dislike: string;
+		retry: string;
+		tokenUsage: string;
+		sources: string;
+	};
 	emptyState: {
-		chat: {
-			title: string;
-			subtitle: string;
-		};
-		photo: {
-			title: string;
-			subtitle: string;
-		};
-		doc: {
-			title: string;
-			subtitle: string;
-		};
-		canvas: {
-			title: string;
-			subtitle: string;
-		};
+		chat: EmptyStateCopy;
+		photo: EmptyStateCopy;
+		doc: EmptyStateCopy;
+		canvas: EmptyStateCopy;
+	};
+	modes: Record<ModeKey, ModeCardTranslation>;
+	photoView: {
+		toolbarTitle: string;
+		toolbarDescription: string;
+		ratioLabel: string;
+		ratioAction: string;
+		galleryCta: string;
+		enhancerLocked: string;
+		enhancerReady: string;
+	};
+	canvasView: {
+		reasoningTitle: string;
+		reasoningSubtitle: string;
 	};
 }
 
@@ -264,15 +317,26 @@ export const translations: Record<Language, Translations> = {
 			enableMemory: "Ativar Memória",
 			enableTimeline: "Ativar Linha do Tempo",
 			deleteTimeline: "Excluir Linha do Tempo",
-			deleteConfirm:
-				"Isso apagará todo o histórico de eventos. Tem certeza?",
+			deleteConfirm: "Isso apagará todo o histórico de eventos. Tem certeza?",
 			emptyMemory: "Nenhuma memória salva ainda.",
+			mockTime1: "23/11/2025",
+			mockItem1a: "backend rust e supabase",
+			mockItem1b: "Design de interiores com autocad",
+			mockItem1c:
+				"Criação de convites para festa de aniversário da filha de 11 anos.",
+			mockTime2: "22/11/2025",
+			mockItem2a: "Problemas crônicos do BYD Song Pro",
+			mockItem2b: "Quem veio primeiro, o ovo ou a galinha?",
+			mockTime3: "20/11/2025",
+			mockItem3a: "Criação de minuta para processo jurídico",
+			mockTime7Days: "Últimos 7 dias",
+			mockTime30Days: "Últimos 30 dias",
+			mockTimeYear: "Último Ano",
 		},
 		notifications: {
 			title: "Notificações",
 			responses: "Respostas do Zane",
-			responsesDesc:
-				"Receber notificação quando Zane terminar uma tarefa",
+			responsesDesc: "Receber notificação quando Zane terminar uma tarefa",
 			news: "Novidades",
 			newsDesc:
 				"Receber em primeira mão notificações de novidades sobre o Zane",
@@ -316,14 +380,60 @@ export const translations: Record<Language, Translations> = {
 			ultra: "Geração de Imagem (1K/2K/4K) e Edição",
 			selectModel: "Selecionar Modelo",
 			close: "Fechar",
+			heroTitle: "Selecione o cérebro ideal para esta sessão",
+			heroSubtitle:
+				"Cada modelo compartilha a mesma memória e segurança. Troque sem interromper o fluxo.",
+			activeLabel: "Modelo ativo",
+			cta: "Guia completo de modelos",
+		},
+		modelsMeta: {
+			mini: {
+				tier: "Lite",
+				contextWindow: "Ctx 64k",
+				latency: "Latência ~0,6s",
+				bestFor: "Fluxos rápidos, buscas e tarefas cotidianas.",
+			},
+			solo: {
+				tier: "Solo",
+				contextWindow: "Ctx 128k",
+				latency: "Latência ~0,9s",
+				bestFor: "Conversas focadas com um pouco mais de contexto.",
+			},
+			pro: {
+				tier: "Pro",
+				contextWindow: "Ctx 256k",
+				latency: "Latência ~1,2s",
+				bestFor: "Planos longos, raciocínio estruturado e revisões complexas.",
+			},
+			ultra: {
+				tier: "Ultra",
+				contextWindow: "Ctx 256k + Imagens",
+				latency: "Latência ~1,5s",
+				bestFor: "Workflows multimodais, geração visual e edições detalhadas.",
+			},
+		},
+		modelsBadges: {
+			recommended: "Recomendado",
+			balanced: "Equilíbrio",
+			flagship: "Flagship",
+			creative: "Criativo",
 		},
 		reasoning: {
 			title: "Nível de Raciocínio",
 			soft: "Rápido e direto (1k tokens)",
 			medium: "Equilibrado (2k tokens)",
 			max: "Análise profunda (4k tokens)",
-			off: "Desativado",
-			offDescription: "Respostas rápidas",
+			off: "Raciocínio Desativado",
+			offDescription: "Raciocínio desativado",
+		},
+		message: {
+			copy: "Copiar resposta",
+			copied: "Copiado!",
+			like: "Gostei",
+			dislike: "Não gostei",
+			retry: "Tentar novamente",
+			tokenUsage: "Ver consumo de tokens",
+			sources: "Fontes consultadas",
 		},
 		emptyState: {
 			chat: {
@@ -334,6 +444,8 @@ export const translations: Record<Language, Translations> = {
 				title: "Zane Photo Studio",
 				subtitle:
 					"Imagine, descreva e crie. Use o poder do Zane para dar vida às suas ideias.",
+				subtitleWithModel:
+					"Imagine, descreva e crie. Use o poder do {{model}} para dar vida às suas ideias.",
 			},
 			doc: {
 				title: "Zane Doc",
@@ -345,6 +457,51 @@ export const translations: Record<Language, Translations> = {
 				subtitle:
 					"Um espaço dedicado para construção de ideias, escrita longa e projetos complexos.",
 			},
+		},
+		modes: {
+			chat: {
+				title: "Conversas",
+				description:
+					"Planeje conversas longas, revise entregas com agentes e acompanhe decisões em tempo real.",
+				action: "Abrir Conversas",
+				meta: "Raciocínio + Grounding",
+			},
+			photo: {
+				title: "Zane Photo",
+				description:
+					"Descreva cenas e gere imagens em 1K/2K/4K com edição contextual e refino rápido.",
+				action: "Ir para Photo",
+				meta: "Renderização 1K/2K/4K",
+			},
+			doc: {
+				title: "Zane Doc",
+				description:
+					"Faça upload de arquivos técnicos, código ou contratos e converse com os documentos.",
+				action: "Abrir Doc",
+				meta: "Upload + Insights",
+			},
+			canvas: {
+				title: "Zane Canvas",
+				description:
+					"Estruture projetos complexos com workspace persistente e blocos colaborativos.",
+				action: "Explorar Canvas",
+				meta: "Workspace Vivo",
+			},
+		},
+		photoView: {
+			toolbarTitle: "Estúdio Zane Photo",
+			toolbarDescription:
+				"Descreva estilos, luzes e texturas. O Zane ajusta o modelo visual em tempo real.",
+			ratioLabel: "Proporção ativa",
+			ratioAction: "Alterar",
+			galleryCta: "Abrir galeria",
+			enhancerLocked: "Disponível nos modelos Lite e Pro",
+			enhancerReady: "Spark prontos para refinar",
+		},
+		canvasView: {
+			reasoningTitle: "Raciocínio em andamento",
+			reasoningSubtitle:
+				"Zane Canvas está criando o plano de execução antes de gerar o artefato.",
 		},
 	},
 	"en-US": {
@@ -408,7 +565,7 @@ export const translations: Record<Language, Translations> = {
 			save: "Save Changes",
 		},
 		refinement: {
-			title: "Refinement",
+			title: "Refinamento",
 			nameLabel: "How should I call you?",
 			namePlaceholder: "Your name or nickname",
 			genderLabel: "Sex",
@@ -441,9 +598,20 @@ export const translations: Record<Language, Translations> = {
 			enableMemory: "Enable Memory",
 			enableTimeline: "Enable Timeline",
 			deleteTimeline: "Delete Timeline",
-			deleteConfirm:
-				"This will erase all event history. Are you sure?",
+			deleteConfirm: "This will erase all event history. Are you sure?",
 			emptyMemory: "No memories saved yet.",
+			mockTime1: "11/23/2025",
+			mockItem1a: "rust backend and supabase",
+			mockItem1b: "Interior design with autocad",
+			mockItem1c: "Creating invitations for 11-year-old daughter's birthday.",
+			mockTime2: "11/22/2025",
+			mockItem2a: "Chronic problems of BYD Song Pro",
+			mockItem2b: "Who came first, the chicken or the egg?",
+			mockTime3: "11/20/2025",
+			mockItem3a: "Creating a draft for legal proceedings",
+			mockTime7Days: "Last 7 days",
+			mockTime30Days: "Last 30 days",
+			mockTimeYear: "Last Year",
 		},
 		notifications: {
 			title: "Notifications",
@@ -456,13 +624,12 @@ export const translations: Record<Language, Translations> = {
 			title: "Privacy & Security",
 			sectionData: "Data & AI",
 			modelTraining: "Model Training",
-			modelTrainingDesc:
-				"Allow anonymous interactions to help improve Zane.",
+			modelTrainingDesc: "Allow anonymous interactions to help improve Zane.",
 			retention: "Data Retention",
 			retentionPlaceholder: "Select period",
 			retentionIndefinite: "Indefinite",
 			retention1Year: "1 Year",
-			retention30Days: "30 Days",
+			retention30Days: "30 Dias",
 			sectionSecurity: "Security",
 			biometric: "Biometric Lock",
 			biometricDesc: "Require FaceID/TouchID to open",
@@ -491,14 +658,61 @@ export const translations: Record<Language, Translations> = {
 			ultra: "Image Generation (1K/2K/4K) and Editing",
 			selectModel: "Select Model",
 			close: "Close",
+			heroTitle: "Pick the best brain for this session",
+			heroSubtitle:
+				"Every model shares the same memory and safeguards. Switch without disrupting your flow.",
+			activeLabel: "Active model",
+			cta: "Open model guide",
+		},
+		modelsMeta: {
+			mini: {
+				tier: "Lite",
+				contextWindow: "Ctx 64k",
+				latency: "Latency ~0.6s",
+				bestFor: "Quick flows, search and everyday tasks.",
+			},
+			solo: {
+				tier: "Solo",
+				contextWindow: "Ctx 128k",
+				latency: "Latency ~0.9s",
+				bestFor: "Focused chats with a bit more context.",
+			},
+			pro: {
+				tier: "Pro",
+				contextWindow: "Ctx 256k",
+				latency: "Latency ~1.2s",
+				bestFor: "Structured reasoning, reviews and long-form plans.",
+			},
+			ultra: {
+				tier: "Ultra",
+				contextWindow: "Ctx 256k + Images",
+				latency: "Latency ~1.5s",
+				bestFor:
+					"Multimodal workflows, high-fidelity visuals and detailed edits.",
+			},
+		},
+		modelsBadges: {
+			recommended: "Recommended",
+			balanced: "Balanced",
+			flagship: "Flagship",
+			creative: "Creative",
 		},
 		reasoning: {
 			title: "Reasoning Level",
-			soft: "Fast and direct (1k tokens)",
-			medium: "Balanced (2k tokens)",
-			max: "Deep analysis (4k tokens)",
-			off: "Disabled",
-			offDescription: "Fast responses",
+			soft: "Fast and direct",
+			medium: "Balanced",
+			max: "Deep analysis",
+			off: "Reasoning Disabled",
+			offDescription: "Reasoning disabled",
+		},
+		message: {
+			copy: "Copy response",
+			copied: "Copied!",
+			like: "Like",
+			dislike: "Dislike",
+			retry: "Try again",
+			tokenUsage: "View token usage",
+			sources: "Sources consulted",
 		},
 		emptyState: {
 			chat: {
@@ -509,17 +723,63 @@ export const translations: Record<Language, Translations> = {
 				title: "Zane Photo Studio",
 				subtitle:
 					"Imagine, describe and create. Use the power of Zane to bring your ideas to life.",
+				subtitleWithModel:
+					"Imagine, describe and create. Harness the power of {{model}} to bring your ideas to life.",
 			},
 			doc: {
 				title: "Zane Doc",
-				subtitle:
-					"Upload text or code documents and chat with them.",
+				subtitle: "Upload text or code documents and chat with them.",
 			},
 			canvas: {
 				title: "Zane Canvas",
 				subtitle:
 					"A dedicated space for building ideas, long-form writing and complex projects.",
 			},
+		},
+		modes: {
+			chat: {
+				title: "Chats",
+				description:
+					"Run strategic conversations, review deliveries with agents, and keep decisions aligned.",
+				action: "Open Chats",
+				meta: "Reasoning + Grounding",
+			},
+			photo: {
+				title: "Zane Photo",
+				description:
+					"Describe scenes to generate 1K/2K/4K images with contextual editing and quick refinements.",
+				action: "Go to Photo",
+				meta: "1K/2K/4K Output",
+			},
+			doc: {
+				title: "Zane Doc",
+				description:
+					"Upload technical docs, code, or contracts and keep a dialogue with the files.",
+				action: "Open Doc",
+				meta: "Upload + Insights",
+			},
+			canvas: {
+				title: "Zane Canvas",
+				description:
+					"Structure complex projects with a persistent workspace and collaborative blocks.",
+				action: "Explore Canvas",
+				meta: "Living Workspace",
+			},
+		},
+		photoView: {
+			toolbarTitle: "Zane Photo Studio",
+			toolbarDescription:
+				"Describe styles, lighting and textures. Zane adapts the visual model in real time.",
+			ratioLabel: "Active ratio",
+			ratioAction: "Change",
+			galleryCta: "Open gallery",
+			enhancerLocked: "Available on Lite and Pro models",
+			enhancerReady: "Spark ready to refine",
+		},
+		canvasView: {
+			reasoningTitle: "Reasoning in progress",
+			reasoningSubtitle:
+				"Zane Canvas is crafting the execution plan before generating the artifact.",
 		},
 	},
 };

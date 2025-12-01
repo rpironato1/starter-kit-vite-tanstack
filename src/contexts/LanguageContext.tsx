@@ -1,17 +1,18 @@
 import {
 	createContext,
+	type ReactNode,
 	useCallback,
 	useEffect,
+	useLayoutEffect,
 	useMemo,
 	useState,
-	type ReactNode,
 } from "react";
 import {
-	type Language,
-	type Translations,
 	detectBrowserLanguage,
 	getSavedLanguage,
+	type Language,
 	saveLanguage,
+	type Translations,
 	translations,
 } from "@/lib/i18n";
 
@@ -22,6 +23,9 @@ interface LanguageContextValue {
 }
 
 export const LanguageContext = createContext<LanguageContextValue | null>(null);
+
+const useIsomorphicLayoutEffect =
+	typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface LanguageProviderProps {
 	children: ReactNode;
@@ -39,9 +43,16 @@ export function LanguageProvider({
 	defaultLanguage,
 }: LanguageProviderProps) {
 	const [language, setLanguageState] = useState<Language>(() => {
-		// Prioridade: 1. defaultLanguage prop, 2. localStorage, 3. navegador
+		// Prioridade: default fornecido → dataset pré-hidratado → localStorage → navegador
 		if (defaultLanguage) {
 			return defaultLanguage;
+		}
+
+		if (typeof document !== "undefined") {
+			const datasetLanguage = document.documentElement.dataset.language;
+			if (datasetLanguage === "pt-BR" || datasetLanguage === "en-US") {
+				return datasetLanguage;
+			}
 		}
 
 		const saved = getSavedLanguage();
@@ -52,14 +63,26 @@ export function LanguageProvider({
 		return detectBrowserLanguage();
 	});
 
+	// Hidratar imediatamente com o idioma salvo para evitar flicker
+	useIsomorphicLayoutEffect(() => {
+		const saved = getSavedLanguage();
+		if (saved) {
+			setLanguageState(saved);
+		}
+	}, []);
+
 	// Sincroniza com localStorage quando muda
 	useEffect(() => {
 		saveLanguage(language);
 	}, [language]);
 
-	// Atualiza o atributo lang do HTML
-	useEffect(() => {
+	// Atualiza atributos do HTML imediatamente após mudança
+	useIsomorphicLayoutEffect(() => {
+		if (typeof document === "undefined") {
+			return;
+		}
 		document.documentElement.lang = language;
+		document.documentElement.dataset.language = language;
 	}, [language]);
 
 	const setLanguage = useCallback((newLanguage: Language) => {

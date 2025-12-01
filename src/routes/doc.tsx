@@ -115,6 +115,7 @@ function DocPage() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const modelButtonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -225,8 +226,10 @@ function DocPage() {
 
 			<Header
 				onMenuClick={() => setIsSidebarOpen(true)}
-				onModelClick={() => setIsModelSelectorOpen(true)}
+				onModelClick={() => setIsModelSelectorOpen((prev) => !prev)}
 				currentModel={currentModel}
+				modelMenuOpen={isModelSelectorOpen}
+				modelButtonRef={modelButtonRef}
 				onAvatarClick={() => setIsSettingsOpen(true)}
 				rightSlot={contextButton}
 			/>
@@ -255,6 +258,7 @@ function DocPage() {
 					setCurrentModel(model);
 					setIsModelSelectorOpen(false);
 				}}
+				anchorRef={modelButtonRef}
 			/>
 
 			<ContextDrawer
@@ -332,7 +336,10 @@ function DocPage() {
 										</motion.div>
 									))}
 									{isLoading && (
-										<LoadingIndicator text="Analisando documentos..." />
+										<LoadingIndicator
+											moduleVariant="doc"
+											text="Analisando documentos..."
+										/>
 									)}
 								</>
 							)}

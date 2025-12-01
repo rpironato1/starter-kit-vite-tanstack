@@ -1,21 +1,33 @@
-import {
-	createContext,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useMemo,
-	useState,
-} from "react";
+import { useStore } from "@tanstack/react-store";
+import { Store } from "@tanstack/store";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 import { type TokenUsage, TokenUsageModal } from "@/components/modals";
+
+interface TokenUsageState {
+	currentUsage: TokenUsage | null;
+}
 
 interface TokenUsageContextValue {
 	openTokenUsage: (usage: TokenUsage) => void;
 	closeTokenUsage: () => void;
+	currentUsage: TokenUsage | null;
 }
+
+const tokenUsageStore = new Store<TokenUsageState>({
+	currentUsage: null,
+});
 
 const TokenUsageContext = createContext<TokenUsageContextValue | undefined>(
 	undefined,
 );
+
+function openUsage(usage: TokenUsage) {
+	tokenUsageStore.setState(() => ({ currentUsage: usage }));
+}
+
+function closeUsage() {
+	tokenUsageStore.setState(() => ({ currentUsage: null }));
+}
 
 export function useTokenUsage() {
 	const context = useContext(TokenUsageContext);
@@ -28,33 +40,22 @@ export function useTokenUsage() {
 }
 
 export function TokenUsageProvider({ children }: { children: ReactNode }) {
-	const [currentUsage, setCurrentUsage] = useState<TokenUsage | null>(null);
-
-	const openTokenUsage = useCallback((usage: TokenUsage) => {
-		setCurrentUsage(usage);
-	}, []);
-
-	const closeTokenUsage = useCallback(() => {
-		setCurrentUsage(null);
-	}, []);
+	const currentUsage = useStore(tokenUsageStore, (state) => state.currentUsage);
 
 	const value = useMemo(
 		() => ({
-			openTokenUsage,
-			closeTokenUsage,
+			openTokenUsage: openUsage,
+			closeTokenUsage: closeUsage,
+			currentUsage,
 		}),
-		[closeTokenUsage, openTokenUsage],
+		[currentUsage],
 	);
 
 	return (
 		<TokenUsageContext.Provider value={value}>
 			{children}
 			{currentUsage && (
-				<TokenUsageModal
-					isOpen
-					onClose={closeTokenUsage}
-					usage={currentUsage}
-				/>
+				<TokenUsageModal isOpen onClose={closeUsage} usage={currentUsage} />
 			)}
 		</TokenUsageContext.Provider>
 	);
