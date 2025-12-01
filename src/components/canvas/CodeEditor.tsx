@@ -11,7 +11,7 @@ export function CodeEditor({ content, language, onChange }: CodeEditorProps) {
 				value={content}
 				onChange={(e) => onChange(e.target.value)}
 				spellCheck={false}
-				className="w-full h-full bg-[#1e1e1e] text-zinc-300 font-mono text-sm p-4 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/50"
+				className="w-full h-full bg-bg-surface text-text-primary font-mono text-sm p-4 resize-none focus:outline-none focus:ring-1 focus:ring-accent-primary/50"
 				placeholder={`// Enter ${language} code here...`}
 			/>
 		</div>

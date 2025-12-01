@@ -110,7 +110,7 @@ export function EmptyState({
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.4, delay: 0.2 }}
-				className="mb-3 font-serif text-3xl md:text-4xl text-[#eecfa1] md:text-text-primary tracking-wide"
+				className="mb-3 font-serif text-3xl md:text-4xl text-accent-textHighlight md:text-text-primary tracking-wide"
 			>
 				{variant === "chat" && !customTitle ? (
 					<>

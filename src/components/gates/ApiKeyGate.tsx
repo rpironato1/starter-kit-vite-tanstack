@@ -14,7 +14,7 @@ export function ApiKeyGate({
 			{/* Ambient glow per design spec */}
 			<div aria-hidden="true" className="pointer-events-none absolute inset-0">
 				<div className="absolute -top-20 left-1/3 h-72 w-72 rounded-full bg-accent-primary/20 blur-[140px]" />
-				<div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-[#77f0c5]/20 blur-[160px]" />
+				<div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-accent-primary/20 blur-[160px]" />
 			</div>
 
 			<div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">

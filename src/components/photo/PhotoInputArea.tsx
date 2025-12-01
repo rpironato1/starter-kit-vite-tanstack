@@ -1,22 +1,17 @@
 import {
-	Camera,
 	Check,
-	FolderOpen,
-	Grid3x3,
 	Image as ImageIcon,
-	Monitor,
-	Plus,
-	RectangleHorizontal,
-	RectangleVertical,
-	Send,
-	Smartphone,
-	Sparkles,
 	Square,
+	Plus,
+	Send,
+	Sparkles,
 	X,
 } from "lucide-react";
-import { type ComponentType, type RefObject, useState } from "react";
+import { type RefObject, useState } from "react";
 import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
+import { PhotoAttachPopover } from "@/components/photo/PhotoAttachPopover";
+import { ASPECT_RATIOS } from "@/components/photo/photoAspectRatios";
 import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
@@ -36,73 +31,6 @@ interface PhotoInputAreaProps {
 	inputRef?: RefObject<HTMLTextAreaElement | null>;
 	currentModel?: string;
 }
-
-const ASPECT_RATIOS: {
-	label: string;
-	value: AspectRatio;
-	icon: ComponentType<{ className?: string }>;
-}[] = [
-	{ label: "Quadrado (1:1)", value: "1:1", icon: Square },
-	{ label: "Paisagem (4:3)", value: "4:3", icon: RectangleHorizontal },
-	{ label: "Retrato (3:4)", value: "3:4", icon: RectangleVertical },
-	{ label: "Cinema (16:9)", value: "16:9", icon: Monitor },
-	{ label: "Story (9:16)", value: "9:16", icon: Smartphone },
-];
-
-interface AttachPopoverProps {
-	onAttachClick?: (type: "camera" | "photo" | "gallery") => void;
-	onClose: () => void;
-	labels: { camera: string; photos: string };
-}
-
-const AttachPopover = ({
-	onAttachClick,
-	onClose,
-	labels,
-}: AttachPopoverProps) => (
-	<div
-		className={cn(
-			"absolute bottom-full left-0 mb-4",
-			"bg-bg-modal border border-border-default p-2 rounded-2xl shadow-xl",
-			"min-w-[160px] flex flex-col gap-1 z-50",
-			"animate-in slide-in-from-bottom-2",
-		)}
-	>
-		<button
-			type="button"
-			onClick={() => {
-				onAttachClick?.("camera");
-				onClose();
-			}}
-			className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors text-text-secondary hover:text-text-primary text-left"
-		>
-			<Camera className="w-4 h-4" />
-			<span className="text-sm font-medium">{labels.camera}</span>
-		</button>
-		<button
-			type="button"
-			onClick={() => {
-				onAttachClick?.("photo");
-				onClose();
-			}}
-			className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors text-text-secondary hover:text-text-primary text-left"
-		>
-			<FolderOpen className="w-4 h-4" />
-			<span className="text-sm font-medium">{labels.photos}</span>
-		</button>
-		<button
-			type="button"
-			onClick={() => {
-				onAttachClick?.("gallery");
-				onClose();
-			}}
-			className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors text-text-secondary hover:text-text-primary text-left"
-		>
-			<Grid3x3 className="w-4 h-4" />
-			<span className="text-sm font-medium">Galeria Zane</span>
-		</button>
-	</div>
-);
 
 interface RatioPopoverProps {
 	aspectRatio: AspectRatio;
@@ -228,10 +156,14 @@ export function PhotoInputArea({
 						)}
 					</button>
 					{attachMenuOpen && (
-						<AttachPopover
+						<PhotoAttachPopover
 							onAttachClick={onAttachClick}
 							onClose={() => setAttachMenuOpen(false)}
-							labels={{ camera: t.input.camera, photos: t.input.photos }}
+							labels={{
+								camera: t.input.camera,
+								photos: t.input.photos,
+								gallery: "Galeria Zane",
+							}}
 						/>
 					)}
 				</div>
@@ -242,7 +174,7 @@ export function PhotoInputArea({
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
 					onKeyDown={handleKeyDown}
-					placeholder="Descreva sua imagem..."
+					placeholder={t.input.placeholder}
 					disabled={isLoading}
 					rows={1}
 					className={cn(

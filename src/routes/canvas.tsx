@@ -1,95 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { CanvasWorkspace } from "@/components/canvas";
-import { ArtifactCard } from "@/components/canvas/ArtifactCard";
 import { CanvasInputArea } from "@/components/canvas/CanvasInputArea";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { ReasoningBubble } from "@/components/chat/ReasoningBubble";
+import { CanvasMessagesPanel } from "@/components/canvas/CanvasMessagesPanel";
+import { CANVAS_EXECUTION_PLAN, CANVAS_MODELS, createCanvasUsage } from "@/components/canvas/canvasConfig";
+import type { CanvasMessage } from "@/components/canvas/canvasTypes";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { useTokenUsage } from "@/hooks/useTokenUsage";
 import { cn } from "@/lib/utils";
-import type { CanvasArtifact, TokenUsage } from "@/types";
+import type { CanvasArtifact } from "@/types";
 import { parseArtifactFromMessage } from "@/utils/canvas";
 
 export const Route = createFileRoute("/canvas")({ component: CanvasPage });
-
-interface CanvasMessage {
-	id: string;
-	role: "user" | "ai";
-	content: string;
-	image?: string;
-	artifact?: CanvasArtifact;
-	usage?: TokenUsage;
-	executionPlan?: string[];
-}
-
-const CANVAS_EXECUTION_PLAN = [
-	"Compreender o objetivo criativo e definir requisitos.",
-	"Gerar esboço estruturado do artefato com contexto adicional.",
-	"Converter o resultado em código executável no workspace.",
-];
-
-function createCanvasUsage(prompt: string): TokenUsage {
-	const base = Math.max(prompt.length, 140);
-	const inputTokens = 160 + Math.round(base * 0.35);
-	const outputTokens = 320;
-	const thinkingTokens = 120;
-	const cachedContentTokens = 48;
-	const totalTokens =
-		inputTokens +
-		outputTokens +
-		thinkingTokens -
-		Math.floor(cachedContentTokens / 2);
-
-	return {
-		inputTokens,
-		outputTokens,
-		thinkingTokens,
-		cachedContentTokens,
-		totalTokens,
-		steps: [
-			{
-				stepName: "Ideação",
-				tool: "zane-canvas-planner",
-				input: Math.round(inputTokens * 0.5),
-				output: 96,
-				think: 24,
-				cache: 0,
-			},
-			{
-				stepName: "Geração de Código",
-				tool: "zane-canvas-core",
-				input: Math.round(inputTokens * 0.5),
-				output: outputTokens,
-				think: thinkingTokens,
-				cache: cachedContentTokens,
-			},
-		],
-	};
-}
-
-const CANVAS_MODELS = [
-	{
-		id: "draft",
-		name: "Zane Canvas Draft",
-		description: "Quick drafts and initial ideation",
-	},
-	{
-		id: "pro",
-		name: "Zane Canvas Pro",
-		description: "Structured writing and expanded context",
-	},
-	{
-		id: "studio",
-		name: "Zane Canvas Studio",
-		description: "Complex creative production",
-	},
-];
 
 function CanvasPage() {
 	const { openTokenUsage } = useTokenUsage();
@@ -187,9 +112,9 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 		}, 2000);
 	};
 
-	// Placeholder for attach (would be handled here if we add logic)
+	// Placeholder for attach (integrate camera/photo/file when storage backend is ready)
 	const handleAttachClick = (type: "camera" | "photo" | "file") => {
-		console.log("Attach:", type);
+		void type;
 	};
 
 	const handleNewChat = () => {
@@ -250,68 +175,17 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 						isWorkspaceOpen ? "md:basis-[45%] md:max-w-[45%]" : "md:basis-full",
 					)}
 				>
-					<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
-						<div className="max-w-3xl mx-auto py-6 space-y-6">
-							<AnimatePresence mode="popLayout">
-								{messages.length === 0 && !isLoading ? (
-									<EmptyState key="canvas-empty" variant="canvas" />
-								) : (
-									messages.map((message) => (
-										<motion.div
-											key={message.id}
-											initial={{ opacity: 0, y: 20 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{
-												type: "spring",
-												stiffness: 300,
-												damping: 30,
-											}}
-										>
-											{message.role === "user" ? (
-												<div className="flex justify-end">
-													<div className="max-w-[85%] md:max-w-[65%] rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
-														<p className="text-[15px] leading-relaxed">
-															{message.content}
-														</p>
-													</div>
-												</div>
-											) : (
-												<div className="space-y-3">
-													<AIMessage
-														content={message.content}
-														executionPlan={message.executionPlan}
-														onTokenDetails={openTokenUsage}
-														usage={message.usage}
-														isLastMessage={
-																messages[messages.length - 1]?.id === message.id
-																}
-													/>
-													{message.artifact && (
-														<div className="mt-3">
-															<ArtifactCard
-																						artifact={message.artifact}
-																						onClick={() => {
-																							setActiveArtifact(message.artifact ?? null);
-																							setIsWorkspaceOpen(true);
-																						}}
-																	/>
-														</div>
-													)}
-												</div>
-											)}
-										</motion.div>
-									))
-								)}
-								{isLoading && (
-									<ReasoningBubble
-										key="reasoning-bubble"
-										steps={CANVAS_EXECUTION_PLAN}
-									/>
-								)}
-							</AnimatePresence>
-							<div ref={messagesEndRef} />
-						</div>
-					</div>
+					<CanvasMessagesPanel
+						messages={messages}
+						isLoading={isLoading}
+						executionPlan={CANVAS_EXECUTION_PLAN}
+						onTokenDetails={openTokenUsage}
+						onArtifactSelect={(artifact) => {
+							setActiveArtifact(artifact);
+							setIsWorkspaceOpen(true);
+						}}
+						messagesEndRef={messagesEndRef}
+					/>
 
 					{/* REPLACED CanvasCommandBar with CanvasInputArea */}
 					<CanvasInputArea

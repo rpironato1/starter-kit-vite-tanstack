@@ -10,7 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useEffect } from "react";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ApiAccessProvider } from "@/hooks/useApiAccess";
-import { TokenUsageProvider } from "@/hooks/useTokenUsage";
+import { TokenUsagePortal, TokenUsageProvider } from "@/hooks/useTokenUsage";
 import {
 	beginInitStep,
 	completeGlobalInit,
@@ -87,6 +87,7 @@ function RootComponent() {
 			<ApiAccessProvider>
 				<TokenUsageProvider>
 					<Outlet />
+					<TokenUsagePortal />
 				</TokenUsageProvider>
 			</ApiAccessProvider>
 		</LanguageProvider>

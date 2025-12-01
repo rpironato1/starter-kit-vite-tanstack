@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Code, Copy, RefreshCw, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CodeEditor } from "./CodeEditor";
 import { Preview } from "./Preview";
 
@@ -27,12 +27,16 @@ export function CanvasWorkspace({
 }: CanvasWorkspaceProps) {
 	const [artifact, setArtifact] = useState(initialArtifact);
 	const [activeTab, setActiveTab] = useState<"code" | "preview">(
-		["html", "react", "javascript"].includes(initialArtifact.language)
-			? "preview"
-			: "code",
+		initialArtifact.language === "html" ? "preview" : "code",
 	);
 	const [isCopied, setIsCopied] = useState(false);
 	const [refreshKey, setRefreshKey] = useState(0);
+
+	useEffect(() => {
+		setArtifact(initialArtifact);
+		setActiveTab(initialArtifact.language === "html" ? "preview" : "code");
+		setRefreshKey((prev) => prev + 1);
+	}, [initialArtifact]);
 
 	const handleCopy = async () => {
 		await navigator.clipboard.writeText(artifact.content);
@@ -48,13 +52,7 @@ export function CanvasWorkspace({
 		setArtifact((prev) => ({ ...prev, content: newContent }));
 	};
 
-	const isWebPreviewable = [
-		"html",
-		"react",
-		"javascript",
-		"jsx",
-		"tsx",
-	].includes(artifact.language);
+	const isWebPreviewable = artifact.language === "html";
 
 	return (
 		<AnimatePresence>

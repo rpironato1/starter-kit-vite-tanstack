@@ -52,11 +52,22 @@ export function TokenUsageProvider({ children }: { children: ReactNode }) {
 	);
 
 	return (
-		<TokenUsageContext.Provider value={value}>
-			{children}
-			{currentUsage && (
-				<TokenUsageModal isOpen onClose={closeUsage} usage={currentUsage} />
-			)}
-		</TokenUsageContext.Provider>
+		<TokenUsageContext.Provider value={value}>{children}</TokenUsageContext.Provider>
+	);
+}
+
+export function TokenUsagePortal() {
+	const { currentUsage, closeTokenUsage } = useTokenUsage();
+
+	if (!currentUsage) {
+		return null;
+	}
+
+	return (
+		<TokenUsageModal
+			isOpen
+			onClose={closeTokenUsage}
+			usage={currentUsage}
+		/>
 	);
 }

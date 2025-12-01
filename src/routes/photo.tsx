@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
-import { Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ZaneGallery } from "@/components/photo";
 import { PhotoInputArea } from "@/components/photo/PhotoInputArea";
+import { PhotoMessagesPanel } from "@/components/photo/PhotoMessagesPanel";
+import { PHOTO_MODELS } from "@/components/photo/photoConfig";
+import type { PhotoMessage } from "@/components/photo/photoTypes";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
@@ -17,31 +15,6 @@ import PromptEnhancer from "@/services/promptEnhancer";
 import type { TokenUsage } from "@/types";
 
 export const Route = createFileRoute("/photo")({ component: PhotoPage });
-
-const PHOTO_MODELS = [
-	{
-		id: "img-lite",
-		name: "Zane img Lite",
-		description: "Ilustrações e avatares",
-	},
-	{ id: "img-pro", name: "Zane img Pro", description: "Realismo e detalhes" },
-	{
-		id: "img-ultra",
-		name: "Zane img Ultra",
-		description: "Altíssimo realismo",
-	},
-];
-
-interface PhotoMessage {
-	id: string;
-	role: "user" | "assistant";
-	content: string;
-	imageUrl?: string;
-	generatedImageUrl?: string;
-	timestamp: Date;
-	usage?: TokenUsage;
-	executionPlan?: string[];
-}
 
 const PHOTO_EXECUTION_PLAN = [
 	"Interpretar o prompt e identificar os elementos principais.",
@@ -271,95 +244,12 @@ function PhotoPage() {
       */}
 
 			<main className="flex-1 overflow-hidden relative">
-				<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
-					<div className="max-w-3xl mx-auto py-6 space-y-6">
-						<AnimatePresence mode="popLayout">
-							{messages.length === 0 && !isLoading ? (
-								<motion.div
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									className="flex flex-col items-center gap-6"
-								>
-									<EmptyState variant="photo" modelName={currentModel} />
-								</motion.div>
-							) : (
-								<>
-									{messages.map((message) => (
-										<motion.div
-											key={message.id}
-											initial={{ opacity: 0, y: 20 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{
-												type: "spring",
-												stiffness: 300,
-												damping: 30,
-											}}
-										>
-											{message.role === "user" ? (
-												<div className="flex justify-end">
-													<div className="max-w-[85%] md:max-w-[65%] space-y-3 rounded-[20px] rounded-tr-[4px] border border-border-default bg-bg-surface px-5 py-3.5 text-text-primary shadow-sm">
-														{message.imageUrl && (
-															<img
-																src={message.imageUrl}
-																alt="Referência enviada"
-																className="max-h-48 w-full rounded-xl border border-border-default object-cover"
-															/>
-														)}
-														<p className="text-[15px] leading-relaxed">
-															{message.content}
-														</p>
-													</div>
-												</div>
-											) : (
-												<div className="space-y-3">
-													{message.generatedImageUrl && (
-														<div className="relative group rounded-2xl overflow-hidden border border-border-default shadow-2xl bg-black/40 max-w-md">
-															<img
-																src={message.generatedImageUrl}
-																alt="Generated"
-																className="w-full h-auto object-cover"
-															/>
-															<div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-																<button
-																	type="button"
-																	title="Baixar imagem"
-																	onClick={() =>
-																		window.open(
-																			message.generatedImageUrl,
-																			"_blank",
-																		)
-																	}
-																	className="p-4 bg-white/20 rounded-full hover:scale-110 transition-transform"
-																>
-																	<Download className="w-6 h-6 text-white" />
-																</button>
-															</div>
-														</div>
-													)}
-													<AIMessage
-														content={message.content}
-														usage={message.usage}
-														executionPlan={message.executionPlan}
-														onTokenDetails={(usage) => openTokenUsage(usage)}
-													/>
-												</div>
-											)}
-										</motion.div>
-									))}
-									{isLoading && (
-										<motion.div
-											initial={{ opacity: 0, y: 10 }}
-											animate={{ opacity: 1, y: 0 }}
-										>
-											<LoadingIndicator moduleVariant="photo" />
-										</motion.div>
-									)}
-								</>
-							)}
-						</AnimatePresence>
-						<div ref={messagesEndRef} />
-					</div>
-				</div>
+				<PhotoMessagesPanel
+					messages={messages}
+					isLoading={isLoading}
+					onTokenDetails={(usage) => openTokenUsage(usage)}
+					messagesEndRef={messagesEndRef}
+				/>
 
 				{/* REPLACED PhotoCommandBar with PhotoInputArea */}
 				<PhotoInputArea

@@ -79,7 +79,7 @@ export function CanvasCommandBar({
 						type="button"
 						onClick={() => onSpark?.()}
 						disabled={!hasContent || isLoading}
-						className="rounded-full p-3 text-[#eecfa1] transition-colors hover:bg-bg-hover disabled:cursor-not-allowed disabled:opacity-50"
+						className="rounded-full p-3 text-accent-textHighlight transition-colors hover:bg-bg-hover disabled:cursor-not-allowed disabled:opacity-50"
 						title="Automatizar com assistente"
 					>
 						<Sparkles className="h-5 w-5" />

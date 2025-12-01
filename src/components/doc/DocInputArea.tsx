@@ -2,6 +2,7 @@ import { Plus, Send } from "lucide-react";
 import type { RefObject } from "react";
 import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
+import { useTranslation } from "@/hooks/useI18n";
 import { cn } from "@/lib/utils";
 
 type ReasoningLevel = "soft" | "medium" | "max" | "off";
@@ -27,6 +28,7 @@ export function DocInputArea({
 	onFileSelect,
 	inputRef,
 }: DocInputAreaProps) {
+	const { t } = useTranslation();
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault();
@@ -69,7 +71,7 @@ export function DocInputArea({
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
 					onKeyDown={handleKeyDown}
-					placeholder="Pergunte aos seus documentos..."
+					placeholder={t.input.placeholder}
 					disabled={isLoading}
 					rows={1}
 					className={cn(

@@ -144,7 +144,7 @@ export function CanvasInputArea({
 						value={value}
 						onChange={(e) => onChange(e.target.value)}
 						onKeyDown={handleKeyDown}
-						placeholder="Canvas: Desenvolva suas ideias..."
+						placeholder={t.input.placeholder}
 						disabled={isLoading}
 						rows={1}
 						className={cn(

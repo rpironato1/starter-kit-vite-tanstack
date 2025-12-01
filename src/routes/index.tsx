@@ -1,71 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { AIMessage } from "@/components/chat/AIMessage";
+import { ChatMessagesPanel } from "@/components/chat/ChatMessagesPanel";
 import { ChatInputArea } from "@/components/chat/ChatInputArea";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
-import { UserMessage } from "@/components/chat/UserMessage";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { useTokenUsage } from "@/hooks/useTokenUsage";
-import type { TokenUsage } from "@/types";
+import { createMockUsage, PLAN_STEPS } from "@/components/chat/chatMocks";
+import type { ChatMessage } from "@/components/chat/chatTypes";
 
 export const Route = createFileRoute("/")({ component: ChatPage });
-
-interface ChatMessage {
-	id: string;
-	role: "user" | "assistant";
-	content: string;
-	imageUrl?: string;
-	timestamp: Date;
-	usage?: TokenUsage;
-	executionPlan?: string[];
-}
-
-const PLAN_STEPS = [
-	"Interpretar o contexto e identificar o objetivo central.",
-	"Selecionar conhecimentos relevantes do repositório Zane.",
-	"Gerar resposta estruturada com evidências e tom natural.",
-];
-
-function createMockUsage(prompt: string): TokenUsage {
-	const normalizedLength = Math.max(prompt.length, 120);
-	const inputTokens = 120 + Math.round(normalizedLength * 0.2);
-	const thinkingTokens = 80;
-	const outputTokens = 240;
-	const cachedContentTokens = 36;
-	const totalTokens =
-		inputTokens + outputTokens + thinkingTokens - cachedContentTokens / 2;
-
-	return {
-		inputTokens,
-		outputTokens,
-		thinkingTokens,
-		cachedContentTokens,
-		totalTokens,
-		steps: [
-			{
-				stepName: "Planner",
-				tool: "zane-planner",
-				input: Math.round(inputTokens * 0.6),
-				output: 64,
-				think: 24,
-				cache: 0,
-			},
-			{
-				stepName: "Responder",
-				tool: "zane-core",
-				input: Math.round(inputTokens * 0.4),
-				output: outputTokens,
-				think: thinkingTokens,
-				cache: cachedContentTokens,
-			},
-		],
-	};
-}
 
 function ChatPage() {
 	const { openTokenUsage } = useTokenUsage();
@@ -234,58 +179,13 @@ function ChatPage() {
 
 			{/* Main Content */}
 			<main className="flex-1 overflow-hidden relative">
-				{/* Messages Area */}
-				<div className="h-full overflow-y-auto pb-32 px-4 md:px-6">
-					<div className="max-w-3xl mx-auto py-6 space-y-6">
-						<AnimatePresence mode="popLayout">
-							{messages.length === 0 && !isLoading ? (
-								<EmptyState variant="chat" />
-							) : (
-								<>
-									{messages.map((message) => (
-										<motion.div
-											key={message.id}
-											initial={{ opacity: 0, y: 20 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{
-												type: "spring",
-												stiffness: 300,
-												damping: 30,
-											}}
-										>
-											{message.role === "user" ? (
-												<UserMessage
-													content={message.content}
-													imageUrl={message.imageUrl}
-												/>
-											) : (
-												<AIMessage
-													content={message.content}
-													usage={message.usage}
-													executionPlan={message.executionPlan}
-													onTokenDetails={(usage) => openTokenUsage(usage)}
-													onRetry={handleRetry}
-													isLastMessage={
-																messages[messages.length - 1]?.id === message.id
-														}
-												/>
-											)}
-										</motion.div>
-									))}
-									{isLoading && (
-										<motion.div
-											initial={{ opacity: 0, y: 10 }}
-											animate={{ opacity: 1, y: 0 }}
-										>
-											<LoadingIndicator moduleVariant="chat" />
-										</motion.div>
-									)}
-								</>
-							)}
-						</AnimatePresence>
-						<div ref={messagesEndRef} />
-					</div>
-				</div>
+				<ChatMessagesPanel
+					messages={messages}
+					isLoading={isLoading}
+					onTokenDetails={openTokenUsage}
+					onRetry={handleRetry}
+					messagesEndRef={messagesEndRef}
+				/>
 
 				{/* REPLACED Input Bar with ChatInputArea */}
 				<ChatInputArea
