@@ -116,8 +116,8 @@ export function Sidebar({
 	onNewChat,
 	onOpenSettings,
 	currentView,
-	userName = "Usuário",
-	userInitials = "U",
+	userName = "Zane User",
+	userInitials = "ZA",
 	activeChatId,
 	onSelectChat,
 	chatHistory,
@@ -245,50 +245,34 @@ export function Sidebar({
 							</AnimatePresence>
 						</motion.div>
 
-						{/* User Badge + Plus Row */}
-						<motion.div
-							variants={itemVariants}
-							className="p-4 border-t border-border-default space-y-2"
-						>
-							<div className="flex items-center gap-3 rounded-[32px] border border-border-default/60 bg-bg-surface/80 p-3 shadow-[0_20px_40px_rgba(0,0,0,0.35)]">
+						{/* Footer - User Badge and New Chat Button */}
+						<motion.div variants={itemVariants} className="p-4">
+							<div className="h-px bg-border-default/40 w-full mb-4" />
+							<div className="flex items-center justify-between">
 								<button
 									type="button"
 									onClick={onOpenSettings}
-									title={t.settings.title}
-									aria-label={t.settings.title}
-									className="group flex flex-1 items-center gap-3 rounded-2xl text-left"
+									className="flex items-center gap-3 bg-bg-hover/50 hover:bg-bg-hover rounded-full p-1 pr-4 transition-colors border border-white/5"
 								>
-									<div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border-default/40 bg-bg-hover text-base font-bold text-text-primary transition-colors group-hover:border-accent-primary/40 group-hover:bg-accent-primary/10">
+									<div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-white">
 										{userInitials}
 									</div>
-									<div className="min-w-0">
-										<p className="truncate text-sm font-semibold text-text-primary">
-											{userName}
-										</p>
-										<p className="text-xs text-text-secondary">
-											{t.plan.accountPlan}:{" "}
-											<span className="font-semibold text-text-primary">
-												{t.plan.currentPlanName}
-											</span>
-										</p>
-									</div>
+									<span className="text-sm font-medium text-text-primary">
+										{userName}
+									</span>
 								</button>
+
 								<button
 									type="button"
 									onClick={() => {
 										handleNavigate("chat");
 										onNewChat();
 									}}
-									title={t.sidebar.newChat}
-									aria-label={t.sidebar.newChat}
-									className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-primary text-white shadow-lg shadow-green-900/30 transition-transform duration-200 hover:scale-105"
+									className="w-12 h-12 rounded-full bg-accent-primary hover:bg-accent-hover flex items-center justify-center text-white shadow-lg shadow-green-900/20 transition-transform hover:scale-105"
 								>
-									<Plus className="h-5 w-5" />
+									<Plus className="w-6 h-6" />
 								</button>
 							</div>
-							<p className="text-center text-[11px] font-semibold uppercase tracking-[0.4em] text-text-secondary">
-								{t.sidebar.newChat}
-							</p>
 						</motion.div>
 					</motion.aside>
 				)}
