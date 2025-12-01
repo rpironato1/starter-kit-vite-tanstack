@@ -283,36 +283,6 @@ export function ModelSelector({
 						aria-labelledby={titleId}
 						aria-describedby={descriptionId}
 					>
-						<div className="border-b border-border-default/40 bg-bg-main/60 px-4 py-3">
-							<p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-text-secondary">
-								{t.models.heroTitle}
-							</p>
-							<div className="mt-2 flex flex-col gap-3">
-								<div className="flex items-start justify-between gap-3">
-									<div className="min-w-0">
-										<p
-											id={titleId}
-											className="font-serif text-2xl text-text-primary"
-										>
-											{currentModel}
-										</p>
-										<p
-											id={descriptionId}
-											className="text-sm text-text-secondary"
-										>
-											{t.models.heroSubtitle}
-										</p>
-									</div>
-									<span className="inline-flex items-center rounded-xl border border-border-default/50 bg-bg-hover/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-text-secondary">
-										{t.models.activeLabel}
-									</span>
-								</div>
-								<div className="flex items-center gap-2 text-xs text-text-secondary">
-									<Sparkles className="h-3.5 w-3.5 text-accent-primary" />
-									<span>{t.models.cta}</span>
-								</div>
-							</div>
-						</div>
 						<div className="p-2" role="listbox">
 							{availableModels.map((model, index) => {
 								const isSelected =

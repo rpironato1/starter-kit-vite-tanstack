@@ -1,5 +1,5 @@
 import { Plus, Send } from "lucide-react";
-import { type RefObject, useState } from "react";
+import type { RefObject } from "react";
 import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
 import { cn } from "@/lib/utils";

@@ -161,7 +161,7 @@ function DocPage() {
 			id: crypto.randomUUID(),
 			role: "user",
 			content:
-				issue.trim() || `Analisar ${attachedFiles.length} arquivo(s)`,
+				inputValue.trim() || `Analisar ${attachedFiles.length} arquivo(s)`,
 			attachedFiles: attachedFiles.length > 0 ? [...attachedFiles] : undefined,
 			timestamp: new Date(),
 		};

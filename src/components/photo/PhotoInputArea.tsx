@@ -52,10 +52,14 @@ const ASPECT_RATIOS: {
 interface AttachPopoverProps {
 	onAttachClick?: (type: "camera" | "photo" | "gallery") => void;
 	onClose: () => void;
-	t: any;
+	labels: { camera: string; photos: string };
 }
 
-const AttachPopover = ({ onAttachClick, onClose, t }: AttachPopoverProps) => (
+const AttachPopover = ({
+	onAttachClick,
+	onClose,
+	labels,
+}: AttachPopoverProps) => (
 	<div
 		className={cn(
 			"absolute bottom-full left-0 mb-4",
@@ -73,7 +77,7 @@ const AttachPopover = ({ onAttachClick, onClose, t }: AttachPopoverProps) => (
 			className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors text-text-secondary hover:text-text-primary text-left"
 		>
 			<Camera className="w-4 h-4" />
-			<span className="text-sm font-medium">{t.input.camera}</span>
+			<span className="text-sm font-medium">{labels.camera}</span>
 		</button>
 		<button
 			type="button"
@@ -84,7 +88,7 @@ const AttachPopover = ({ onAttachClick, onClose, t }: AttachPopoverProps) => (
 			className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors text-text-secondary hover:text-text-primary text-left"
 		>
 			<FolderOpen className="w-4 h-4" />
-			<span className="text-sm font-medium">{t.input.photos}</span>
+			<span className="text-sm font-medium">{labels.photos}</span>
 		</button>
 		<button
 			type="button"
@@ -104,14 +108,14 @@ interface RatioPopoverProps {
 	aspectRatio: AspectRatio;
 	onAspectRatioChange: (ratio: AspectRatio) => void;
 	onClose: () => void;
-	t: any;
+	ratioLabel: string;
 }
 
 const RatioPopover = ({
 	aspectRatio,
 	onAspectRatioChange,
 	onClose,
-	t,
+	ratioLabel,
 }: RatioPopoverProps) => (
 	<div
 		className={cn(
@@ -122,7 +126,7 @@ const RatioPopover = ({
 		)}
 	>
 		<div className="px-3 py-2 text-[10px] font-bold text-text-secondary uppercase tracking-widest">
-			{t.photoView.ratioLabel}
+			{ratioLabel}
 		</div>
 		{ASPECT_RATIOS.map((ratio) => (
 			<button
@@ -227,7 +231,7 @@ export function PhotoInputArea({
 						<AttachPopover
 							onAttachClick={onAttachClick}
 							onClose={() => setAttachMenuOpen(false)}
-							t={t}
+							labels={{ camera: t.input.camera, photos: t.input.photos }}
 						/>
 					)}
 				</div>
@@ -277,7 +281,7 @@ export function PhotoInputArea({
 								aspectRatio={aspectRatio}
 								onAspectRatioChange={onAspectRatioChange}
 								onClose={() => setRatioMenuOpen(false)}
-								t={t}
+								ratioLabel={t.photoView.ratioLabel}
 							/>
 						)}
 					</div>

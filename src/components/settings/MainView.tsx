@@ -12,13 +12,6 @@ import {
 	Terminal,
 	User,
 } from "lucide-react";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { ZaneToggle } from "@/components/ui/switch";
 import { useTranslation } from "@/hooks/useI18n";
 import { useTheme } from "@/hooks/useTheme";
@@ -40,18 +33,18 @@ export function MainView({ pushView }: MainViewProps) {
 	const { isDark, toggleTheme } = useTheme();
 	const { t, language, setLanguage } = useTranslation();
 
-	const handleLanguageChange = (value: string) => {
-		if (value === "pt-BR" || value === "en-US") {
-			setLanguage(value as Language);
-		}
+	const handleLanguageChange = () => {
+		const nextLang = language === "pt-BR" ? "en-US" : "pt-BR";
+		setLanguage(nextLang as Language);
 	};
 
+	const currentLangLabel =
+		LANGUAGES.find((l) => l.value === language)?.label || language;
+
 	const handleLogout = () => {
-		// TODO: Implement logout logic
 		console.log("Logout clicked");
 	};
 
-	// TODO: Get email from user context/auth
 	const userEmail = "usuario@email.com";
 
 	return (
@@ -81,10 +74,7 @@ export function MainView({ pushView }: MainViewProps) {
 					icon={SlidersHorizontal}
 					label={t.settings.features}
 					description={t.settings.features}
-					onClick={() => {
-						// TODO: Implement features view
-						console.log("Features clicked");
-					}}
+					onClick={() => console.log("Features clicked")}
 				/>
 
 				<SettingsItem
@@ -115,36 +105,18 @@ export function MainView({ pushView }: MainViewProps) {
 				/>
 
 				{/* Language - Inline Selector */}
-				<div className="bg-bg-surface rounded-xl p-4">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-4">
-							<div className="w-10 h-10 rounded-full bg-bg-hover flex items-center justify-center">
-								<Globe className="w-5 h-5 text-text-secondary" />
-							</div>
-							<div>
-								<p className="text-sm font-medium text-text-primary">
-									{t.settings.language}
-								</p>
-								<p className="text-xs text-text-secondary">
-									{LANGUAGES.find((l) => l.value === language)?.label}
-								</p>
-							</div>
-						</div>
-
-						<Select value={language} onValueChange={handleLanguageChange}>
-							<SelectTrigger className="w-36">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								{LANGUAGES.map((lang) => (
-									<SelectItem key={lang.value} value={lang.value}>
-										{lang.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-				</div>
+				<SettingsItem
+					icon={Globe}
+					label={t.settings.language}
+					rightElement={
+						<button
+							onClick={handleLanguageChange}
+							className="text-sm text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2"
+						>
+							{currentLangLabel}
+						</button>
+					}
+				/>
 
 				<SettingsItem
 					icon={Bell}

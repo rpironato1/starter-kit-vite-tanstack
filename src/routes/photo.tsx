@@ -9,7 +9,6 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ZaneGallery } from "@/components/photo";
 import { PhotoInputArea } from "@/components/photo/PhotoInputArea";
-import { PhotoToolbar } from "@/components/photo/PhotoToolbar";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
