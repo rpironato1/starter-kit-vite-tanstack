@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { RefObject } from "react";
 import { ArtifactCard } from "@/components/canvas/ArtifactCard";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { ReasoningBubble } from "@/components/chat/ReasoningBubble";
+import { AIMessage } from "@/domains/chat/components/AIMessage";
+import { EmptyState } from "@/domains/chat/components/EmptyState";
+import { ReasoningBubble } from "@/domains/chat/components/ReasoningBubble";
 import type { CanvasMessage } from "@/components/canvas/canvasTypes";
 import type { CanvasArtifact, TokenUsage } from "@/types";
 

@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
-import { UserMessage } from "@/components/chat/UserMessage";
-import type { ChatMessage } from "@/components/chat/chatTypes";
+import { AIMessage } from "./AIMessage";
+import { EmptyState } from "./EmptyState";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { UserMessage } from "./UserMessage";
+import type { ChatMessage } from "./chatTypes";
 import type { TokenUsage } from "@/types";
 
 interface ChatMessagesPanelProps {

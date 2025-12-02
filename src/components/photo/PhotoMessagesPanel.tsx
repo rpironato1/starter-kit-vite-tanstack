@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Download } from "lucide-react";
 import type { RefObject } from "react";
-import { AIMessage } from "@/components/chat/AIMessage";
-import { EmptyState } from "@/components/chat/EmptyState";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
+import { AIMessage } from "@/domains/chat/components/AIMessage";
+import { EmptyState } from "@/domains/chat/components/EmptyState";
+import { LoadingIndicator } from "@/domains/chat/components/LoadingIndicator";
 import type { PhotoMessage } from "@/components/photo/photoTypes";
 import type { TokenUsage } from "@/types";
 
