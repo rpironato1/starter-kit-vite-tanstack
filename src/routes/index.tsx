@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChatMessagesPanel } from "@/components/chat/ChatMessagesPanel";
-import { ChatInputArea } from "@/components/chat/ChatInputArea";
+import { ChatMessagesPanel } from "@/domains/chat/components/ChatMessagesPanel";
+import { ChatInputArea } from "@/domains/chat/components/ChatInputArea";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { useTokenUsage } from "@/hooks/useTokenUsage";
-import { createMockUsage, PLAN_STEPS } from "@/components/chat/chatMocks";
-import type { ChatMessage } from "@/components/chat/chatTypes";
+import { createMockUsage, PLAN_STEPS } from "@/domains/chat/components/chatMocks";
+import type { ChatMessage } from "@/domains/chat/components/chatTypes";
 
 export const Route = createFileRoute("/")({ component: ChatPage });
 
