@@ -89,10 +89,11 @@ const MODULE_COLORS: Record<string, string> = {
 // ============================================================================
 
 const getConfig = (): LoggerConfig => {
+	const env = process.env as NodeJS.ProcessEnv & { NODE_ENV?: string };
 	const isDev =
 		typeof window !== "undefined"
 			? (import.meta.env?.DEV ?? true)
-			: process.env.NODE_ENV !== "production";
+			: env.NODE_ENV !== "production";
 
 	return {
 		enabled: isDev,
@@ -348,7 +349,11 @@ class InitializationSequence {
 		}
 
 		this.currentStep = stepIndex === -1 ? this.steps.length - 1 : stepIndex;
-		this.steps[this.currentStep].status = "running";
+		const currentStepEntry = this.steps[this.currentStep];
+		if (!currentStepEntry) {
+			return;
+		}
+		currentStepEntry.status = "running";
 
 		logInit.info(`→ Step ${this.currentStep + 1}: ${name}`, {
 			data: { status: "running" },
@@ -360,8 +365,12 @@ class InitializationSequence {
 		const stepIndex = this.steps.findIndex((s) => s.name === name);
 
 		if (stepIndex !== -1) {
-			this.steps[stepIndex].status = "success";
-			this.steps[stepIndex].duration = duration;
+			const step = this.steps[stepIndex];
+			if (!step) {
+				return;
+			}
+			step.status = "success";
+			step.duration = duration;
 
 			logInit.success(`✓ Step ${stepIndex + 1}: ${name}`, {
 				duration,
@@ -374,9 +383,13 @@ class InitializationSequence {
 		const stepIndex = this.steps.findIndex((s) => s.name === name);
 
 		if (stepIndex !== -1) {
-			this.steps[stepIndex].status = "error";
-			this.steps[stepIndex].duration = duration;
-			this.steps[stepIndex].error = error;
+			const step = this.steps[stepIndex];
+			if (!step) {
+				return;
+			}
+			step.status = "error";
+			step.duration = duration;
+			step.error = error;
 
 			logInit.error(`✗ Step ${stepIndex + 1}: ${name}`, {
 				duration,

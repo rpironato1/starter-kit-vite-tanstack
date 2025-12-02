@@ -41,7 +41,7 @@ export function parseArtifactFromMessage(
 	}
 
 	const language = match[1] || "plaintext";
-	const code = match[2].trim();
+	const code = (match[2] ?? "").trim();
 	const langLower = language.toLowerCase();
 
 	const title = titleMap[langLower] || `Snippet ${language.toUpperCase()}`;

@@ -4,8 +4,8 @@ export interface CanvasMessage {
 	id: string;
 	role: "user" | "ai";
 	content: string;
-	image?: string;
-	artifact?: CanvasArtifact;
-	usage?: TokenUsage;
-	executionPlan?: string[];
+	image?: string | undefined;
+	artifact?: CanvasArtifact | undefined;
+	usage?: TokenUsage | undefined;
+	executionPlan?: string[] | undefined;
 }

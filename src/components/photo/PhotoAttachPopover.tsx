@@ -2,7 +2,7 @@ import { Camera, FolderOpen, Grid3x3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AttachPopoverProps {
-	onAttachClick?: (type: "camera" | "photo" | "gallery") => void;
+	onAttachClick?: ((type: "camera" | "photo" | "gallery") => void) | undefined;
 	onClose: () => void;
 	labels: { camera: string; photos: string; gallery: string };
 }

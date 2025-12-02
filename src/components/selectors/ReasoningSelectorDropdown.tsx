@@ -16,7 +16,7 @@ import {
 interface ReasoningSelectorDropdownProps {
 	value: ReasoningLevel;
 	onChange: (level: ReasoningLevel) => void;
-	className?: string;
+	className?: string | undefined;
 }
 
 export function ReasoningSelectorDropdown({

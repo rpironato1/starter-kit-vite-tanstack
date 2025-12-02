@@ -5,8 +5,8 @@ export interface DocMessage {
 	id: string;
 	role: "user" | "assistant";
 	content: string;
-	attachedFiles?: UploadedDocument[];
+	attachedFiles?: UploadedDocument[] | undefined;
 	timestamp: Date;
-	usage?: TokenUsage;
-	executionPlan?: string[];
+	usage?: TokenUsage | undefined;
+	executionPlan?: string[] | undefined;
 }

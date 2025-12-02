@@ -4,8 +4,8 @@ export interface ChatMessage {
 	id: string;
 	role: "user" | "assistant";
 	content: string;
-	imageUrl?: string;
+	imageUrl?: string | undefined;
 	timestamp: Date;
-	usage?: TokenUsage;
-	executionPlan?: string[];
+	usage?: TokenUsage | undefined;
+	executionPlan?: string[] | undefined;
 }

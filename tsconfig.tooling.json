@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo.tooling",
+    "types": ["node"],
+    "moduleDetection": "force"
+  },
+  "include": ["vite.config.ts", "vitest.setup.ts"],
+  "exclude": ["prototipos-zane"]
+}

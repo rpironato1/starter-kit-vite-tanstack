@@ -4,9 +4,9 @@ export interface PhotoMessage {
 	id: string;
 	role: "user" | "assistant";
 	content: string;
-	imageUrl?: string;
-	generatedImageUrl?: string;
+	imageUrl?: string | undefined;
+	generatedImageUrl?: string | undefined;
 	timestamp: Date;
-	usage?: TokenUsage;
-	executionPlan?: string[];
+	usage?: TokenUsage | undefined;
+	executionPlan?: string[] | undefined;
 }

@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 
 interface UserMessageProps {
 	content: string;
-	imageUrl?: string;
-	timestamp?: Date;
+	imageUrl?: string | undefined;
+	timestamp?: Date | undefined;
 }
 
 const springTransition = {

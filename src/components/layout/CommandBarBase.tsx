@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 interface CommandBarBaseProps {
 	children?: ReactNode;
 	attachmentPreview?: ReactNode;
-	className?: string;
-	containerClassName?: string;
+	className?: string | undefined;
+	containerClassName?: string | undefined;
 	leadingSlot?: ReactNode;
 	primarySlot?: ReactNode;
 	trailingSlot?: ReactNode;

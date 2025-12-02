@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo.test",
+    "types": ["vitest/globals", "vite/client", "react", "react-dom", "node"],
+    "moduleDetection": "force"
+  },
+  "include": [
+    "src/**/*",
+    "vitest.setup.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "env.d.ts"
+  ],
+  "exclude": ["prototipos-zane"]
+}

@@ -62,7 +62,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 		],
 	);
 
-	const currentView = viewStack[viewStack.length - 1];
+	const currentView = viewStack[viewStack.length - 1] ?? "main";
 	const canGoBack = viewStack.length > 1;
 
 	const pushView = useCallback((view: SettingsView) => {

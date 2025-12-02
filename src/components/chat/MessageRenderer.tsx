@@ -119,9 +119,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 				if (part.startsWith("```")) {
 					const match = part.match(/```(\w*)\n?([\s\S]*?)```/);
 					if (match) {
-						return (
-							<CodeBlock key={partKey} language={match[1]} code={match[2]} />
-						);
+						const language = match[1] ?? "";
+						const code = match[2] ?? "";
+						return <CodeBlock key={partKey} language={language} code={code} />;
 					}
 					return null;
 				}

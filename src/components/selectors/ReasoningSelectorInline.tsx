@@ -12,7 +12,7 @@ import {
 interface ReasoningSelectorInlineProps {
 	value: ReasoningLevel;
 	onChange: (level: ReasoningLevel) => void;
-	className?: string;
+	className?: string | undefined;
 }
 
 export function ReasoningSelectorInline({

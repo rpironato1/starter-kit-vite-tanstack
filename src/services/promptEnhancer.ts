@@ -200,7 +200,7 @@ function pickTone(prompt: string, locale: PromptLocale) {
 function formatSubject(prompt: string) {
 	const trimmed = prompt.trim();
 	if (!trimmed) return "";
-	return trimmed[0].toUpperCase() + trimmed.slice(1);
+	return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
 export async function enhancePrompt(rawPrompt: string): Promise<string> {

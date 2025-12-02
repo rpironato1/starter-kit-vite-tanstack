@@ -21,12 +21,12 @@ interface CanvasInputAreaProps {
 	isLoading: boolean;
 	reasoningLevel: ReasoningLevel;
 	onReasoningChange: (level: ReasoningLevel) => void;
-	onAttachClick?: (type: "camera" | "photo" | "file") => void;
+	onAttachClick?: ((type: "camera" | "photo" | "file") => void) | undefined;
 	inputRef?: RefObject<HTMLTextAreaElement | null>;
 }
 
 interface AttachPanelProps {
-	onAttachClick?: (type: "camera" | "photo" | "file") => void;
+	onAttachClick?: ((type: "camera" | "photo" | "file") => void) | undefined;
 	onClose: () => void;
 	labels: { camera: string; photos: string; files: string };
 }

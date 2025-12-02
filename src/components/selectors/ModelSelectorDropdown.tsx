@@ -15,7 +15,7 @@ interface ModelSelectorDropdownProps {
 	availableModels: Model[];
 	currentModel: string;
 	translateClass: string;
-	className?: string;
+	className?: string | undefined;
 	position: { top: number; left: number };
 	motionYOffset: number;
 	resolvedPlacement: "up" | "down";

@@ -1,4 +1,5 @@
 // Ensures CommonJS modules expecting `module` global can run under ESM Vitest
-if (typeof globalThis.module === "undefined") {
-	(globalThis as Record<string, unknown>).module = { exports: {} };
+const globalRecord = globalThis as Record<string, unknown>;
+if (typeof globalRecord["module"] === "undefined") {
+	globalRecord["module"] = { exports: {} };
 }

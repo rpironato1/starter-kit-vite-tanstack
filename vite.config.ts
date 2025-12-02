@@ -41,6 +41,9 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 			},
 		],
 	},
+	build: {
+		chunkSizeWarningLimit: 1200,
+	},
 	test: {
 		environment: "jsdom",
 		setupFiles: ["./vitest.setup.ts"],

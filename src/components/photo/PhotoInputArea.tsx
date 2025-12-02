@@ -22,14 +22,14 @@ interface PhotoInputAreaProps {
 	isLoading: boolean;
 	aspectRatio: AspectRatio;
 	onAspectRatioChange: (ratio: AspectRatio) => void;
-	onAttachClick?: (type: "camera" | "photo" | "gallery") => void;
-	onEnhancePrompt?: () => void;
-	canEnhance?: boolean;
-	isEnhancing?: boolean;
-	onRemoveImage?: () => void;
+	onAttachClick?: ((type: "camera" | "photo" | "gallery") => void) | undefined;
+	onEnhancePrompt?: (() => void) | undefined;
+	canEnhance?: boolean | undefined;
+	isEnhancing?: boolean | undefined;
+	onRemoveImage?: (() => void) | undefined;
 	attachedImage?: string | null;
 	inputRef?: RefObject<HTMLTextAreaElement | null>;
-	currentModel?: string;
+	currentModel?: string | undefined;
 }
 
 interface RatioPopoverProps {

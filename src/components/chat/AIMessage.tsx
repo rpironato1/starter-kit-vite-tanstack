@@ -29,21 +29,21 @@ interface AIMessageProps {
 	isLoading?: boolean;
 	image?: string;
 	sources?: Source[];
-	usage?: TokenUsage;
-	executionPlan?: string[];
+	usage?: TokenUsage | undefined;
+	executionPlan?: string[] | undefined;
 	hideCodeBlocks?: boolean;
-	onCopy?: () => void;
-	onLike?: () => void;
-	onDislike?: () => void;
-	onRetry?: () => void;
-	onTokenDetails?: (usage: TokenUsage) => void;
+	onCopy?: (() => void) | undefined;
+	onLike?: (() => void) | undefined;
+	onDislike?: (() => void) | undefined;
+	onRetry?: (() => void) | undefined;
+	onTokenDetails?: ((usage: TokenUsage) => void) | undefined;
 	isLastMessage?: boolean;
 }
 
 interface ActionButtonProps {
 	icon: ReactNode;
 	label: string;
-	onClick?: () => void;
+	onClick?: (() => void) | undefined;
 	active?: boolean;
 }
 

@@ -49,7 +49,10 @@ export function LanguageProvider({
 		}
 
 		if (typeof document !== "undefined") {
-			const datasetLanguage = document.documentElement.dataset.language;
+			const dataset = document.documentElement.dataset as DOMStringMap & {
+				language?: string;
+			};
+			const datasetLanguage = dataset.language;
 			if (datasetLanguage === "pt-BR" || datasetLanguage === "en-US") {
 				return datasetLanguage;
 			}
@@ -82,7 +85,10 @@ export function LanguageProvider({
 			return;
 		}
 		document.documentElement.lang = language;
-		document.documentElement.dataset.language = language;
+		const dataset = document.documentElement.dataset as DOMStringMap & {
+			language?: string;
+		};
+		dataset.language = language;
 	}, [language]);
 
 	const setLanguage = useCallback((newLanguage: Language) => {
