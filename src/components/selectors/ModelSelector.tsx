@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { ModelSelectorDropdown } from "./ModelSelectorDropdown";
 import {
 	DEFAULT_MODELS,

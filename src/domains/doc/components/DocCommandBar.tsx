@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FileText, Plus, Send } from "lucide-react";
 import type { RefObject } from "react";
-import type { UploadedDocument } from "@/components/doc/ContextDrawer";
+import type { UploadedDocument } from "./ContextDrawer";
 import { CommandBarBase } from "@/components/layout/CommandBarBase";
 import { cn } from "@/lib/utils";
 

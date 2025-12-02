@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import {
 	getReasoningLabel,
@@ -25,7 +25,7 @@ export function ReasoningSelectorInline({
 	return (
 		<div
 			className={cn(
-				"flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-surface)]",
+				"flex items-center gap-1 p-1 rounded-lg bg-bg-surface",
 				className,
 			)}
 		>
@@ -41,13 +41,13 @@ export function ReasoningSelectorInline({
 							"relative px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
 							isSelected
 								? config.color
-								: "text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
+								: "text-text-secondary hover:text-text-primary",
 						)}
 					>
 						{isSelected && (
 							<motion.div
 								layoutId="reasoning-pill"
-								className="absolute inset-0 bg-[var(--bg-hover)] rounded-md"
+								className="absolute inset-0 bg-bg-hover rounded-md"
 								transition={SPRING_CONFIG}
 							/>
 						)}

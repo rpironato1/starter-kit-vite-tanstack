@@ -13,8 +13,8 @@ import {
 	User,
 } from "lucide-react";
 import { ZaneToggle } from "@/components/ui/switch";
-import { useTranslation } from "@/hooks/useI18n";
-import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { useTheme } from "@/shared/hooks/useTheme";
 import type { Language } from "@/lib/i18n";
 import { SettingsItem } from "./SettingsItem";
 import type { SettingsView } from "./SettingsModal";

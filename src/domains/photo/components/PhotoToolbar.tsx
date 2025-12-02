@@ -4,7 +4,7 @@ import {
 	type AspectRatio,
 	AspectRatioSelector,
 } from "@/components/selectors/AspectRatioSelector";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 interface PhotoToolbarProps {

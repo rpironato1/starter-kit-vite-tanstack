@@ -1,6 +1,6 @@
 import { ChevronDown, Menu } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {

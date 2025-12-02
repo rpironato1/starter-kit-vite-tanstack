@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, FileText, Image } from "lucide-react";
 import { type ComponentType, useEffect, useRef } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 type AttachType = "camera" | "gallery" | "files";

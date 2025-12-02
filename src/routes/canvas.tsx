@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { CanvasWorkspace } from "@/components/canvas";
-import { CanvasInputArea } from "@/components/canvas/CanvasInputArea";
-import { CanvasMessagesPanel } from "@/components/canvas/CanvasMessagesPanel";
-import { CANVAS_EXECUTION_PLAN, CANVAS_MODELS, createCanvasUsage } from "@/components/canvas/canvasConfig";
-import type { CanvasMessage } from "@/components/canvas/canvasTypes";
+import {
+	CanvasWorkspace,
+	CanvasInputArea,
+	CanvasMessagesPanel,
+	CANVAS_EXECUTION_PLAN,
+	CANVAS_MODELS,
+	createCanvasUsage,
+	type CanvasMessage,
+} from "@/domains/canvas/components";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
-import { SettingsModal } from "@/components/settings/SettingsModal";
-import { useTokenUsage } from "@/hooks/useTokenUsage";
+import { SettingsModal } from "@/domains/settings/components";
+import { useTokenUsage } from "@/app/providers/token-usage";
 import { cn } from "@/lib/utils";
 import type { CanvasArtifact } from "@/types";
 import { parseArtifactFromMessage } from "@/utils/canvas";

@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 import { AIMessage } from "@/domains/chat/components/AIMessage";
 import { EmptyState } from "@/domains/chat/components/EmptyState";
 import { LoadingIndicator } from "@/domains/chat/components/LoadingIndicator";
-import type { PhotoMessage } from "@/components/photo/photoTypes";
+import type { PhotoMessage } from "./photoTypes";
 import type { TokenUsage } from "@/types";
 
 interface PhotoMessagesPanelProps {

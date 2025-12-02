@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Brain, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import {
 	getReasoningDescription,

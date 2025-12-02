@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { RefObject } from "react";
-import { ArtifactCard } from "@/components/canvas/ArtifactCard";
+import { ArtifactCard } from "./ArtifactCard";
 import { AIMessage } from "@/domains/chat/components/AIMessage";
 import { EmptyState } from "@/domains/chat/components/EmptyState";
 import { ReasoningBubble } from "@/domains/chat/components/ReasoningBubble";
-import type { CanvasMessage } from "@/components/canvas/canvasTypes";
+import type { CanvasMessage } from "./canvasTypes";
 import type { CanvasArtifact, TokenUsage } from "@/types";
 
 interface CanvasMessagesPanelProps {

@@ -8,7 +8,7 @@ import {
 	Wand2,
 } from "lucide-react";
 import { useMemo } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 interface ModeCardsProps {

@@ -1,1 +1,0 @@
-export { ZaneGallery } from "./ZaneGallery";

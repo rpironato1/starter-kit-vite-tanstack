@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FileText, LayoutGrid, MessageSquare, Wand2 } from "lucide-react";
 import type { ElementType } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 type EmptyStateVariant = "chat" | "photo" | "doc" | "canvas";
 

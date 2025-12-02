@@ -1,16 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Sidebar } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { ContextDrawer, type UploadedDocument } from "@/components/doc";
-import { DocInputArea } from "@/components/doc/DocInputArea";
-import { DocMessagesPanel } from "@/components/doc/DocMessagesPanel";
-import { DOC_MODELS, ACCEPTED_EXTENSIONS, ACCEPTED_TYPES } from "@/components/doc/docConfig";
-import type { DocMessage } from "@/components/doc/docTypes";
+import {
+	ContextDrawer,
+	type UploadedDocument,
+	DocInputArea,
+	DocMessagesPanel,
+	DOC_MODELS,
+	ACCEPTED_EXTENSIONS,
+	ACCEPTED_TYPES,
+	type DocMessage,
+} from "@/domains/doc/components";
 import { Header } from "@/components/layout/Header";
 import { Sidebar as AppSidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
-import { SettingsModal } from "@/components/settings/SettingsModal";
-import { useTokenUsage } from "@/hooks/useTokenUsage";
+import { SettingsModal } from "@/domains/settings/components";
+import { useTokenUsage } from "@/app/providers/token-usage";
 import type { TokenUsage } from "@/types";
 
 export const Route = createFileRoute("/doc")({ component: DocPage });

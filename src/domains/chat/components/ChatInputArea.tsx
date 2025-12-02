@@ -10,7 +10,7 @@ import {
 import { type RefObject, useState } from "react";
 import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 type ReasoningLevel = "soft" | "medium" | "max" | "off";

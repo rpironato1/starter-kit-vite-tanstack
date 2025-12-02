@@ -10,9 +10,9 @@ import {
 import { type RefObject, useState } from "react";
 import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
-import { PhotoAttachPopover } from "@/components/photo/PhotoAttachPopover";
-import { ASPECT_RATIOS } from "@/components/photo/photoAspectRatios";
-import { useTranslation } from "@/hooks/useI18n";
+import { PhotoAttachPopover } from "./PhotoAttachPopover";
+import { ASPECT_RATIOS } from "./photoAspectRatios";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 interface PhotoInputAreaProps {

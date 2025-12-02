@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { ZaneBadge } from "@/components/ui/zane-badge";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import type { TokenUsage } from "@/types";
 import { MessageRenderer } from "./MessageRenderer";

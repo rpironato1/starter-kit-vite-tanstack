@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Backdrop } from "@/components/ui/backdrop";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 // Dados mockados para histórico

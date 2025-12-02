@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 import { useState } from "react";
 import { AttachMenu } from "@/components/selectors/AttachMenu";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import { CommandBarBase } from "./CommandBarBase";
 

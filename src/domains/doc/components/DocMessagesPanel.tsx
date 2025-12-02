@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 import { AIMessage } from "@/domains/chat/components/AIMessage";
 import { EmptyState } from "@/domains/chat/components/EmptyState";
 import { LoadingIndicator } from "@/domains/chat/components/LoadingIndicator";
-import type { DocMessage } from "@/components/doc/docTypes";
+import type { DocMessage } from "./docTypes";
 import type { TokenUsage } from "@/types";
 
 interface DocMessagesPanelProps {

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { forwardRef } from "react";
 import { ZaneBadge } from "@/components/ui/zane-badge";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { TodoListPanel } from "./TodoListPanel";
 
 interface ReasoningBubbleProps {

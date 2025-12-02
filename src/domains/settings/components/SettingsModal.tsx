@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { MainView } from "./MainView";
 import { MemoryFactsView } from "./MemoryFactsView";
 import { MemoryMenuView } from "./MemoryMenuView";

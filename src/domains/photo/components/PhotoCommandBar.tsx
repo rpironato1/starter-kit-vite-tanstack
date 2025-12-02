@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CommandBarBase } from "@/components/layout/CommandBarBase";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { AttachMenu } from "@/components/selectors/AttachMenu";
-import { useTranslation } from "@/hooks/useI18n";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 interface PhotoCommandBarProps {

@@ -2,16 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { ZaneGallery } from "@/components/photo";
-import { PhotoInputArea } from "@/components/photo/PhotoInputArea";
-import { PhotoMessagesPanel } from "@/components/photo/PhotoMessagesPanel";
-import { PHOTO_MODELS } from "@/components/photo/photoConfig";
-import type { PhotoMessage } from "@/components/photo/photoTypes";
+import {
+	ZaneGallery,
+	PhotoInputArea,
+	PhotoMessagesPanel,
+	PHOTO_MODELS,
+	type PhotoMessage,
+} from "@/domains/photo/components";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
-import { SettingsModal } from "@/components/settings/SettingsModal";
-import { useTokenUsage } from "@/hooks/useTokenUsage";
-import PromptEnhancer from "@/services/promptEnhancer";
+import { SettingsModal } from "@/domains/settings/components";
+import { useTokenUsage } from "@/app/providers/token-usage";
+import PromptEnhancer from "@/domains/photo/services/promptEnhancer";
 import type { TokenUsage } from "@/types";
 
 export const Route = createFileRoute("/photo")({ component: PhotoPage });

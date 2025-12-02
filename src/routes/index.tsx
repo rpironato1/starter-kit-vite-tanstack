@@ -5,8 +5,8 @@ import { ChatInputArea } from "@/domains/chat/components/ChatInputArea";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
-import { SettingsModal } from "@/components/settings/SettingsModal";
-import { useTokenUsage } from "@/hooks/useTokenUsage";
+import { SettingsModal } from "@/domains/settings/components";
+import { useTokenUsage } from "@/app/providers/token-usage";
 import { createMockUsage, PLAN_STEPS } from "@/domains/chat/components/chatMocks";
 import type { ChatMessage } from "@/domains/chat/components/chatTypes";
 

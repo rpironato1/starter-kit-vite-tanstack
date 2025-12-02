@@ -1,5 +1,5 @@
 import type { TokenUsage } from "@/types";
-import type { UploadedDocument } from "@/components/doc";
+import type { UploadedDocument } from "./ContextDrawer";
 
 export interface DocMessage {
 	id: string;

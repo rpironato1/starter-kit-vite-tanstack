@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { ApiAccessProvider } from "@/hooks/useApiAccess";
-import { TokenUsagePortal, TokenUsageProvider } from "@/hooks/useTokenUsage";
+import { ApiAccessProvider } from "@/app/providers/api-access";
+import {
+	TokenUsagePortal,
+	TokenUsageProvider,
+} from "@/app/providers/token-usage";
 
 interface AppProvidersProps {
 	children: ReactNode;
