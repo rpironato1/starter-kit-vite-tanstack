@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { LayoutGrid, Send, Sparkles } from "lucide-react";
 import type { RefObject } from "react";
-import { CommandBarBase } from "@/components/layout/CommandBarBase";
+import { CommandBarBase } from "@/shared/components";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
 import { cn } from "@/lib/utils";
 

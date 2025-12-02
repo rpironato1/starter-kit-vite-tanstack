@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { FileText, Plus, Send } from "lucide-react";
 import type { RefObject } from "react";
 import type { UploadedDocument } from "./ContextDrawer";
-import { CommandBarBase } from "@/components/layout/CommandBarBase";
+import { CommandBarBase } from "@/shared/components";
 import { cn } from "@/lib/utils";
 
 interface DocCommandBarProps {

@@ -12,6 +12,10 @@ interface CommandBarBaseProps {
 	footerSlot?: ReactNode;
 }
 
+/**
+ * Container base dos inputs tipo "pill" dos protótipos.
+ * Compartilhado entre CommandBars e InputBars dos domínios.
+ */
 export function CommandBarBase({
 	children,
 	attachmentPreview,

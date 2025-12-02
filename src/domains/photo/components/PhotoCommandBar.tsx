@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ImageIcon, Loader2, Plus, Sparkles } from "lucide-react";
 import type { RefObject } from "react";
 import { useState } from "react";
-import { CommandBarBase } from "@/components/layout/CommandBarBase";
+import { CommandBarBase } from "@/shared/components";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { AttachMenu } from "@/components/selectors/AttachMenu";
 import { useTranslation } from "@/shared/hooks/useTranslation";

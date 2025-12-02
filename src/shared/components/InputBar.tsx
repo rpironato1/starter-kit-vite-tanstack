@@ -27,6 +27,10 @@ interface InputBarProps {
 	className?: string;
 }
 
+/**
+ * Implementação genérica do input bar usado nos protótipos.
+ * Atual/legado, mas mantido no shared para consumo futuro.
+ */
 export function InputBar({
 	value,
 	onChange,
@@ -57,23 +61,15 @@ export function InputBar({
 	};
 
 	const handleAttachSelect = (type: "camera" | "gallery" | "files") => {
-		if (type === "camera") {
-			// Simular captura de câmera
+		if (type === "camera" || type === "gallery") {
 			if (onImageAttach) {
 				const fakeImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
 				onImageAttach(fakeImageUrl);
 			}
-		} else if (type === "gallery") {
-			// Simular seleção de galeria
-			if (onImageAttach) {
-				const fakeImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
-				onImageAttach(fakeImageUrl);
-			}
-		} else if (type === "files") {
-			// Simular upload de arquivo - em produção abriria file picker
-			if (onAttachClick) {
-				onAttachClick();
-			}
+			return;
+		}
+		if (type === "files") {
+			onAttachClick?.();
 		}
 	};
 
