@@ -1,130 +1,51 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
 	CanvasWorkspace,
 	CanvasInputArea,
 	CanvasMessagesPanel,
-	CANVAS_EXECUTION_PLAN,
 	CANVAS_MODELS,
-	createCanvasUsage,
-	type CanvasMessage,
+	CANVAS_EXECUTION_PLAN,
 } from "@/domains/canvas/components";
+import { useCanvasExperience } from "@/domains/canvas/hooks";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ModelSelector } from "@/components/selectors/ModelSelector";
 import { SettingsModal } from "@/domains/settings/components";
 import { useTokenUsage } from "@/app/providers/token-usage";
 import { cn } from "@/lib/utils";
-import type { CanvasArtifact } from "@/types";
-import { parseArtifactFromMessage } from "@/utils/canvas";
 
 export const Route = createFileRoute("/canvas")({ component: CanvasPage });
 
 function CanvasPage() {
 	const { openTokenUsage } = useTokenUsage();
-	const [messages, setMessages] = useState<CanvasMessage[]>([]);
-	const [inputValue, setInputValue] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
+	const {
+		messages,
+		inputValue,
+		isLoading,
+		currentModel,
+		reasoningLevel,
+		isModelSelectorOpen,
+		activeArtifact,
+		isWorkspaceOpen,
+		setInputValue,
+		setCurrentModel,
+		setReasoningLevel,
+		setIsModelSelectorOpen,
+		handleSend,
+		handleAttachClick,
+		openWorkspaceWithArtifact,
+		closeWorkspace,
+		resetConversation,
+		messagesEndRef,
+		inputRef,
+		modelButtonRef,
+	} = useCanvasExperience();
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-	const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
-	const [currentModel, setCurrentModel] = useState("Zane Canvas Pro");
-	const [reasoningLevel, setReasoningLevel] = useState<
-		"soft" | "medium" | "max" | "off"
-	>("soft");
-	const [activeArtifact, setActiveArtifact] = useState<CanvasArtifact | null>(
-		null,
-	);
-	const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
-
-	const messagesEndRef = useRef<HTMLDivElement>(null);
-	const inputRef = useRef<HTMLTextAreaElement>(null);
-	const modelButtonRef = useRef<HTMLButtonElement>(null);
-
-	useEffect(() => {
-		if (messages.length === 0) {
-			return;
-		}
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages.length]);
-
-	const handleSend = () => {
-		if (!inputValue.trim() || isLoading) return;
-
-		const userMessage: CanvasMessage = {
-			id: `msg-${Date.now()}`,
-			role: "user",
-			content: inputValue.trim(),
-		};
-
-		setMessages((prev) => [...prev, userMessage]);
-		setInputValue("");
-		setIsLoading(true);
-
-		// Close workspace on mobile when sending
-		if (typeof window !== "undefined" && window.innerWidth < 768) {
-			setIsWorkspaceOpen(false);
-		}
-
-		// Simulate AI response with code generation
-		setTimeout(() => {
-			const aiResponseContent = `Aqui está o código que você pediu:
-
-\
-\
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generated App</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-  <div class="text-center p-8">
-    <h1 class="text-4xl font-bold mb-4">Hello from Zane Canvas!</h1>
-    <p class="text-gray-400">Generated based on: ${userMessage.content}</p>
-    <button class="mt-6 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
-      Click me!
-    </button>
-  </div>
-</body>
-</html>
-\
-\
-
-O código acima cria uma aplicação web baseada no seu pedido.`;
-
-			// Parse automático do artefato
-			const parsedArtifact = parseArtifactFromMessage(aiResponseContent);
-
-			const aiMessage: CanvasMessage = {
-				id: `msg-${Date.now()}`,
-				role: "ai",
-				content: aiResponseContent,
-				artifact: parsedArtifact || undefined,
-				usage: createCanvasUsage(userMessage.content),
-				executionPlan: CANVAS_EXECUTION_PLAN,
-			};
-
-			setMessages((prev) => [...prev, aiMessage]);
-			if (parsedArtifact) {
-				setActiveArtifact(parsedArtifact);
-				setIsWorkspaceOpen(true);
-			}
-			setIsLoading(false);
-		}, 2000);
-	};
-
-	// Placeholder for attach (integrate camera/photo/file when storage backend is ready)
-	const handleAttachClick = (type: "camera" | "photo" | "file") => {
-		void type;
-	};
 
 	const handleNewChat = () => {
-		setMessages([]);
-		setActiveArtifact(null);
-		setIsWorkspaceOpen(false);
+		resetConversation();
 		setIsSidebarOpen(false);
 	};
 
@@ -179,17 +100,14 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 						isWorkspaceOpen ? "md:basis-[45%] md:max-w-[45%]" : "md:basis-full",
 					)}
 				>
-					<CanvasMessagesPanel
-						messages={messages}
-						isLoading={isLoading}
+						<CanvasMessagesPanel
+							messages={messages}
+							isLoading={isLoading}
 						executionPlan={CANVAS_EXECUTION_PLAN}
-						onTokenDetails={openTokenUsage}
-						onArtifactSelect={(artifact) => {
-							setActiveArtifact(artifact);
-							setIsWorkspaceOpen(true);
-						}}
-						messagesEndRef={messagesEndRef}
-					/>
+							onTokenDetails={openTokenUsage}
+						onArtifactSelect={openWorkspaceWithArtifact}
+							messagesEndRef={messagesEndRef}
+						/>
 
 					{/* REPLACED CanvasCommandBar with CanvasInputArea */}
 					<CanvasInputArea
@@ -204,12 +122,12 @@ O código acima cria uma aplicação web baseada no seu pedido.`;
 					/>
 				</div>
 
-        {/* Canvas Workspace */}
+				{/* Canvas Workspace */}
         {activeArtifact && (
           <CanvasWorkspace
             artifact={activeArtifact}
             isOpen={isWorkspaceOpen}
-            onClose={() => setIsWorkspaceOpen(false)}
+            onClose={closeWorkspace}
           />
         )}
 			</main>

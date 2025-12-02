@@ -1,56 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
-import {
-	PHOTO_MODELS,
-	type PhotoMessage,
-} from "@/domains/photo/components";
-import PromptEnhancer from "@/domains/photo/services/promptEnhancer";
-import type { TokenUsage } from "@/types";
-
-const PHOTO_EXECUTION_PLAN = [
-	"Interpretar o prompt e identificar os elementos principais.",
-	"Aprimorar o briefing visual com detalhes de estilo e luz.",
-	"Solicitar renderização no modelo de imagem selecionado.",
-];
-
-function createPhotoUsage(prompt: string, ratio: AspectRatio): TokenUsage {
-	const base = Math.max(prompt.length, 60);
-	const inputTokens = 80 + Math.round(base * 0.25);
-	const outputTokens = 110;
-	const thinkingTokens = 50;
-	const cachedContentTokens = ratio === "1:1" ? 20 : 32;
-	const totalTokens =
-		inputTokens +
-		outputTokens +
-		thinkingTokens -
-		Math.floor(cachedContentTokens / 2);
-
-	return {
-		inputTokens,
-		outputTokens,
-		thinkingTokens,
-		cachedContentTokens,
-		totalTokens,
-		steps: [
-			{
-				stepName: "Briefing Visual",
-				tool: "zane-photo-brief",
-				input: Math.round(inputTokens * 0.6),
-				output: 48,
-				think: 18,
-				cache: 0,
-			},
-			{
-				stepName: "Render",
-				tool: "zane-img-core",
-				input: Math.round(inputTokens * 0.4),
-				output: outputTokens,
-				think: thinkingTokens,
-				cache: cachedContentTokens,
-			},
-		],
-	};
-}
+import type { PhotoMessage } from "@/domains/photo/components";
+import { PromptEnhancer, photoRenderAgent } from "@/domains/photo/services";
 
 export function usePhotoExperience() {
 	const [messages, setMessages] = useState<PhotoMessage[]>([]);
@@ -105,6 +56,10 @@ export function usePhotoExperience() {
 		[],
 	);
 
+	const handleRemoveImage = useCallback(() => {
+		setAttachedImage(null);
+	}, []);
+
 	const canEnhancePrompt = useMemo(() => {
 		return (
 			(currentModel === "Zane img Lite" || currentModel === "Zane img Pro") &&
@@ -143,21 +98,24 @@ export function usePhotoExperience() {
 		setAttachedImage(null);
 		setIsLoading(true);
 
-		setTimeout(() => {
-			const imageUrl = `https://picsum.photos/512/512?random=${Date.now()}`;
-			const aiMessage: PhotoMessage = {
-				id: crypto.randomUUID(),
-				role: "assistant",
-				content: `Imagem gerada com ${currentModel} (${aspectRatio}).`,
-				generatedImageUrl: imageUrl,
-				timestamp: new Date(),
-				usage: createPhotoUsage(userMessage.content, aspectRatio),
-				executionPlan: PHOTO_EXECUTION_PLAN,
-			};
-			setMessages((prev) => [...prev, aiMessage]);
-			setGeneratedImages((prev) => [...prev, imageUrl]);
-			setIsLoading(false);
-		}, 2000);
+		void (async () => {
+			try {
+				const aiMessage = await photoRenderAgent.renderImage({
+					prompt: userMessage.content,
+					model: currentModel,
+					aspectRatio,
+				});
+				setMessages((prev) => [...prev, aiMessage]);
+				const generatedImageUrl = aiMessage.generatedImageUrl;
+				if (generatedImageUrl) {
+					setGeneratedImages((prev) => [...prev, generatedImageUrl]);
+				}
+			} catch (error) {
+				console.error("Photo render agent failed", error);
+			} finally {
+				setIsLoading(false);
+			}
+		})();
 	}, [aspectRatio, attachedImage, currentModel, inputValue]);
 
 	const resetConversation = useCallback(() => {
@@ -187,6 +145,7 @@ export function usePhotoExperience() {
 		handleAttachClick,
 		handleEnhancePrompt,
 		handleSend,
+		handleRemoveImage,
 		resetConversation,
 		messagesEndRef,
 		inputRef,

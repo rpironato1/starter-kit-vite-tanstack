@@ -4,8 +4,8 @@ Estrutura pensada para isolar os micro-módulos do chat de acordo com `ARQUITETU
 
 - `components/`: UI específica (mensagens, input, painéis).
 - `hooks/`: estado local e adapters do domínio.
-- `services/`: orquestradores e lógicas puras (ex.: prompt enhancer futuro).
+- `services/`: orquestradores e lógicas puras (ex.: `chatAgent` que simula respostas do domínio).
 - `orpc/`: contratos e clients para edge functions do chat.
 - `tests/`: suites unitárias/integradas específicas do domínio.
 
-> Nesta etapa inicial apenas componentes foram migrados; as demais pastas servem como base para a próxima fase do Strangler Fig.
+> O `chatAgent` já está implementado e consumido pelo `useChatExperience`, mantendo as rotas como containers finos enquanto evoluímos para o oRPC real.

@@ -5,52 +5,7 @@ import {
 	type DocMessage,
 	type UploadedDocument,
 } from "@/domains/doc/components";
-import type { TokenUsage } from "@/types";
-
-const DOC_EXECUTION_PLAN = [
-	"Indexar documentos recebidos e extrair metadados.",
-	"Criar mapa de tópicos relevantes e confirmar intenção.",
-	"Redigir resposta com evidências dos arquivos analisados.",
-];
-
-function createDocUsage(prompt: string, fileCount: number): TokenUsage {
-	const base = Math.max(prompt.length, 120);
-	const inputTokens = 140 + Math.round(base * 0.3) + fileCount * 20;
-	const outputTokens = 260;
-	const thinkingTokens = 90;
-	const cachedContentTokens = fileCount * 15;
-	const totalTokens =
-		inputTokens +
-		outputTokens +
-		thinkingTokens -
-		Math.floor(cachedContentTokens / 2);
-
-	return {
-		inputTokens,
-		outputTokens,
-		thinkingTokens,
-		cachedContentTokens,
-		totalTokens,
-		steps: [
-			{
-				stepName: "Indexação",
-				tool: "zane-doc-ingest",
-				input: Math.round(inputTokens * 0.5),
-				output: 72,
-				think: 18,
-				cache: cachedContentTokens,
-			},
-			{
-				stepName: "Análise",
-				tool: "zane-doc-core",
-				input: Math.round(inputTokens * 0.5),
-				output: outputTokens,
-				think: thinkingTokens,
-				cache: 0,
-			},
-		],
-	};
-}
+import { docAnalyzer } from "@/domains/doc/services";
 
 type ReasoningLevel = "soft" | "medium" | "max" | "off";
 
@@ -71,6 +26,9 @@ export function useDocExperience() {
 	const modelButtonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
+		if (!messages.length) {
+			return;
+		}
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages.length]);
 
@@ -132,27 +90,16 @@ export function useDocExperience() {
 		setAttachedFiles([]);
 		setIsLoading(true);
 
-		setTimeout(() => {
-			const fileList =
-				userMessage.attachedFiles
-					?.map((f) => `- ${f.name}`)
-					.join("\n") || "";
-			const aiMessage: DocMessage = {
-				id: crypto.randomUUID(),
-				role: "assistant",
-				content: `## Análise de Documentos\n\nAnalisei: "${userMessage.content}"\n\n${
-					fileList ? `### Arquivos\n${fileList}\n\n` : ""
-				}Resposta simulada. Em produção, análise detalhada será fornecida.`,
-				timestamp: new Date(),
-				usage: createDocUsage(
-					userMessage.content,
-					userMessage.attachedFiles?.length ?? 0,
-				),
-				executionPlan: DOC_EXECUTION_PLAN,
-			};
-			setMessages((prev) => [...prev, aiMessage]);
-			setIsLoading(false);
-		}, 1800);
+		void (async () => {
+			try {
+				const aiMessage = await docAnalyzer.analyze(userMessage);
+				setMessages((prev) => [...prev, aiMessage]);
+			} catch (error) {
+				console.error("Doc analyzer failed", error);
+			} finally {
+				setIsLoading(false);
+			}
+		})();
 	}, [attachedFiles, inputValue]);
 
 	const resetConversation = useCallback(() => {

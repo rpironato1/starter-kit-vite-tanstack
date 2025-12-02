@@ -2,14 +2,14 @@
 
 ## Visão Geral da Arquitetura
 
-**Zane Chat AI** é uma aplicação full-stack construída com **TanStack Start** com capacidades de agentes de IA alimentados pelo Claude (Anthropic), implantada em **Cloudflare Workers**. O projeto segue uma arquitetura modular baseada em domínios independentes, garantindo baixo acoplamento e alta coesão.
+**Zane Chat AI** é uma aplicação full-stack construída com **TanStack Start** com capacidades de agentes de IA alimentados pelo Gemini (google), implantada em **Cloudflare Workers**. O projeto segue uma arquitetura modular baseada em domínios independentes, garantindo baixo acoplamento e alta coesão.
 
 | Camada | Tecnologia | Propósito |
 |-------|------------|---------|
 | Framework | TanStack Start + React 19 | SSR/SPA híbrido com roteamento baseado em arquivos |
 | State | TanStack Store + Query | Estado global + cache servidor |
 | API | oRPC | RPC type-safe em `/api/rpc` |
-| IA | Vercel AI SDK + Anthropic | Respostas de IA com streaming e ferramentas |
+| IA | Gemini (google) | Respostas de IA com streaming e ferramentas |
 | Estilização | Tailwind CSS v4 + shadcn/ui | Biblioteca de componentes (estilo new-york) |
 | Deploy | Cloudflare Workers | Implantação em edge via Wrangler |
 | Animações | Framer Motion | Animações e transições suaves |
@@ -19,7 +19,7 @@
 - **Framework**: TanStack Start + React 19 + Vite 7
 - **State Management**: TanStack Store + TanStack Query
 - **API**: oRPC + Zod 4 (type-safe RPC)
-- **Integração com IA**: Vercel AI SDK + Anthropic + MCP
+- **Integração com IA**: Gemini 
 - **Estilização**: Tailwind CSS 4 + shadcn/ui + Framer Motion
 - **Componentes UI**: Radix UI + Lucide Icons
 - **Deploy**: Cloudflare Workers (Wrangler)
@@ -175,19 +175,6 @@ pnpx shadcn@latest add <component>
 - Usar `cn()` de `@/lib/utils` para merge de classNames
 - Sempre adicionar `type="button"` para botões que não são submit
 
-### Padrão de Integração com IA
-```typescript
-import { anthropic } from '@ai-sdk/anthropic'
-import { streamText } from 'ai'
-
-const result = await streamText({
-  model: anthropic('claude-3-5-sonnet-latest'),
-  messages: convertToModelMessages(messages),
-  tools: minhasFerramentas, // Definições de ferramentas com validação Zod
-})
-return result.toUIMessageStreamResponse()
-```
-
 ### Gerenciamento de Estado
 ```typescript
 // Estado global
@@ -205,7 +192,7 @@ doubled.mount() // Necessário para estado derivado
 - Definir em `src/env.ts` usando T3 Env + Zod
 - Variáveis server: sem prefixo
 - Variáveis client: prefixo `VITE_` obrigatório
-- Requerido: `ANTHROPIC_API_KEY`
+
 
 ### Padrões de Domínios
 - Cada domínio mantém sua própria lógica encapsulada

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createMockUsage, PLAN_STEPS } from "@/domains/chat/components/chatMocks";
 import type { ChatMessage } from "@/domains/chat/components/chatTypes";
+import { chatAgent } from "@/domains/chat/services";
 
 type ReasoningLevel = "soft" | "medium" | "max" | "off";
 
@@ -40,18 +40,16 @@ export function useChatExperience() {
 		setAttachedImage(null);
 		setIsLoading(true);
 
-		setTimeout(() => {
-			const aiMessage: ChatMessage = {
-				id: crypto.randomUUID(),
-				role: "assistant",
-				content: `Este é um exemplo de resposta para: "${userMessage.content}".\n\nNa versão completa, os agentes Zane analisariam sua solicitação, fariam grounding e entregariam um plano estruturado.`,
-				timestamp: new Date(),
-				usage: createMockUsage(userMessage.content),
-				executionPlan: PLAN_STEPS,
-			};
-			setMessages((prev) => [...prev, aiMessage]);
-			setIsLoading(false);
-		}, 1500);
+		void (async () => {
+			try {
+				const aiMessage = await chatAgent.generateResponse(userMessage);
+				setMessages((prev) => [...prev, aiMessage]);
+			} catch (error) {
+				console.error("Chat agent response failed", error);
+			} finally {
+				setIsLoading(false);
+			}
+		})();
 	}, [attachedImage, inputValue]);
 
 	const handleRetry = useCallback(() => {
@@ -62,18 +60,17 @@ export function useChatExperience() {
 		if (!lastUserMessage) return;
 
 		setIsLoading(true);
-		setTimeout(() => {
-			const aiMessage: ChatMessage = {
-				id: crypto.randomUUID(),
-				role: "assistant",
-				content: `Reprocessando o pedido relacionado a "${lastUserMessage.content}" com nova perspectiva.`,
-				timestamp: new Date(),
-				usage: createMockUsage(lastUserMessage.content),
-				executionPlan: PLAN_STEPS,
-			};
-			setMessages((prev) => [...prev, aiMessage]);
-			setIsLoading(false);
-		}, 1500);
+
+		void (async () => {
+			try {
+				const aiMessage = await chatAgent.generateResponse(lastUserMessage);
+				setMessages((prev) => [...prev, aiMessage]);
+			} catch (error) {
+				console.error("Chat agent retry failed", error);
+			} finally {
+				setIsLoading(false);
+			}
+		})();
 	}, [messages]);
 
 	const handleModelSelect = useCallback((model: string) => {
