@@ -7,7 +7,7 @@ import {
 	Sparkles,
 } from "lucide-react";
 import { type RefObject, useState } from "react";
-import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
+import { PrototypeInputContainer } from "@/shared/components";
 import { ReasoningSelector } from "@/components/selectors/ReasoningSelector";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/lib/utils";

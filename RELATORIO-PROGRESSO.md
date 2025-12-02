@@ -7,6 +7,7 @@
 - **Shared hooks**: `useTranslation`, `useTheme`, `useSidebar` residem em `src/shared/hooks/*`; imports atualizados em layouts, seletores e domínios.
 - **Serviços do domínio**: `promptEnhancer` agora em `src/domains/photo/services/promptEnhancer.ts`, consumido apenas pelo domínio Photo.
 - **Agentes simulados por domínio**: `chatAgent`, `docAnalyzer`, `photoRenderAgent` e `canvasBuilder` moram em `src/domains/<feature>/services` e alimentam os hooks (`use<Feature>Experience`), deixando rotas/containers sem side effects.
+- **Shared layer**: `PrototypeInputContainer` migrado para `src/shared/components`, consumido por todos os domínios de input mantendo fronteira de importação.
 - **oRPC**: routers placeholders criados para cada domínio (`src/domains/*/orpc/router.ts`) e agregados em `src/orpc/router/index.ts`, substituindo o mock `todos.ts`.
 - **Tokens Tailwind v4**: `src/styles.css` usa `@theme` / `@theme dark`, removendo `:root`/`.dark` e ajustando componentes dependentes (`ReasoningSelectorInline`).
 - **Planos registrados**: `PLAN-DOMINIOS-E-TOKENS.md` e `PLAN-DOMINIOS-LOGICA.md` documentam as etapas executadas e as próximas fases.
@@ -15,8 +16,8 @@
 ## 2. Entregas Restantes
 1. **oRPC real + Supabase**  
    - Implementar contratos e handlers em `src/domains/<feature>/orpc/router.ts` conectando cada um aos respectivos diretórios `supabase/functions/<feature>` e migrations.
-2. **Shared Layer**  
-   - Avaliar componentes/hook realmente transversais (ex.: `PrototypeInputContainer`) e movê-los para `src/shared`.
+2. **Shared Layer (fase 2)**  
+   - Revisar demais componentes compartilháveis (ex.: `CommandBarBase`, `InputBar`) e movê-los para `src/shared`, garantindo lint/import-boundaries.
 3. **Testes unitários e integração**  
    - Criar suites por domínio (`domains/<feature>/tests`) e validar serviços/hook isoladamente.
 4. **Documentação e automação**  

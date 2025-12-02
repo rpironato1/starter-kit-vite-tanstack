@@ -8,7 +8,7 @@ import {
 	X,
 } from "lucide-react";
 import { type RefObject, useState } from "react";
-import { PrototypeInputContainer } from "@/components/layout/PrototypeInputContainer";
+import { PrototypeInputContainer } from "@/shared/components";
 import type { AspectRatio } from "@/components/selectors/AspectRatioSelector";
 import { PhotoAttachPopover } from "./PhotoAttachPopover";
 import { ASPECT_RATIOS } from "./photoAspectRatios";
